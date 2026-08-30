@@ -1,16 +1,57 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+    /* =========================
+       BASIC SETTINGS
+    ========================= */
+
     let currentStep = 1;
+
     const totalSteps = 5;
 
-    const form = document.getElementById("celebrationForm");
 
-    const nextBtn = document.getElementById("nextBtn");
-    const prevBtn = document.getElementById("prevBtn");
-    const submitBtn = document.getElementById("submitBtn");
+    const form =
+        document.getElementById(
+            "celebrationForm"
+        );
+
+
+    const nextBtn =
+        document.getElementById(
+            "nextBtn"
+        );
+
+
+    const prevBtn =
+        document.getElementById(
+            "prevBtn"
+        );
+
+
+    const submitBtn =
+        document.getElementById(
+            "submitBtn"
+        );
+
 
     const progressFill =
-        document.getElementById("progressFill");
+        document.getElementById(
+            "progressFill"
+        );
+
+
+    /* =========================
+       CHECK FORM
+    ========================= */
+
+    if (!form) {
+
+        console.error(
+            "celebrationForm not found"
+        );
+
+        return;
+
+    }
 
 
     /* =========================
@@ -22,28 +63,38 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.search
         );
 
+
     const selectedOccasion =
-        params.get("occasion");
+        params.get(
+            "occasion"
+        );
+
 
     const selectedPackage =
-        params.get("package");
+        params.get(
+            "package"
+        );
 
 
     /* =========================
-       SHOW STEP
+       SHOW CURRENT STEP
     ========================= */
 
     function showStep(step) {
 
-        document.querySelectorAll(
-            ".form-step"
-        ).forEach(formStep => {
+        document
+            .querySelectorAll(
+                ".form-step"
+            )
+            .forEach(
+                formStep => {
 
-            formStep.classList.remove(
-                "active"
+                    formStep.classList.remove(
+                        "active"
+                    );
+
+                }
             );
-
-        });
 
 
         const activeStep =
@@ -61,37 +112,48 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        document.querySelectorAll(
-            ".progress-step"
-        ).forEach(progressStep => {
+        /* Progress Steps */
 
-            const stepNumber =
-                Number(
-                    progressStep.dataset.step
-                );
+        document
+            .querySelectorAll(
+                ".progress-step"
+            )
+            .forEach(
+                progressStep => {
 
-            if (
-                stepNumber <= step
-            ) {
+                    const stepNumber =
+                        Number(
+                            progressStep.dataset.step
+                        );
 
-                progressStep.classList.add(
-                    "active"
-                );
 
-            } else {
+                    if (
+                        stepNumber <= step
+                    ) {
 
-                progressStep.classList.remove(
-                    "active"
-                );
+                        progressStep.classList.add(
+                            "active"
+                        );
 
-            }
+                    } else {
 
-        });
+                        progressStep.classList.remove(
+                            "active"
+                        );
 
+                    }
+
+                }
+            );
+
+
+        /* Progress Bar */
 
         const progress =
-            ((step - 1) /
-                (totalSteps - 1)) * 100;
+            (
+                (step - 1) /
+                (totalSteps - 1)
+            ) * 100;
 
 
         if (progressFill) {
@@ -101,6 +163,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
 
+
+        /* Previous Button */
 
         if (prevBtn) {
 
@@ -112,6 +176,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
+        /* Next Button */
+
         if (nextBtn) {
 
             nextBtn.style.display =
@@ -121,6 +187,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
 
+
+        /* Submit Button */
 
         if (submitBtn) {
 
@@ -144,7 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================
-       GENERAL SELECTION SYSTEM
+       GENERAL CARD SELECTION
     ========================= */
 
     function setupSelection(
@@ -158,55 +226,96 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-        cards.forEach(card => {
+        cards.forEach(
+            card => {
 
-            card.addEventListener(
-                "click",
-                () => {
+                card.addEventListener(
+                    "click",
+                    () => {
 
-                    cards.forEach(item => {
+                        /* Remove Previous Selection */
 
-                        item.classList.remove(
+                        cards.forEach(
+                            item => {
+
+                                item.classList.remove(
+                                    "selected"
+                                );
+
+                            }
+                        );
+
+
+                        /* Add New Selection */
+
+                        card.classList.add(
                             "selected"
                         );
 
-                    });
+
+                        /* Hidden Input */
+
+                        const hiddenInput =
+                            document.getElementById(
+                                inputId
+                            );
 
 
-                    card.classList.add(
-                        "selected"
-                    );
+                        if (!hiddenInput) {
+
+                            console.error(
+                                `${inputId} input not found`
+                            );
+
+                            return;
+
+                        }
 
 
-                    const hiddenInput =
-                        document.getElementById(
-                            inputId
-                        );
+                        /* Get Value */
+
+                        let value =
+                            card.dataset.value ||
+                            card.dataset.package ||
+                            "";
 
 
-                    if (hiddenInput) {
+                        /*
+                           Extra fallback
+                        */
+
+                        if (!value) {
+
+                            value =
+                                card.getAttribute(
+                                    "data-value"
+                                ) || "";
+
+                        }
+
 
                         hiddenInput.value =
-                            card.dataset.value;
+                            value
+                                .toLowerCase()
+                                .trim();
+
+
+                        console.log(
+                            `${inputId} selected:`,
+                            hiddenInput.value
+                        );
 
                     }
+                );
 
-
-                    console.log(
-                        inputId + " selected:",
-                        card.dataset.value
-                    );
-
-                }
-            );
-
-        });
+            }
+        );
 
     }
 
 
     /* =========================
-       SETUP SELECTIONS
+       OCCASION SELECTION
     ========================= */
 
     setupSelection(
@@ -215,11 +324,19 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
+    /* =========================
+       RELATIONSHIP SELECTION
+    ========================= */
+
     setupSelection(
         ".relationship-selection .selection-card",
         "relationship"
     );
 
+
+    /* =========================
+       THEME SELECTION
+    ========================= */
 
     setupSelection(
         ".theme-card",
@@ -227,9 +344,137 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    setupSelection(
-        ".package-option",
-        "package"
+    /* =========================
+       PACKAGE SELECTION
+    ========================= */
+
+    const packageCards =
+        document.querySelectorAll(
+            ".package-option"
+        );
+
+
+    const packageInput =
+        document.getElementById(
+            "package"
+        );
+
+
+    packageCards.forEach(
+        card => {
+
+            card.addEventListener(
+                "click",
+                () => {
+
+                    /* Remove Previous Selection */
+
+                    packageCards.forEach(
+                        item => {
+
+                            item.classList.remove(
+                                "selected"
+                            );
+
+                        }
+                    );
+
+
+                    /* Select Current Package */
+
+                    card.classList.add(
+                        "selected"
+                    );
+
+
+                    /* Get Package Value */
+
+                    let packageValue =
+                        card.dataset.value ||
+                        card.dataset.package ||
+                        "";
+
+
+                    /*
+                       If data-value is missing,
+                       detect package from text
+                    */
+
+                    if (!packageValue) {
+
+                        const cardText =
+                            card.textContent
+                                .toLowerCase();
+
+
+                        if (
+                            cardText.includes(
+                                "basic"
+                            )
+                        ) {
+
+                            packageValue =
+                                "basic";
+
+                        }
+
+
+                        else if (
+                            cardText.includes(
+                                "premium"
+                            )
+                        ) {
+
+                            packageValue =
+                                "premium";
+
+                        }
+
+
+                        else if (
+                            cardText.includes(
+                                "ultimate"
+                            )
+                        ) {
+
+                            packageValue =
+                                "ultimate";
+
+                        }
+
+                    }
+
+
+                    /* Save Package */
+
+                    if (packageInput) {
+
+                        packageInput.value =
+                            String(
+                                packageValue
+                            )
+                                .toLowerCase()
+                                .trim();
+
+
+                        console.log(
+                            "PACKAGE SELECTED:",
+                            packageInput.value
+                        );
+
+
+                        console.log(
+                            "PACKAGE CARD:",
+                            card
+                        );
+
+                    }
+
+
+                }
+            );
+
+        }
     );
 
 
@@ -248,7 +493,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (occasionInput) {
 
             occasionInput.value =
-                selectedOccasion;
+                selectedOccasion
+                    .toLowerCase()
+                    .trim();
 
         }
 
@@ -261,15 +508,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (occasionCard) {
 
-            document.querySelectorAll(
-                ".occasion-selection .selection-card"
-            ).forEach(card => {
+            document
+                .querySelectorAll(
+                    ".occasion-selection .selection-card"
+                )
+                .forEach(
+                    card => {
 
-                card.classList.remove(
-                    "selected"
+                        card.classList.remove(
+                            "selected"
+                        );
+
+                    }
                 );
-
-            });
 
 
             occasionCard.classList.add(
@@ -287,44 +538,55 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (selectedPackage) {
 
-        const packageInput =
-            document.getElementById(
-                "package"
-            );
+        const normalizedPackage =
+            selectedPackage
+                .toLowerCase()
+                .trim();
 
 
         if (packageInput) {
 
             packageInput.value =
-                selectedPackage;
+                normalizedPackage;
 
         }
 
 
-        const packageCard =
-            document.querySelector(
-                `.package-option[data-value="${selectedPackage}"]`
-            );
+        packageCards.forEach(
+            card => {
+
+                let cardValue =
+                    card.dataset.value ||
+                    card.dataset.package ||
+                    "";
 
 
-        if (packageCard) {
+                if (
+                    cardValue
+                        .toLowerCase()
+                        .trim() ===
+                    normalizedPackage
+                ) {
 
-            document.querySelectorAll(
-                ".package-option"
-            ).forEach(card => {
+                    packageCards.forEach(
+                        item => {
 
-                card.classList.remove(
-                    "selected"
-                );
+                            item.classList.remove(
+                                "selected"
+                            );
 
-            });
+                        }
+                    );
 
 
-            packageCard.classList.add(
-                "selected"
-            );
+                    card.classList.add(
+                        "selected"
+                    );
 
-        }
+                }
+
+            }
+        );
 
     }
 
@@ -335,12 +597,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function validateStep() {
 
+        /* STEP 1 */
+
         if (currentStep === 1) {
 
-            const occasion =
+            const occasionInput =
                 document.getElementById(
                     "occasion"
-                ).value;
+                );
+
+
+            const occasion =
+                occasionInput
+                    ? occasionInput.value.trim()
+                    : "";
 
 
             if (!occasion) {
@@ -356,12 +626,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
+        /* STEP 2 */
+
         if (currentStep === 2) {
 
-            const relationship =
+            const relationshipInput =
                 document.getElementById(
                     "relationship"
-                ).value;
+                );
+
+
+            const relationship =
+                relationshipInput
+                    ? relationshipInput.value.trim()
+                    : "";
 
 
             if (!relationship) {
@@ -377,12 +655,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
+        /* STEP 3 */
+
         if (currentStep === 3) {
 
-            const theme =
+            const themeInput =
                 document.getElementById(
                     "theme"
-                ).value;
+                );
+
+
+            const theme =
+                themeInput
+                    ? themeInput.value.trim()
+                    : "";
 
 
             if (!theme) {
@@ -397,6 +683,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
 
+
+        /* STEP 4 */
 
         if (currentStep === 4) {
 
@@ -419,7 +707,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         "Please fill all required details."
                     );
 
+
                     input.focus();
+
 
                     return false;
 
@@ -430,16 +720,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
+        /* STEP 5 */
+
         if (currentStep === 5) {
 
             const selectedPackageValue =
-                document.getElementById(
-                    "package"
-                ).value;
+                packageInput
+                    ? packageInput.value
+                        .toLowerCase()
+                        .trim()
+                    : "";
 
 
             console.log(
-                "Package before payment:",
+                "FINAL PACKAGE:",
                 selectedPackageValue
             );
 
@@ -450,6 +744,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 alert(
                     "Please select a package 💎"
+                );
+
+                return false;
+
+            }
+
+
+            /*
+               Check valid package
+            */
+
+            const validPackages =
+                [
+                    "basic",
+                    "premium",
+                    "ultimate"
+                ];
+
+
+            if (
+                !validPackages.includes(
+                    selectedPackageValue
+                )
+            ) {
+
+                alert(
+                    "Invalid package selected. Please select again."
                 );
 
                 return false;
@@ -476,14 +797,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (
                     !validateStep()
-                ) return;
+                ) {
+
+                    return;
+
+                }
 
 
                 if (
-                    currentStep < totalSteps
+                    currentStep <
+                    totalSteps
                 ) {
 
                     currentStep++;
+
 
                     showStep(
                         currentStep
@@ -512,6 +839,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ) {
 
                     currentStep--;
+
 
                     showStep(
                         currentStep
@@ -560,52 +888,54 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
 
 
-                files.forEach(file => {
+                files.forEach(
+                    file => {
 
-                    if (
-                        !file.type.startsWith(
-                            "image/"
-                        )
-                    ) {
+                        if (
+                            !file.type.startsWith(
+                                "image/"
+                            )
+                        ) {
 
-                        return;
+                            return;
 
-                    }
-
-
-                    const reader =
-                        new FileReader();
+                        }
 
 
-                    reader.onload =
-                        event => {
+                        const reader =
+                            new FileReader();
 
-                            const image =
-                                document.createElement(
-                                    "img"
+
+                        reader.onload =
+                            event => {
+
+                                const image =
+                                    document.createElement(
+                                        "img"
+                                    );
+
+
+                                image.src =
+                                    event.target.result;
+
+
+                                image.className =
+                                    "photo-preview";
+
+
+                                photoPreview.appendChild(
+                                    image
                                 );
 
-
-                            image.src =
-                                event.target.result;
+                            };
 
 
-                            image.className =
-                                "photo-preview";
+                        reader.readAsDataURL(
+                            file
+                        );
 
-
-                            photoPreview.appendChild(
-                                image
-                            );
-
-                        };
-
-
-                    reader.readAsDataURL(
-                        file
-                    );
-
-                });
+                    }
+                );
 
             }
         );
@@ -633,61 +963,94 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
+            /* Get Package Safely */
+
+            const finalPackage =
+                packageInput
+                    ? packageInput.value
+                        .toLowerCase()
+                        .trim()
+                    : "";
+
+
             const celebrationData = {
 
                 occasion:
                     document.getElementById(
                         "occasion"
-                    ).value,
+                    )?.value || "",
+
 
                 relationship:
                     document.getElementById(
                         "relationship"
-                    ).value,
+                    )?.value || "",
+
 
                 theme:
                     document.getElementById(
                         "theme"
-                    ).value,
+                    )?.value || "",
+
 
                 personName:
                     document.getElementById(
                         "personName"
-                    ).value,
+                    )?.value || "",
+
 
                 customerName:
                     document.getElementById(
                         "customerName"
-                    ).value,
+                    )?.value || "",
+
 
                 specialDate:
                     document.getElementById(
                         "specialDate"
-                    ).value,
+                    )?.value || "",
+
 
                 email:
                     document.getElementById(
                         "email"
-                    ).value,
+                    )?.value || "",
+
 
                 message:
                     document.getElementById(
                         "message"
-                    ).value,
+                    )?.value || "",
+
 
                 package:
-                    document.getElementById(
-                        "package"
-                    ).value
+                    finalPackage
 
             };
 
 
             console.log(
-                "Saving order:",
+                "FINAL ORDER DATA:",
                 celebrationData
             );
 
+
+            /* Check Package Again */
+
+            if (
+                !celebrationData.package
+            ) {
+
+                alert(
+                    "Package was not saved. Please select your package again."
+                );
+
+                return;
+
+            }
+
+
+            /* Save To LocalStorage */
 
             localStorage.setItem(
                 "celebrateVerseOrder",
@@ -696,6 +1059,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 )
             );
 
+
+            console.log(
+                "ORDER SAVED SUCCESSFULLY"
+            );
+
+
+            console.log(
+                localStorage.getItem(
+                    "celebrateVerseOrder"
+                )
+            );
+
+
+            /* Go To Payment */
 
             window.location.href =
                 "payment.html";
@@ -708,6 +1085,8 @@ document.addEventListener("DOMContentLoaded", () => {
        START PAGE
     ========================= */
 
-    showStep(1);
+    showStep(
+        currentStep
+    );
 
 });
