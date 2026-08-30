@@ -1,202 +1,321 @@
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* =========================
+       PACKAGE PRICES
+    ========================= */
+
+    const packagePrices = {
+        basic: 499,
+        premium: 999,
+        ultimate: 1999
+    };
 
 
-        /* =========================
-           GET SAVED ORDER
-        ========================= */
+    /* =========================
+       GET SAVED ORDER
+    ========================= */
 
-        const savedOrder =
-            localStorage.getItem(
-                "celebrateVerseOrder"
-            );
+    const savedOrder =
+        localStorage.getItem("celebrateVerseOrder");
 
 
-        if (!savedOrder) {
+    if (!savedOrder) {
 
-            alert(
-                "No celebration details found. Please create your celebration first."
-            );
+        console.error("No saved order found");
+
+        alert(
+            "No celebration details found. Please create your celebration first."
+        );
+
+        window.location.href =
+            "customize.html";
+
+        return;
+
+    }
 
 
-            window.location.href =
-                "customize.html";
+    let order;
 
 
-            return;
+    try {
 
-        }
-
-
-        const order =
+        order =
             JSON.parse(savedOrder);
 
+    } catch (error) {
+
+        console.error(
+            "Order JSON Error:",
+            error
+        );
+
+        alert(
+            "Saved order data is corrupted. Please create your celebration again."
+        );
+
+        localStorage.removeItem(
+            "celebrateVerseOrder"
+        );
+
+        window.location.href =
+            "customize.html";
+
+        return;
+
+    }
 
 
-        /* =========================
-           FORMAT TEXT
-        ========================= */
-
-        function formatText(text) {
-
-            if (!text) return "-";
+    console.log(
+        "FULL SAVED ORDER:",
+        order
+    );
 
 
-            return text
-                .replace(
-                    /-/g,
-                    " "
-                )
-                .replace(
-                    /\b\w/g,
-                    char =>
-                        char.toUpperCase()
-                );
+    /* =========================
+       FIX PACKAGE VALUE
+    ========================= */
+
+    let selectedPackage =
+        order.package;
+
+
+    if (selectedPackage) {
+
+        selectedPackage =
+            String(selectedPackage)
+                .trim()
+                .toLowerCase();
+
+    }
+
+
+    console.log(
+        "SELECTED PACKAGE:",
+        selectedPackage
+    );
+
+
+    const price =
+        packagePrices[selectedPackage] || 0;
+
+
+    console.log(
+        "PACKAGE PRICE:",
+        price
+    );
+
+
+    /* =========================
+       FORMAT TEXT
+    ========================= */
+
+    function formatText(text) {
+
+        if (!text) {
+
+            return "-";
 
         }
 
 
+        return String(text)
+            .replace(/-/g, " ")
+            .replace(
+                /\b\w/g,
+                character =>
+                    character.toUpperCase()
+            );
 
-        /* =========================
-           PACKAGE PRICES
-        ========================= */
-
-        const packagePrices = {
-
-            basic: 499,
-
-            premium: 999,
-
-            ultimate: 1999
-
-        };
+    }
 
 
-        const price =
-            packagePrices[
-                order.package
-            ] || 0;
+    /* =========================
+       FORMAT PRICE
+    ========================= */
+
+    function formatPrice(amount) {
+
+        return (
+            "₹" +
+            Number(amount).toLocaleString(
+                "en-IN"
+            )
+        );
+
+    }
 
 
+    /* =========================
+       FORMAT DATE
+    ========================= */
 
-        /* =========================
-           DATE FORMAT
-        ========================= */
+    function formatDate(dateValue) {
 
-        let formattedDate = "-";
+        if (!dateValue) {
+
+            return "-";
+
+        }
 
 
-        if (order.specialDate) {
+        try {
 
             const date =
                 new Date(
-                    order.specialDate +
+                    dateValue +
                     "T00:00:00"
                 );
 
 
-            formattedDate =
-                date.toLocaleDateString(
-                    "en-IN",
-                    {
+            if (
+                isNaN(
+                    date.getTime()
+                )
+            ) {
 
-                        day:
-                            "numeric",
+                return dateValue;
 
-                        month:
-                            "long",
+            }
 
-                        year:
-                            "numeric"
 
-                    }
-                );
+            return date.toLocaleDateString(
+                "en-IN",
+                {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                }
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Date Error:",
+                error
+            );
+
+            return "-";
 
         }
 
+    }
 
 
-        /* =========================
-           UPDATE SUMMARY
-        ========================= */
+    /* =========================
+       SAFE UPDATE FUNCTION
+    ========================= */
 
-        document.getElementById(
-            "summaryPersonName"
-        ).textContent =
-            order.personName ||
-            "Your Special Moment";
+    function updateElement(
+        id,
+        value
+    ) {
+
+        const element =
+            document.getElementById(id);
 
 
-        document.getElementById(
-            "summaryOccasion"
-        ).textContent =
-            formatText(
-                order.occasion
+        if (element) {
+
+            element.textContent =
+                value;
+
+        } else {
+
+            console.warn(
+                "Element not found:",
+                id
             );
 
+        }
 
+    }
+
+
+    /* =========================
+       UPDATE ORDER SUMMARY
+    ========================= */
+
+    updateElement(
+        "summaryPersonName",
+        order.personName ||
+        "Your Special Moment"
+    );
+
+
+    updateElement(
+        "summaryOccasion",
+        formatText(
+            order.occasion
+        )
+    );
+
+
+    updateElement(
+        "summaryRelationship",
+        formatText(
+            order.relationship
+        )
+    );
+
+
+    updateElement(
+        "summaryTheme",
+        formatText(
+            order.theme
+        )
+    );
+
+
+    updateElement(
+        "summaryDate",
+        formatDate(
+            order.specialDate
+        )
+    );
+
+
+    updateElement(
+        "summaryPackage",
+        formatText(
+            selectedPackage
+        )
+    );
+
+
+    updateElement(
+        "summaryPrice",
+        formatPrice(
+            price
+        )
+    );
+
+
+    updateElement(
+        "summaryTotal",
+        formatPrice(
+            price
+        )
+    );
+
+
+    /* =========================
+       SPECIAL MESSAGE
+    ========================= */
+
+    const messageBox =
         document.getElementById(
-            "summaryRelationship"
-        ).textContent =
-            formatText(
-                order.relationship
-            );
+            "summaryMessage"
+        );
 
 
-        document.getElementById(
-            "summaryTheme"
-        ).textContent =
-            formatText(
-                order.theme
-            );
-
-
-        document.getElementById(
-            "summaryDate"
-        ).textContent =
-            formattedDate;
-
-
-        document.getElementById(
-            "summaryPackage"
-        ).textContent =
-            formatText(
-                order.package
-            );
-
-
-        document.getElementById(
-            "summaryPrice"
-        ).textContent =
-            "₹" +
-            price.toLocaleString(
-                "en-IN"
-            );
-
-
-        document.getElementById(
-            "summaryTotal"
-        ).textContent =
-            "₹" +
-            price.toLocaleString(
-                "en-IN"
-            );
-
-
-        /* =========================
-           SPECIAL MESSAGE
-        ========================= */
-
-        const messageBox =
-            document.getElementById(
-                "summaryMessage"
-            );
-
+    if (messageBox) {
 
         if (
             order.message &&
-            order.message.trim() !== ""
+            String(
+                order.message
+            ).trim() !== ""
         ) {
 
             messageBox.textContent =
@@ -210,82 +329,138 @@ document.addEventListener(
 
         }
 
+    }
 
 
-        /* =========================
-           PAYMENT METHOD
-        ========================= */
+    /* =========================
+       PACKAGE ERROR CHECK
+    ========================= */
 
-        const paymentMethods =
-            document.querySelectorAll(
-                ".payment-method"
-            );
+    if (price === 0) {
 
+        console.error(
+            "INVALID PACKAGE:",
+            selectedPackage
+        );
 
-        paymentMethods.forEach(
-            method => {
+        console.error(
+            "Available packages:",
+            Object.keys(
+                packagePrices
+            )
+        );
 
-                method.addEventListener(
-                    "click",
-                    () => {
-
-
-                        paymentMethods.forEach(
-                            item => {
-
-                                item.classList.remove(
-                                    "active-payment"
-                                );
-
-                            }
-                        );
+    }
 
 
-                        method.classList.add(
-                            "active-payment"
-                        );
+    /* =========================
+       PAYMENT METHOD SELECT
+    ========================= */
 
-
-                    }
-                );
-
-
-            }
+    const paymentMethods =
+        document.querySelectorAll(
+            ".payment-method"
         );
 
 
+    paymentMethods.forEach(
+        method => {
 
-     /* =========================
-   CREATE REAL ORDER
-========================= */
+            method.addEventListener(
+                "click",
+                () => {
 
-const payButton = document.getElementById("payButton");
+                    paymentMethods.forEach(
+                        item => {
 
-if (!payButton) {
+                            item.classList.remove(
+                                "active-payment"
+                            );
 
-    console.error("payButton not found");
+                        }
+                    );
 
-} else {
+
+                    method.classList.add(
+                        "active-payment"
+                    );
+
+
+                    console.log(
+                        "Payment method:",
+                        method.dataset.method
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =========================
+       PAY BUTTON
+    ========================= */
+
+    const payButton =
+        document.getElementById(
+            "payButton"
+        );
+
+
+    if (!payButton) {
+
+        console.error(
+            "payButton not found"
+        );
+
+        return;
+
+    }
+
 
     payButton.addEventListener(
         "click",
         async () => {
+
+
+            /* =========================
+               CHECK PACKAGE
+            ========================= */
+
+            if (
+                !selectedPackage ||
+                !packagePrices[selectedPackage]
+            ) {
+
+                alert(
+                    "Package information is missing. Please select your package again."
+                );
+
+
+                window.location.href =
+                    "customize.html";
+
+                return;
+
+            }
+
 
             /* =========================
                CHECK SUPABASE
             ========================= */
 
             if (
-                typeof supabaseClient === "undefined" ||
-                !supabaseClient
+                typeof supabaseClient ===
+                "undefined"
             ) {
 
                 console.error(
-                    "Supabase client is not initialized"
+                    "supabaseClient is undefined"
                 );
 
                 alert(
-                    "Supabase connection error. Please check supabase.js."
+                    "Database connection error. Please check supabase.js."
                 );
 
                 return;
@@ -294,10 +469,28 @@ if (!payButton) {
 
 
             /* =========================
+               GET PAYMENT METHOD
+            ========================= */
+
+            const activePayment =
+                document.querySelector(
+                    ".payment-method.active-payment"
+                );
+
+
+            const paymentMethod =
+                activePayment
+                    ? activePayment.dataset.method
+                    : "upi";
+
+
+            /* =========================
                PREVENT DOUBLE CLICK
             ========================= */
 
-            payButton.disabled = true;
+            payButton.disabled =
+                true;
+
 
             const originalButtonHTML =
                 payButton.innerHTML;
@@ -313,56 +506,43 @@ if (!payButton) {
 
 
                 /* =========================
-                   CHECK PACKAGE
-                ========================= */
-
-                if (
-                    !order.package ||
-                    !packagePrices[order.package]
-                ) {
-
-                    throw new Error(
-                        "Please select a valid package."
-                    );
-
-                }
-
-
-                /* =========================
-                   CREATE ORDER DATA
+                   ORDER DATA
                 ========================= */
 
                 const orderData = {
 
                     occasion:
-                        order.occasion || "",
+                        order.occasion || null,
 
                     relationship:
-                        order.relationship || "",
+                        order.relationship || null,
 
                     theme:
-                        order.theme || "",
+                        order.theme || null,
 
                     person_name:
-                        order.personName || "",
+                        order.personName || null,
 
                     customer_name:
-                        order.customerName || "",
+                        order.customerName || null,
 
                     special_date:
                         order.specialDate || null,
 
                     email:
-                        order.email || "",
+                        order.email || null,
 
                     message:
-                        order.message || "",
+                        order.message || null,
 
                     package:
-                        order.package,
+                        selectedPackage,
 
                     amount:
                         Number(price),
+
+                    payment_method:
+                        paymentMethod,
 
                     payment_status:
                         "pending",
@@ -374,78 +554,71 @@ if (!payButton) {
 
 
                 console.log(
-                    "Sending order:",
+                    "SENDING ORDER:",
                     orderData
                 );
 
 
                 /* =========================
-                   INSERT ORDER
+                   INSERT INTO SUPABASE
                 ========================= */
 
                 const {
                     data,
                     error
-                } = await supabaseClient
-                    .from("orders")
-                    .insert(orderData)
-                    .select("id")
-                    .single();
+                } =
+                    await supabaseClient
+                        .from("orders")
+                        .insert(
+                            [orderData]
+                        )
+                        .select();
 
 
                 /* =========================
-                   CHECK SUPABASE ERROR
+                   DATABASE ERROR
                 ========================= */
 
                 if (error) {
 
                     console.error(
-                        "Supabase Error:",
+                        "SUPABASE ERROR:",
                         error
                     );
 
                     throw new Error(
-                        error.message ||
-                        "Database error"
+                        error.message
                     );
 
                 }
 
 
-                /* =========================
-                   CHECK ORDER ID
-                ========================= */
-
-                if (
-                    !data ||
-                    !data.id
-                ) {
-
-                    throw new Error(
-                        "Order was created but Order ID was not received."
-                    );
-
-                }
+                console.log(
+                    "ORDER CREATED:",
+                    data
+                );
 
 
                 /* =========================
                    SAVE ORDER ID
                 ========================= */
 
-                localStorage.setItem(
-                    "celebrateVerseOrderId",
-                    data.id
-                );
+                if (
+                    data &&
+                    data.length > 0 &&
+                    data[0].id
+                ) {
 
+                    localStorage.setItem(
+                        "celebrateVerseOrderId",
+                        data[0].id
+                    );
 
-                console.log(
-                    "Order Created Successfully:",
-                    data
-                );
+                }
 
 
                 /* =========================
-                   SUCCESS BUTTON
+                   SUCCESS
                 ========================= */
 
                 payButton.innerHTML = `
@@ -459,17 +632,14 @@ if (!payButton) {
                 );
 
 
-                /*
-                   NEXT STEP:
-                   PAYMENT GATEWAY
-                */
+                /* =========================
+                   FUTURE PAYMENT PAGE
+                ========================= */
 
                 setTimeout(
                     () => {
 
                         /*
-                        Example:
-
                         window.location.href =
                             "payment-success.html";
                         */
@@ -481,10 +651,6 @@ if (!payButton) {
 
             } catch (error) {
 
-
-                /* =========================
-                   SHOW REAL ERROR
-                ========================= */
 
                 console.error(
                     "ORDER ERROR:",
@@ -501,10 +667,6 @@ if (!payButton) {
                 );
 
 
-                /* =========================
-                   RESET BUTTON
-                ========================= */
-
                 payButton.disabled =
                     false;
 
@@ -512,11 +674,11 @@ if (!payButton) {
                 payButton.innerHTML =
                     originalButtonHTML;
 
+            }
 
 
         }
     );
 
-}
-    }
-);
+
+});
