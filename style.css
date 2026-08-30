@@ -3083,3 +3083,547 @@ id="72915"}
     }
 
 }
+/* =====================================
+   CELEBRATEVERSE CUSTOMIZER
+===================================== */
+
+.customizer-page {
+    min-height: 100vh;
+    padding: 120px 20px 80px;
+    background: #090914;
+    color: white;
+}
+
+.customizer-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.customizer-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.section-tag {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: #ff6b9d;
+    margin-bottom: 15px;
+}
+
+.customizer-header h1 {
+    font-size: 52px;
+    margin-bottom: 15px;
+}
+
+.customizer-header h1 span {
+    color: #ff6b9d;
+}
+
+.customizer-header p {
+    color: #a9a9b8;
+    font-size: 17px;
+}
+
+
+/* =====================================
+   FORM STEPS
+===================================== */
+
+.form-step {
+    display: none;
+}
+
+.form-step.active {
+    display: block;
+}
+
+.step-title {
+    margin-bottom: 30px;
+}
+
+.step-title h2 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.step-title p {
+    color: #a9a9b8;
+}
+
+
+/* =====================================
+   SELECTION GRID
+===================================== */
+
+.selection-grid,
+.theme-grid,
+.package-selection-grid {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(220px, 1fr)
+    );
+    gap: 20px;
+}
+
+
+/* =====================================
+   NORMAL SELECTION CARD
+===================================== */
+
+.selection-card,
+.theme-card,
+.package-option {
+    background: #121222;
+    border: 2px solid #24243a;
+    border-radius: 18px;
+    padding: 25px;
+    cursor: pointer;
+    transition: 0.25s ease;
+    position: relative;
+}
+
+.selection-card:hover,
+.theme-card:hover,
+.package-option:hover {
+    transform: translateY(-5px);
+    border-color: #ff6b9d;
+}
+
+.selection-card.selected,
+.theme-card.selected,
+.package-option.selected {
+    border-color: #ff6b9d;
+    background: #1d1020;
+    box-shadow:
+        0 0 25px
+        rgba(255, 107, 157, 0.25);
+}
+
+.selection-icon {
+    font-size: 38px;
+    margin-bottom: 15px;
+}
+
+.selection-card h3,
+.theme-card h3,
+.package-option h3 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.selection-card p,
+.theme-card p,
+.package-option p {
+    color: #aaaabb;
+}
+
+
+/* =====================================
+   THEME PREVIEW
+===================================== */
+
+.theme-preview {
+    height: 120px;
+    border-radius: 14px;
+    margin-bottom: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 42px;
+}
+
+.romantic-theme {
+    background: linear-gradient(
+        135deg,
+        #ff416c,
+        #ff4b2b
+    );
+}
+
+.luxury-theme {
+    background: linear-gradient(
+        135deg,
+        #24243e,
+        #c9a227
+    );
+}
+
+.fun-theme {
+    background: linear-gradient(
+        135deg,
+        #ff9966,
+        #ff5e62
+    );
+}
+
+.minimal-theme {
+    background: #eaeaea;
+    color: #222;
+}
+
+.space-theme {
+    background: linear-gradient(
+        135deg,
+        #000428,
+        #004e92
+    );
+}
+
+.custom-theme {
+    background: linear-gradient(
+        135deg,
+        #833ab4,
+        #fd1d1d,
+        #fcb045
+    );
+}
+
+
+/* =====================================
+   DETAILS FORM
+===================================== */
+
+.details-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(2, 1fr);
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.input-group label {
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.input-group input,
+.input-group textarea {
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+
+    border: 1px solid #303044;
+
+    background: #121222;
+    color: white;
+
+    font-size: 15px;
+
+    outline: none;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+    border-color: #ff6b9d;
+}
+
+
+/* =====================================
+   PHOTO UPLOAD
+===================================== */
+
+.upload-box {
+    border: 2px dashed #33334b;
+    border-radius: 15px;
+
+    padding: 35px 20px;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    position: relative;
+}
+
+.upload-box input {
+    position: absolute;
+
+    width: 100%;
+    height: 100%;
+
+    opacity: 0;
+
+    left: 0;
+    top: 0;
+
+    cursor: pointer;
+}
+
+.upload-box i {
+    font-size: 32px;
+    margin-bottom: 12px;
+    color: #ff6b9d;
+}
+
+.photo-preview-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    margin-top: 15px;
+}
+
+.photo-preview {
+    width: 90px;
+    height: 90px;
+
+    object-fit: cover;
+
+    border-radius: 10px;
+}
+
+
+/* =====================================
+   PACKAGE CARDS
+===================================== */
+
+.package-selection-grid {
+    grid-template-columns:
+        repeat(3, 1fr);
+}
+
+.package-option {
+    min-height: 380px;
+    padding: 30px;
+
+    display: flex;
+    flex-direction: column;
+
+    cursor: pointer;
+}
+
+.package-option h3 {
+    font-size: 26px;
+}
+
+.package-price {
+    font-size: 32px;
+    font-weight: 700;
+
+    color: #ff6b9d;
+
+    margin: 12px 0;
+}
+
+.package-option ul {
+    list-style: none;
+
+    padding: 0;
+
+    margin-top: 20px;
+}
+
+.package-option ul li {
+    margin-bottom: 14px;
+    color: #d0d0dc;
+}
+
+.package-option ul li i {
+    color: #ff6b9d;
+    margin-right: 8px;
+}
+
+.package-option.recommended {
+    border-color: #ff6b9d;
+    transform: scale(1.04);
+}
+
+.recommended-label {
+    position: absolute;
+
+    top: -13px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    background: #ff6b9d;
+
+    padding: 7px 15px;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+}
+
+
+/* =====================================
+   NAVIGATION BUTTONS
+===================================== */
+
+.form-navigation {
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-top: 40px;
+}
+
+.form-btn {
+    border: none;
+
+    padding: 15px 25px;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    font-size: 16px;
+
+    font-weight: 600;
+}
+
+.primary-form-btn {
+    background: #ff6b9d;
+
+    color: white;
+}
+
+.secondary-form-btn {
+    background: #202033;
+
+    color: white;
+}
+
+.submit-btn {
+    display: none;
+}
+
+
+/* =====================================
+   PROGRESS BAR
+===================================== */
+
+.progress-wrapper {
+    margin-bottom: 50px;
+}
+
+.progress-bar {
+    height: 5px;
+
+    background: #252538;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+
+    width: 0%;
+
+    background: #ff6b9d;
+
+    transition: 0.3s ease;
+}
+
+.progress-steps {
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 15px;
+}
+
+.progress-step {
+    color: #77778c;
+
+    font-size: 13px;
+
+    text-align: center;
+}
+
+.progress-step span {
+    display: block;
+
+    width: 30px;
+    height: 30px;
+
+    margin: 0 auto 8px;
+
+    border-radius: 50%;
+
+    background: #252538;
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-step.active {
+    color: white;
+}
+
+.progress-step.active span {
+    background: #ff6b9d;
+}
+
+
+/* =====================================
+   MOBILE
+===================================== */
+
+@media (max-width: 768px) {
+
+    .customizer-page {
+        padding: 90px 15px 50px;
+    }
+
+    .customizer-header h1 {
+        font-size: 36px;
+    }
+
+    .selection-grid,
+    .theme-grid,
+    .package-selection-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .package-option.recommended {
+        transform: none;
+    }
+
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .input-group.full-width {
+        grid-column: auto;
+    }
+
+    .progress-steps {
+        gap: 5px;
+    }
+
+    .progress-step {
+        font-size: 10px;
+    }
+
+    .form-navigation {
+        flex-wrap: wrap;
+    }
+
+}
