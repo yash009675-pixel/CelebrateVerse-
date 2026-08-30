@@ -255,180 +255,267 @@ document.addEventListener(
 
 
 
-      /* =========================
+     /* =========================
    CREATE REAL ORDER
 ========================= */
 
-const payButton =
-    document.getElementById(
-        "payButton"
-    );
+const payButton = document.getElementById("payButton");
 
+if (!payButton) {
 
-payButton.addEventListener(
-    "click",
-    async () => {
+    console.error("payButton not found");
 
+} else {
 
-        payButton.disabled = true;
+    payButton.addEventListener(
+        "click",
+        async () => {
 
+            /* =========================
+               CHECK SUPABASE
+            ========================= */
 
-        payButton.innerHTML =
-            `
-            <i class="fa-solid fa-spinner fa-spin"></i>
-            Creating Your Order...
-            `;
-
-
-        try {
-
-
-            const orderData = {
-
-                occasion:
-                    order.occasion,
-
-                relationship:
-                    order.relationship,
-
-                theme:
-                    order.theme,
-
-                person_name:
-                    order.personName,
-
-                customer_name:
-                    order.customerName,
-
-                special_date:
-                    order.specialDate,
-
-                email:
-                    order.email,
-
-                message:
-                    order.message || "",
-
-                package:
-                    order.package,
-
-                amount:
-                    price,
-
-                payment_status:
-                    "pending",
-
-                order_status:
-                    "new"
-
-            };
-
-
-            const {
-                data,
-                error
-            } =
-                await supabaseClient
-                    .from("orders")
-                    .insert([
-                        orderData
-                    ])
-                    .select();
-
-
-            if (error) {
+            if (
+                typeof supabaseClient === "undefined" ||
+                !supabaseClient
+            ) {
 
                 console.error(
-                    error
+                    "Supabase client is not initialized"
                 );
-
 
                 alert(
-                    "Something went wrong while creating your order. Please try again."
+                    "Supabase connection error. Please check supabase.js."
                 );
-
-
-                payButton.disabled =
-                    false;
-
-
-                payButton.innerHTML =
-                    `
-                    <i class="fa-solid fa-lock"></i>
-                    <span>
-                        Continue to Secure Payment
-                    </span>
-                    `;
-
 
                 return;
 
             }
 
 
-            console.log(
-                "Order Created:",
-                data
-            );
+            /* =========================
+               PREVENT DOUBLE CLICK
+            ========================= */
+
+            payButton.disabled = true;
+
+            const originalButtonHTML =
+                payButton.innerHTML;
 
 
-            /*
-             SAVE ORDER ID
-             FOR PAYMENT
-            */
-
-            localStorage.setItem(
-                "celebrateVerseOrderId",
-                data[0].id
-            );
+            payButton.innerHTML = `
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                Creating Your Order...
+            `;
 
 
-            alert(
-                "🎉 Order created successfully!"
-            );
+            try {
 
 
-            /*
-             PAYMENT GATEWAY
-             NEXT PART
-            */
+                /* =========================
+                   CHECK PACKAGE
+                ========================= */
 
-            payButton.innerHTML =
-                `
-                <i class="fa-solid fa-check"></i>
-                Order Created Successfully
+                if (
+                    !order.package ||
+                    !packagePrices[order.package]
+                ) {
+
+                    throw new Error(
+                        "Please select a valid package."
+                    );
+
+                }
+
+
+                /* =========================
+                   CREATE ORDER DATA
+                ========================= */
+
+                const orderData = {
+
+                    occasion:
+                        order.occasion || "",
+
+                    relationship:
+                        order.relationship || "",
+
+                    theme:
+                        order.theme || "",
+
+                    person_name:
+                        order.personName || "",
+
+                    customer_name:
+                        order.customerName || "",
+
+                    special_date:
+                        order.specialDate || null,
+
+                    email:
+                        order.email || "",
+
+                    message:
+                        order.message || "",
+
+                    package:
+                        order.package,
+
+                    amount:
+                        Number(price),
+
+                    payment_status:
+                        "pending",
+
+                    order_status:
+                        "new"
+
+                };
+
+
+                console.log(
+                    "Sending order:",
+                    orderData
+                );
+
+
+                /* =========================
+                   INSERT ORDER
+                ========================= */
+
+                const {
+                    data,
+                    error
+                } = await supabaseClient
+                    .from("orders")
+                    .insert(orderData)
+                    .select("id")
+                    .single();
+
+
+                /* =========================
+                   CHECK SUPABASE ERROR
+                ========================= */
+
+                if (error) {
+
+                    console.error(
+                        "Supabase Error:",
+                        error
+                    );
+
+                    throw new Error(
+                        error.message ||
+                        "Database error"
+                    );
+
+                }
+
+
+                /* =========================
+                   CHECK ORDER ID
+                ========================= */
+
+                if (
+                    !data ||
+                    !data.id
+                ) {
+
+                    throw new Error(
+                        "Order was created but Order ID was not received."
+                    );
+
+                }
+
+
+                /* =========================
+                   SAVE ORDER ID
+                ========================= */
+
+                localStorage.setItem(
+                    "celebrateVerseOrderId",
+                    data.id
+                );
+
+
+                console.log(
+                    "Order Created Successfully:",
+                    data
+                );
+
+
+                /* =========================
+                   SUCCESS BUTTON
+                ========================= */
+
+                payButton.innerHTML = `
+                    <i class="fa-solid fa-check"></i>
+                    Order Created Successfully
                 `;
 
 
-        } catch (error) {
+                alert(
+                    "🎉 Order created successfully!"
+                );
 
 
-            console.error(
-                error
-            );
+                /*
+                   NEXT STEP:
+                   PAYMENT GATEWAY
+                */
+
+                setTimeout(
+                    () => {
+
+                        /*
+                        Example:
+
+                        window.location.href =
+                            "payment-success.html";
+                        */
+
+                    },
+                    500
+                );
 
 
-            alert(
-                "An unexpected error occurred."
-            );
+            } catch (error) {
 
 
-            payButton.disabled =
-                false;
+                /* =========================
+                   SHOW REAL ERROR
+                ========================= */
+
+                console.error(
+                    "ORDER ERROR:",
+                    error
+                );
 
 
-            payButton.innerHTML =
-                `
-                <i class="fa-solid fa-lock"></i>
-                <span>
-                    Continue to Secure Payment
-                </span>
-                `;
+                alert(
+                    "Order Error: " +
+                    (
+                        error.message ||
+                        "An unexpected error occurred."
+                    )
+                );
+
+
+                /* =========================
+                   RESET BUTTON
+                ========================= */
+
+                payButton.disabled =
+                    false;
+
+
+                payButton.innerHTML =
+                    originalButtonHTML;
+
+            }
+
 
         }
+    );
 
-
-    }
-);
-            }
-);
+}
