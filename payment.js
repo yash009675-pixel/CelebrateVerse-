@@ -430,3 +430,5 @@ payButton.addEventListener(
 
     }
 );
+            }
+);
