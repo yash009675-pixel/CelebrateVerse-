@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+
+    <title>
+        Payment | CelebrateVerse
+    </title>
+
+
+    <!-- GOOGLE FONTS -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com">
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin>
+
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"
+        rel="stylesheet">
+
+
+    <!-- FONT AWESOME -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+
+    <!-- MAIN CSS -->
+
+    <link
+        rel="stylesheet"
+        href="style.css">
+
+
+</head>
+
+
+<body>
+
+
+    <!-- NAVBAR -->
+
+    <header class="navbar">
+
+        <div class="nav-container">
+
+
+            <a
+                href="index.html"
+                class="logo">
+
+                Celebrate<span>Verse</span>
+
+            </a>
+
+
+            <div class="nav-buttons">
+
+
+                <a
+                    href="customize.html"
+                    class="back-home">
+
+                    <i
+                        class="fa-solid fa-arrow-left">
+                    </i>
+
+                    Edit Celebration
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+    </header>
+
+
+
+    <!-- PAYMENT PAGE -->
+
+    <main
+        class="payment-page">
+
+
+        <div
+            class="payment-container">
+
+
+            <!-- LEFT SIDE -->
+
+            <section
+                class="payment-method-section">
+
+
+                <div
+                    class="payment-header">
+
+
+                    <span
+                        class="section-tag">
+
+                        SECURE CHECKOUT
+
+                    </span>
+
+
+                    <h1>
+
+                        Complete Your
+
+                        <span>
+                            Celebration.
+                        </span>
+
+                    </h1>
+
+
+                    <p>
+
+                        You're just one step away
+                        from creating something
+                        unforgettable.
+
+                    </p>
+
+
+                </div>
+
+
+
+                <!-- PAYMENT METHODS -->
+
+                <div
+                    class="payment-methods">
+
+
+                    <!-- UPI -->
+
+                    <div
+                        class="payment-method active-payment"
+                        data-method="upi">
+
+
+                        <div
+                            class="payment-method-icon">
+
+                            <i
+                                class="fa-solid fa-mobile-screen">
+                            </i>
+
+                        </div>
+
+
+                        <div>
+
+                            <h3>
+                                UPI
+                            </h3>
+
+                            <p>
+                                Google Pay, PhonePe,
+                                Paytm and more
+                            </p>
+
+                        </div>
+
+
+                        <div
+                            class="payment-radio">
+
+                            <span></span>
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- CARD -->
+
+                    <div
+                        class="payment-method"
+                        data-method="card">
+
+
+                        <div
+                            class="payment-method-icon">
+
+                            <i
+                                class="fa-solid fa-credit-card">
+                            </i>
+
+                        </div>
+
+
+                        <div>
+
+                            <h3>
+                                Credit / Debit Card
+                            </h3>
+
+                            <p>
+                                Secure card payment
+                            </p>
+
+                        </div>
+
+
+                        <div
+                            class="payment-radio">
+
+                            <span></span>
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- NET BANKING -->
+
+                    <div
+                        class="payment-method"
+                        data-method="netbanking">
+
+
+                        <div
+                            class="payment-method-icon">
+
+                            <i
+                                class="fa-solid fa-building-columns">
+                            </i>
+
+                        </div>
+
+
+                        <div>
+
+                            <h3>
+                                Net Banking
+                            </h3>
+
+                            <p>
+                                Pay securely using your bank
+                            </p>
+
+                        </div>
+
+
+                        <div
+                            class="payment-radio">
+
+                            <span></span>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- PAYMENT INFORMATION -->
+
+                <div
+                    class="payment-info">
+
+
+                    <i
+                        class="fa-solid fa-lock">
+                    </i>
+
+
+                    <p>
+
+                        Your payment will be processed
+                        securely. CelebrateVerse does not
+                        store your payment details.
+
+                    </p>
+
+
+                </div>
+
+
+
+                <!-- PAY BUTTON -->
+
+                <button
+                    id="payButton"
+                    class="pay-button">
+
+
+                    <i
+                        class="fa-solid fa-lock">
+                    </i>
+
+
+                    <span>
+
+                        Continue to Secure Payment
+
+                    </span>
+
+
+                </button>
+
+
+                <p
+                    class="payment-note">
+
+                    🔒 Payment gateway integration
+                    will be enabled soon.
+
+                </p>
+
+
+            </section>
+
+
+
+            <!-- ORDER SUMMARY -->
+
+            <aside
+                class="order-summary">
+
+
+                <div
+                    class="summary-top">
+
+
+                    <span>
+                        YOUR CELEBRATION
+                    </span>
+
+
+                    <h2
+                        id="summaryPersonName">
+
+                        Your Special Moment
+
+                    </h2>
+
+
+                </div>
+
+
+
+                <!-- SUMMARY DETAILS -->
+
+                <div
+                    class="summary-details">
+
+
+                    <div
+                        class="summary-row">
+
+
+                        <span>
+
+                            <i
+                                class="fa-solid fa-cake-candles">
+                            </i>
+
+                            Occasion
+
+                        </span>
+
+
+                        <strong
+                            id="summaryOccasion">
+
+                            -
+
+                        </strong>
+
+
+                    </div>
+
+
+
+                    <div
+                        class="summary-row">
+
+
+                        <span>
+
+                            <i
+                                class="fa-solid fa-heart">
+                            </i>
+
+                            For
+
+                        </span>
+
+
+                        <strong
+                            id="summaryRelationship">
+
+                            -
+
+                        </strong>
+
+
+                    </div>
+
+
+
+                    <div
+                        class="summary-row">
+
+
+                        <span>
+
+                            <i
+                                class="fa-solid fa-palette">
+                            </i>
+
+                            Theme
+
+                        </span>
+
+
+                        <strong
+                            id="summaryTheme">
+
+                            -
+
+                        </strong>
+
+
+                    </div>
+
+
+
+                    <div
+                        class="summary-row">
+
+
+                        <span>
+
+                            <i
+                                class="fa-solid fa-calendar">
+                            </i>
+
+                            Special Date
+
+                        </span>
+
+
+                        <strong
+                            id="summaryDate">
+
+                            -
+
+                        </strong>
+
+
+                    </div>
+
+
+
+                </div>
+
+
+
+                <!-- PRICE -->
+
+                <div
+                    class="summary-price">
+
+
+                    <div>
+
+                        <span>
+                            Selected Package
+                        </span>
+
+                        <strong
+                            id="summaryPackage">
+
+                            -
+
+                        </strong>
+
+                    </div>
+
+
+                    <div
+                        class="total-price"
+                        id="summaryPrice">
+
+                        ₹0
+
+                    </div>
+
+
+                </div>
+
+
+
+                <div
+                    class="summary-divider">
+                </div>
+
+
+
+                <div
+                    class="total-row">
+
+
+                    <span>
+                        Total Amount
+                    </span>
+
+
+                    <strong
+                        id="summaryTotal">
+
+                        ₹0
+
+                    </strong>
+
+
+                </div>
+
+
+
+                <div
+                    class="summary-message"
+                    id="summaryMessage">
+
+                    Your special message
+                    will appear here.
+
+                </div>
+
+
+            </aside>
+
+
+        </div>
+
+
+    </main>
+
+
+
+    <!-- JAVASCRIPT -->
+
+    <script
+        src="main.js">
+    </script>
+
+
+    <script
+        src="payment.js">
+    </script>
+
+
+</body>
+
+</html>
