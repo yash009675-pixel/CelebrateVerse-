@@ -545,3 +545,50 @@ setupSelection(
     ".package-option",
     "package"
 );
+/* =========================
+   PACKAGE SELECTION FIX
+========================= */
+
+document.querySelectorAll(
+    ".package-option"
+).forEach(packageCard => {
+
+    packageCard.addEventListener(
+        "click",
+        () => {
+
+            document.querySelectorAll(
+                ".package-option"
+            ).forEach(card => {
+
+                card.classList.remove(
+                    "selected"
+                );
+
+            });
+
+
+            packageCard.classList.add(
+                "selected"
+            );
+
+
+            const selectedPackage =
+                packageCard.dataset.value;
+
+
+            document.getElementById(
+                "package"
+            ).value =
+                selectedPackage;
+
+
+            console.log(
+                "Selected package:",
+                selectedPackage
+            );
+
+        }
+    );
+
+});
