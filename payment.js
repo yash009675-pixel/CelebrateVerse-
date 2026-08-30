@@ -512,10 +512,11 @@ if (!payButton) {
                 payButton.innerHTML =
                     originalButtonHTML;
 
-            }
 
 
         }
     );
 
 }
+    }
+);
