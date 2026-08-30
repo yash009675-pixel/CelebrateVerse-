@@ -456,7 +456,7 @@ photoInput.addEventListener(
 
 
 /* =========================
-   FORM SUBMIT
+   SAVE ORDER DATA
 ========================= */
 
 form.addEventListener(
@@ -465,29 +465,75 @@ form.addEventListener(
 
         event.preventDefault();
 
+        if (!validateStep()) return;
 
-        if (
-            !validateStep()
-        ) return;
+
+        const celebrationData = {
+
+            occasion:
+                document.getElementById(
+                    "occasion"
+                ).value,
+
+            relationship:
+                document.getElementById(
+                    "relationship"
+                ).value,
+
+            theme:
+                document.getElementById(
+                    "theme"
+                ).value,
+
+            personName:
+                document.getElementById(
+                    "personName"
+                ).value,
+
+            customerName:
+                document.getElementById(
+                    "customerName"
+                ).value,
+
+            specialDate:
+                document.getElementById(
+                    "specialDate"
+                ).value,
+
+            email:
+                document.getElementById(
+                    "email"
+                ).value,
+
+            message:
+                document.getElementById(
+                    "message"
+                ).value,
+
+            package:
+                document.getElementById(
+                    "package"
+                ).value
+
+        };
 
 
         /*
-          PART 3:
-          Backend + Order System
-          will be connected here.
+          Save temporarily
+          in browser storage.
         */
 
-
-        alert(
-            "Great! 🎉 Your celebration details are ready. Redirecting to payment..."
+        localStorage.setItem(
+            "celebrateVerseOrder",
+            JSON.stringify(
+                celebrationData
+            )
         );
 
 
-        /*
-          Temporary:
-          Payment page will be
-          created in the next part.
-        */
+        alert(
+            "Great! 🎉 Your celebration details are ready. Continue to payment."
+        );
 
 
         window.location.href =
@@ -495,8 +541,3 @@ form.addEventListener(
 
     }
 );
-
-
-/* INITIAL STEP */
-
-showStep(currentStep);
