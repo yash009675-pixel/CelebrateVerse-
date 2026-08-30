@@ -1,0 +1,670 @@
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Your Celebration | CelebrateVerse</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <header class="navbar">
+
+        <div class="nav-container">
+
+            <a href="index.html" class="logo">
+                Celebrate<span>Verse</span>
+            </a>
+
+            <div class="nav-buttons">
+
+                <a href="index.html" class="back-home">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Home
+                </a>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- CUSTOMIZER -->
+
+    <main class="customizer-page">
+
+        <div class="customizer-container">
+
+
+            <!-- HEADER -->
+
+            <div class="customizer-header">
+
+                <span class="section-tag">
+                    CREATE SOMETHING UNFORGETTABLE
+                </span>
+
+                <h1>
+                    Create Your
+                    <span>Celebration.</span>
+                </h1>
+
+                <p>
+                    Tell us about your special moment and we'll help turn it into something unforgettable.
+                </p>
+
+            </div>
+
+
+            <!-- PROGRESS BAR -->
+
+            <div class="progress-wrapper">
+
+                <div class="progress-bar">
+
+                    <div class="progress-fill" id="progressFill"></div>
+
+                </div>
+
+
+                <div class="progress-steps">
+
+                    <div class="progress-step active" data-step="1">
+                        <span>1</span>
+                        Occasion
+                    </div>
+
+                    <div class="progress-step" data-step="2">
+                        <span>2</span>
+                        Person
+                    </div>
+
+                    <div class="progress-step" data-step="3">
+                        <span>3</span>
+                        Theme
+                    </div>
+
+                    <div class="progress-step" data-step="4">
+                        <span>4</span>
+                        Details
+                    </div>
+
+                    <div class="progress-step" data-step="5">
+                        <span>5</span>
+                        Package
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FORM -->
+
+            <form id="celebrationForm">
+
+
+                <!-- STEP 1 -->
+
+                <div class="form-step active" data-step="1">
+
+                    <div class="step-title">
+
+                        <h2>What are you celebrating? 🎉</h2>
+
+                        <p>Select the occasion.</p>
+
+                    </div>
+
+
+                    <div class="selection-grid occasion-selection">
+
+                        <div class="selection-card" data-value="birthday">
+                            <div class="selection-icon">🎂</div>
+                            <h3>Birthday</h3>
+                            <p>Make their day unforgettable.</p>
+                        </div>
+
+
+                        <div class="selection-card" data-value="anniversary">
+                            <div class="selection-icon">❤️</div>
+                            <h3>Anniversary</h3>
+                            <p>Celebrate your journey together.</p>
+                        </div>
+
+
+                        <div class="selection-card" data-value="surprise">
+                            <div class="selection-icon">🎁</div>
+                            <h3>Surprise</h3>
+                            <p>Create something unexpected.</p>
+                        </div>
+
+
+                        <div class="selection-card" data-value="wedding">
+                            <div class="selection-icon">💍</div>
+                            <h3>Wedding</h3>
+                            <p>Preserve your special day.</p>
+                        </div>
+
+
+                        <div class="selection-card" data-value="family">
+                            <div class="selection-icon">👨‍👩‍👧</div>
+                            <h3>Family Special</h3>
+                            <p>Celebrate your loved ones.</p>
+                        </div>
+
+
+                        <div class="selection-card" data-value="custom">
+                            <div class="selection-icon">✨</div>
+                            <h3>Custom Event</h3>
+                            <p>Create something unique.</p>
+                        </div>
+
+                    </div>
+
+                    <input type="hidden" id="occasion" name="occasion">
+
+                </div>
+
+
+                <!-- STEP 2 -->
+
+                <div class="form-step" data-step="2">
+
+                    <div class="step-title">
+
+                        <h2>Who is this celebration for? ❤️</h2>
+
+                        <p>Select your relationship.</p>
+
+                    </div>
+
+
+                    <div class="selection-grid relationship-selection">
+
+                        <div class="selection-card" data-value="girlfriend">
+                            <div class="selection-icon">💕</div>
+                            <h3>Girlfriend</h3>
+                        </div>
+
+                        <div class="selection-card" data-value="boyfriend">
+                            <div class="selection-icon">💙</div>
+                            <h3>Boyfriend</h3>
+                        </div>
+
+                        <div class="selection-card" data-value="wife">
+                            <div class="selection-icon">💍</div>
+                            <h3>Wife</h3>
+                        </div>
+
+                        <div class="selection-card" data-value="husband">
+                            <div class="selection-icon">❤️</div>
+                            <h3>Husband</h3>
+                        </div>
+
+                        <div class="selection-card" data-value="mother">
+                            <div class="selection-icon">👩</div>
+                            <h3>Mother</h3>
+                        </div>
+
+                        <div class="selection-card" data-value="father">
+                            <div class="selection-icon">👨</div>
+                            <h3>Father</h3>
+                        </div>
+
+                        <div class="selection-card" data-value="sister">
+                            <div class="selection-icon">👧</div>
+                            <h3>Sister</h3>
+                        </div>
+
+                        <div class="selection-card" data-value="brother">
+                            <div class="selection-icon">👦</div>
+                            <h3>Brother</h3>
+                        </div>
+
+                        <div class="selection-card" data-value="best-friend">
+                            <div class="selection-icon">👯</div>
+                            <h3>Best Friend</h3>
+                        </div>
+
+                        <div class="selection-card" data-value="other">
+                            <div class="selection-icon">❤️</div>
+                            <h3>Someone Special</h3>
+                        </div>
+
+                    </div>
+
+                    <input type="hidden" id="relationship" name="relationship">
+
+                </div>
+
+
+                <!-- STEP 3 -->
+
+                <div class="form-step" data-step="3">
+
+                    <div class="step-title">
+
+                        <h2>Choose your website style 🎨</h2>
+
+                        <p>Select the theme that best matches your celebration.</p>
+
+                    </div>
+
+
+                    <div class="theme-grid">
+
+
+                        <div class="theme-card" data-value="romantic">
+
+                            <div class="theme-preview romantic-theme">
+                                ❤️
+                            </div>
+
+                            <h3>Romantic</h3>
+
+                            <p>Perfect for love stories.</p>
+
+                        </div>
+
+
+                        <div class="theme-card" data-value="luxury">
+
+                            <div class="theme-preview luxury-theme">
+                                ✨
+                            </div>
+
+                            <h3>Luxury</h3>
+
+                            <p>Elegant and premium.</p>
+
+                        </div>
+
+
+                        <div class="theme-card" data-value="fun">
+
+                            <div class="theme-preview fun-theme">
+                                🎉
+                            </div>
+
+                            <h3>Fun & Colorful</h3>
+
+                            <p>Bright and energetic.</p>
+
+                        </div>
+
+
+                        <div class="theme-card" data-value="minimal">
+
+                            <div class="theme-preview minimal-theme">
+                                🤍
+                            </div>
+
+                            <h3>Minimal</h3>
+
+                            <p>Simple and beautiful.</p>
+
+                        </div>
+
+
+                        <div class="theme-card" data-value="space">
+
+                            <div class="theme-preview space-theme">
+                                🌌
+                            </div>
+
+                            <h3>Galaxy</h3>
+
+                            <p>Explore memories in space.</p>
+
+                        </div>
+
+
+                        <div class="theme-card" data-value="custom">
+
+                            <div class="theme-preview custom-theme">
+                                🎨
+                            </div>
+
+                            <h3>Custom Design</h3>
+
+                            <p>Designed especially for you.</p>
+
+                        </div>
+
+                    </div>
+
+                    <input type="hidden" id="theme" name="theme">
+
+                </div>
+
+
+                <!-- STEP 4 -->
+
+                <div class="form-step" data-step="4">
+
+                    <div class="step-title">
+
+                        <h2>Tell us about your celebration ✨</h2>
+
+                        <p>Add the details that will make it personal.</p>
+
+                    </div>
+
+
+                    <div class="details-grid">
+
+                        <div class="input-group">
+
+                            <label>Celebrating Person's Name *</label>
+
+                            <input
+                                type="text"
+                                id="personName"
+                                name="personName"
+                                placeholder="Enter their name"
+                                required>
+
+                        </div>
+
+
+                        <div class="input-group">
+
+                            <label>Your Name *</label>
+
+                            <input
+                                type="text"
+                                id="customerName"
+                                name="customerName"
+                                placeholder="Enter your name"
+                                required>
+
+                        </div>
+
+
+                        <div class="input-group">
+
+                            <label>Special Date *</label>
+
+                            <input
+                                type="date"
+                                id="specialDate"
+                                name="specialDate"
+                                required>
+
+                        </div>
+
+
+                        <div class="input-group">
+
+                            <label>Email Address *</label>
+
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="you@example.com"
+                                required>
+
+                        </div>
+
+
+                        <div class="input-group full-width">
+
+                            <label>Special Message 💌</label>
+
+                            <textarea
+                                id="message"
+                                name="message"
+                                placeholder="Write something special..."
+                                rows="5"></textarea>
+
+                        </div>
+
+
+                        <div class="input-group full-width">
+
+                            <label>Upload Photos 📸</label>
+
+                            <div class="upload-box">
+
+                                <input
+                                    type="file"
+                                    id="photos"
+                                    name="photos"
+                                    multiple
+                                    accept="image/*">
+
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+
+                                <p>
+                                    Click to upload your special photos
+                                </p>
+
+                                <small>
+                                    You can select multiple photos.
+                                </small>
+
+                            </div>
+
+                            <div
+                                id="photoPreview"
+                                class="photo-preview-grid">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- STEP 5 -->
+
+                <div class="form-step" data-step="5">
+
+                    <div class="step-title">
+
+                        <h2>Choose your package 💎</h2>
+
+                        <p>Select the experience you want.</p>
+
+                    </div>
+
+
+                    <div class="package-selection-grid">
+
+
+                        <div class="package-option" data-value="basic">
+
+                            <h3>Basic</h3>
+
+                            <div class="package-price">
+                                ₹499
+                            </div>
+
+                            <p>
+                                A beautiful simple celebration.
+                            </p>
+
+                            <ul>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Personalized Website
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Up to 10 Photos
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Personal Message
+                                </li>
+
+                            </ul>
+
+                        </div>
+
+
+                        <div
+                            class="package-option recommended"
+                            data-value="premium">
+
+                            <div class="recommended-label">
+                                RECOMMENDED
+                            </div>
+
+                            <h3>Premium</h3>
+
+                            <div class="package-price">
+                                ₹999
+                            </div>
+
+                            <p>
+                                More memories. More magic.
+                            </p>
+
+                            <ul>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Up to 30 Photos
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Background Music
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Premium Animations
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Premium Theme
+                                </li>
+
+                            </ul>
+
+                        </div>
+
+
+                        <div class="package-option" data-value="ultimate">
+
+                            <h3>Ultimate</h3>
+
+                            <div class="package-price">
+                                ₹1,999
+                            </div>
+
+                            <p>
+                                The complete experience.
+                            </p>
+
+                            <ul>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Everything in Premium
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Unlimited Photos
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Advanced Design
+                                </li>
+
+                                <li>
+                                    <i class="fa-solid fa-check"></i>
+                                    Fully Custom Experience
+                                </li>
+
+                            </ul>
+
+                        </div>
+
+                    </div>
+
+                    <input type="hidden" id="package" name="package">
+
+                </div>
+
+
+                <!-- NAVIGATION -->
+
+                <div class="form-navigation">
+
+                    <button
+                        type="button"
+                        id="prevBtn"
+                        class="form-btn secondary-form-btn">
+
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Back
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="nextBtn"
+                        class="form-btn primary-form-btn">
+
+                        Continue
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        id="submitBtn"
+                        class="form-btn primary-form-btn submit-btn">
+
+                        Continue to Payment
+
+                        <i class="fa-solid fa-credit-card"></i>
+
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+    </main>
+
+
+    <script src="js/main.js"></script>
+
+    <script src="js/customize.js"></script>
+
+</body
