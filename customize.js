@@ -509,7 +509,10 @@ form.addEventListener(
                 document.getElementById(
                     "message"
                 ).value,
-
+console.log(
+    "Saving package:",
+    document.getElementById("package").value
+);
             package:
                 document.getElementById(
                     "package"
