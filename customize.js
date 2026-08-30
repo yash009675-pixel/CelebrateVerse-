@@ -1,564 +1,313 @@
-let currentStep = 1;
-const totalSteps = 5;
+document.addEventListener("DOMContentLoaded", () => {
 
-const form = document.getElementById("celebrationForm");
+    let currentStep = 1;
+    const totalSteps = 5;
 
-const nextBtn = document.getElementById("nextBtn");
-const prevBtn = document.getElementById("prevBtn");
-const submitBtn = document.getElementById("submitBtn");
+    const form = document.getElementById("celebrationForm");
 
-const progressFill = document.getElementById("progressFill");
+    const nextBtn = document.getElementById("nextBtn");
+    const prevBtn = document.getElementById("prevBtn");
+    const submitBtn = document.getElementById("submitBtn");
 
-
-/* =========================
-   GET URL PARAMETERS
-========================= */
-
-const params = new URLSearchParams(window.location.search);
-
-const selectedOccasion = params.get("occasion");
-const selectedPackage = params.get("package");
+    const progressFill =
+        document.getElementById("progressFill");
 
 
-/* =========================
-   PRESELECT OCCASION
-========================= */
+    /* =========================
+       URL PARAMETERS
+    ========================= */
 
-if (selectedOccasion) {
-
-    const occasionCard =
-        document.querySelector(
-            `.occasion-selection .selection-card[data-value="${selectedOccasion}"]`
+    const params =
+        new URLSearchParams(
+            window.location.search
         );
 
-    if (occasionCard) {
+    const selectedOccasion =
+        params.get("occasion");
+
+    const selectedPackage =
+        params.get("package");
+
+
+    /* =========================
+       SHOW STEP
+    ========================= */
+
+    function showStep(step) {
 
         document.querySelectorAll(
-            ".occasion-selection .selection-card"
-        ).forEach(card => {
+            ".form-step"
+        ).forEach(formStep => {
 
-            card.classList.remove("selected");
-
-        });
-
-        occasionCard.classList.add("selected");
-
-        document.getElementById("occasion").value =
-            selectedOccasion;
-
-    }
-
-}
-
-
-/* =========================
-   PRESELECT PACKAGE
-========================= */
-
-if (selectedPackage) {
-
-    const packageCard =
-        document.querySelector(
-            `.package-option[data-value="${selectedPackage}"]`
-        );
-
-    if (packageCard) {
-
-        document.querySelectorAll(
-            ".package-option"
-        ).forEach(card => {
-
-            card.classList.remove("selected");
-
-        });
-
-        packageCard.classList.add("selected");
-
-        document.getElementById("package").value =
-            selectedPackage;
-
-    }
-
-}
-
-
-/* =========================
-   UPDATE STEP
-========================= */
-
-function showStep(step) {
-
-    document.querySelectorAll(
-        ".form-step"
-    ).forEach(formStep => {
-
-        formStep.classList.remove("active");
-
-    });
-
-
-    document.querySelector(
-        `.form-step[data-step="${step}"]`
-    ).classList.add("active");
-
-
-    document.querySelectorAll(
-        ".progress-step"
-    ).forEach(progressStep => {
-
-        const stepNumber =
-            Number(
-                progressStep.dataset.step
+            formStep.classList.remove(
+                "active"
             );
 
-        progressStep.classList.toggle(
-            "active",
-            stepNumber <= step
-        );
-
-    });
+        });
 
 
-    const progress =
-        ((step - 1) /
-            (totalSteps - 1)) * 100;
-
-    progressFill.style.width =
-        `${progress}%`;
+        const activeStep =
+            document.querySelector(
+                `.form-step[data-step="${step}"]`
+            );
 
 
-    prevBtn.style.display =
-        step === 1 ? "none" : "flex";
+        if (activeStep) {
+
+            activeStep.classList.add(
+                "active"
+            );
+
+        }
 
 
-    nextBtn.style.display =
-        step === totalSteps ? "none" : "flex";
+        document.querySelectorAll(
+            ".progress-step"
+        ).forEach(progressStep => {
+
+            const stepNumber =
+                Number(
+                    progressStep.dataset.step
+                );
+
+            if (
+                stepNumber <= step
+            ) {
+
+                progressStep.classList.add(
+                    "active"
+                );
+
+            } else {
+
+                progressStep.classList.remove(
+                    "active"
+                );
+
+            }
+
+        });
 
 
-    submitBtn.style.display =
-        step === totalSteps ? "flex" : "none";
+        const progress =
+            ((step - 1) /
+                (totalSteps - 1)) * 100;
 
 
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
+        if (progressFill) {
 
-}
+            progressFill.style.width =
+                `${progress}%`;
+
+        }
 
 
-/* =========================
-   SELECTION CARDS
-========================= */
+        if (prevBtn) {
 
-function setupSelection(
-    selector,
-    inputId
-) {
+            prevBtn.style.display =
+                step === 1
+                    ? "none"
+                    : "flex";
 
-    const cards =
-        document.querySelectorAll(selector);
+        }
 
-    cards.forEach(card => {
 
-        card.addEventListener(
-            "click",
-            () => {
+        if (nextBtn) {
 
-                cards.forEach(item => {
+            nextBtn.style.display =
+                step === totalSteps
+                    ? "none"
+                    : "flex";
 
-                    item.classList.remove(
+        }
+
+
+        if (submitBtn) {
+
+            submitBtn.style.display =
+                step === totalSteps
+                    ? "flex"
+                    : "none";
+
+        }
+
+
+        window.scrollTo({
+
+            top: 0,
+
+            behavior: "smooth"
+
+        });
+
+    }
+
+
+    /* =========================
+       GENERAL SELECTION SYSTEM
+    ========================= */
+
+    function setupSelection(
+        selector,
+        inputId
+    ) {
+
+        const cards =
+            document.querySelectorAll(
+                selector
+            );
+
+
+        cards.forEach(card => {
+
+            card.addEventListener(
+                "click",
+                () => {
+
+                    cards.forEach(item => {
+
+                        item.classList.remove(
+                            "selected"
+                        );
+
+                    });
+
+
+                    card.classList.add(
                         "selected"
                     );
 
-                });
 
-
-                card.classList.add(
-                    "selected"
-                );
-
-
-                document.getElementById(
-                    inputId
-                ).value =
-                    card.dataset.value;
-
-            }
-        );
-
-    });
-
-}
-
-
-setupSelection(
-    ".occasion-selection .selection-card",
-    "occasion"
-);
-
-
-setupSelection(
-    ".relationship-selection .selection-card",
-    "relationship"
-);
-
-
-setupSelection(
-    ".theme-card",
-    "theme"
-);
-
-
-setupSelection(
-    ".package-option",
-    "package"
-);
-
-
-/* =========================
-   VALIDATE STEP
-========================= */
-
-function validateStep() {
-
-    if (currentStep === 1) {
-
-        if (
-            !document.getElementById(
-                "occasion"
-            ).value
-        ) {
-
-            alert(
-                "Please select an occasion 🎉"
-            );
-
-            return false;
-
-        }
-
-    }
-
-
-    if (currentStep === 2) {
-
-        if (
-            !document.getElementById(
-                "relationship"
-            ).value
-        ) {
-
-            alert(
-                "Please select who the celebration is for ❤️"
-            );
-
-            return false;
-
-        }
-
-    }
-
-
-    if (currentStep === 3) {
-
-        if (
-            !document.getElementById(
-                "theme"
-            ).value
-        ) {
-
-            alert(
-                "Please select a website theme 🎨"
-            );
-
-            return false;
-
-        }
-
-    }
-
-
-    if (currentStep === 4) {
-
-        const requiredInputs =
-            document.querySelectorAll(
-                `.form-step[data-step="4"] [required]`
-            );
-
-        for (const input of requiredInputs) {
-
-            if (!input.value.trim()) {
-
-                alert(
-                    "Please fill all required details."
-                );
-
-                input.focus();
-
-                return false;
-
-            }
-
-        }
-
-    }
-
-
-    if (currentStep === 5) {
-
-        if (
-            !document.getElementById(
-                "package"
-            ).value
-        ) {
-
-            alert(
-                "Please select a package 💎"
-            );
-
-            return false;
-
-        }
-
-    }
-
-
-    return true;
-
-}
-
-
-/* =========================
-   NEXT BUTTON
-========================= */
-
-nextBtn.addEventListener(
-    "click",
-    () => {
-
-        if (
-            !validateStep()
-        ) return;
-
-
-        if (
-            currentStep < totalSteps
-        ) {
-
-            currentStep++;
-
-            showStep(
-                currentStep
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================
-   PREVIOUS BUTTON
-========================= */
-
-prevBtn.addEventListener(
-    "click",
-    () => {
-
-        if (
-            currentStep > 1
-        ) {
-
-            currentStep--;
-
-            showStep(
-                currentStep
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================
-   PHOTO PREVIEW
-========================= */
-
-const photoInput =
-    document.getElementById("photos");
-
-const photoPreview =
-    document.getElementById(
-        "photoPreview"
-    );
-
-
-photoInput.addEventListener(
-    "change",
-    () => {
-
-        photoPreview.innerHTML = "";
-
-        const files =
-            Array.from(
-                photoInput.files
-            );
-
-
-        files.forEach(file => {
-
-            if (
-                !file.type.startsWith(
-                    "image/"
-                )
-            ) return;
-
-
-            const reader =
-                new FileReader();
-
-
-            reader.onload =
-                function (event) {
-
-                    const image =
-                        document.createElement(
-                            "img"
+                    const hiddenInput =
+                        document.getElementById(
+                            inputId
                         );
 
 
-                    image.src =
-                        event.target.result;
+                    if (hiddenInput) {
+
+                        hiddenInput.value =
+                            card.dataset.value;
+
+                    }
 
 
-                    image.classList.add(
-                        "photo-preview"
+                    console.log(
+                        inputId + " selected:",
+                        card.dataset.value
                     );
 
-
-                    photoPreview.appendChild(
-                        image
-                    );
-
-                };
-
-
-            reader.readAsDataURL(
-                file
+                }
             );
 
         });
 
     }
-);
 
 
-/* =========================
-   SAVE ORDER DATA
-========================= */
+    /* =========================
+       SETUP SELECTIONS
+    ========================= */
 
-form.addEventListener(
-    "submit",
-    (event) => {
-
-        event.preventDefault();
-
-        if (!validateStep()) return;
+    setupSelection(
+        ".occasion-selection .selection-card",
+        "occasion"
+    );
 
 
-        const celebrationData = {
-
-            occasion:
-                document.getElementById(
-                    "occasion"
-                ).value,
-
-            relationship:
-                document.getElementById(
-                    "relationship"
-                ).value,
-
-            theme:
-                document.getElementById(
-                    "theme"
-                ).value,
-
-            personName:
-                document.getElementById(
-                    "personName"
-                ).value,
-
-            customerName:
-                document.getElementById(
-                    "customerName"
-                ).value,
-
-            specialDate:
-                document.getElementById(
-                    "specialDate"
-                ).value,
-
-            email:
-                document.getElementById(
-                    "email"
-                ).value,
-
-            message:
-                document.getElementById(
-                    "message"
-                ).value,
-console.log(
-    "Saving package:",
-    document.getElementById("package").value
-);
-            package:
-                document.getElementById(
-                    "package"
-                ).value
-
-        };
+    setupSelection(
+        ".relationship-selection .selection-card",
+        "relationship"
+    );
 
 
-        /*
-          Save temporarily
-          in browser storage.
-        */
-
-        localStorage.setItem(
-            "celebrateVerseOrder",
-            JSON.stringify(
-                celebrationData
-            )
-        );
+    setupSelection(
+        ".theme-card",
+        "theme"
+    );
 
 
-        alert(
-            "Great! 🎉 Your celebration details are ready. Continue to payment."
-        );
+    setupSelection(
+        ".package-option",
+        "package"
+    );
 
 
-        window.location.href =
-            "payment.html";
+    /* =========================
+       PRESELECT OCCASION
+    ========================= */
+
+    if (selectedOccasion) {
+
+        const occasionInput =
+            document.getElementById(
+                "occasion"
+            );
+
+
+        if (occasionInput) {
+
+            occasionInput.value =
+                selectedOccasion;
+
+        }
+
+
+        const occasionCard =
+            document.querySelector(
+                `.occasion-selection .selection-card[data-value="${selectedOccasion}"]`
+            );
+
+
+        if (occasionCard) {
+
+            document.querySelectorAll(
+                ".occasion-selection .selection-card"
+            ).forEach(card => {
+
+                card.classList.remove(
+                    "selected"
+                );
+
+            });
+
+
+            occasionCard.classList.add(
+                "selected"
+            );
+
+        }
 
     }
-);
-setupSelection(
-    ".package-option",
-    "package"
-);
-/* =========================
-   PACKAGE SELECTION FIX
-========================= */
 
-document.querySelectorAll(
-    ".package-option"
-).forEach(packageCard => {
 
-    packageCard.addEventListener(
-        "click",
-        () => {
+    /* =========================
+       PRESELECT PACKAGE
+    ========================= */
+
+    if (selectedPackage) {
+
+        const packageInput =
+            document.getElementById(
+                "package"
+            );
+
+
+        if (packageInput) {
+
+            packageInput.value =
+                selectedPackage;
+
+        }
+
+
+        const packageCard =
+            document.querySelector(
+                `.package-option[data-value="${selectedPackage}"]`
+            );
+
+
+        if (packageCard) {
 
             document.querySelectorAll(
                 ".package-option"
@@ -575,23 +324,390 @@ document.querySelectorAll(
                 "selected"
             );
 
+        }
 
-            const selectedPackage =
-                packageCard.dataset.value;
+    }
 
 
-            document.getElementById(
-                "package"
-            ).value =
-                selectedPackage;
+    /* =========================
+       VALIDATE STEP
+    ========================= */
+
+    function validateStep() {
+
+        if (currentStep === 1) {
+
+            const occasion =
+                document.getElementById(
+                    "occasion"
+                ).value;
+
+
+            if (!occasion) {
+
+                alert(
+                    "Please select an occasion 🎉"
+                );
+
+                return false;
+
+            }
+
+        }
+
+
+        if (currentStep === 2) {
+
+            const relationship =
+                document.getElementById(
+                    "relationship"
+                ).value;
+
+
+            if (!relationship) {
+
+                alert(
+                    "Please select who the celebration is for ❤️"
+                );
+
+                return false;
+
+            }
+
+        }
+
+
+        if (currentStep === 3) {
+
+            const theme =
+                document.getElementById(
+                    "theme"
+                ).value;
+
+
+            if (!theme) {
+
+                alert(
+                    "Please select a website theme 🎨"
+                );
+
+                return false;
+
+            }
+
+        }
+
+
+        if (currentStep === 4) {
+
+            const requiredInputs =
+                document.querySelectorAll(
+                    '.form-step[data-step="4"] [required]'
+                );
+
+
+            for (
+                const input
+                of requiredInputs
+            ) {
+
+                if (
+                    !input.value.trim()
+                ) {
+
+                    alert(
+                        "Please fill all required details."
+                    );
+
+                    input.focus();
+
+                    return false;
+
+                }
+
+            }
+
+        }
+
+
+        if (currentStep === 5) {
+
+            const selectedPackageValue =
+                document.getElementById(
+                    "package"
+                ).value;
 
 
             console.log(
-                "Selected package:",
-                selectedPackage
+                "Package before payment:",
+                selectedPackageValue
             );
+
+
+            if (
+                !selectedPackageValue
+            ) {
+
+                alert(
+                    "Please select a package 💎"
+                );
+
+                return false;
+
+            }
+
+        }
+
+
+        return true;
+
+    }
+
+
+    /* =========================
+       NEXT BUTTON
+    ========================= */
+
+    if (nextBtn) {
+
+        nextBtn.addEventListener(
+            "click",
+            () => {
+
+                if (
+                    !validateStep()
+                ) return;
+
+
+                if (
+                    currentStep < totalSteps
+                ) {
+
+                    currentStep++;
+
+                    showStep(
+                        currentStep
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================
+       PREVIOUS BUTTON
+    ========================= */
+
+    if (prevBtn) {
+
+        prevBtn.addEventListener(
+            "click",
+            () => {
+
+                if (
+                    currentStep > 1
+                ) {
+
+                    currentStep--;
+
+                    showStep(
+                        currentStep
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================
+       PHOTO PREVIEW
+    ========================= */
+
+    const photoInput =
+        document.getElementById(
+            "photos"
+        );
+
+
+    const photoPreview =
+        document.getElementById(
+            "photoPreview"
+        );
+
+
+    if (
+        photoInput &&
+        photoPreview
+    ) {
+
+        photoInput.addEventListener(
+            "change",
+            () => {
+
+                photoPreview.innerHTML =
+                    "";
+
+
+                const files =
+                    Array.from(
+                        photoInput.files
+                    );
+
+
+                files.forEach(file => {
+
+                    if (
+                        !file.type.startsWith(
+                            "image/"
+                        )
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const reader =
+                        new FileReader();
+
+
+                    reader.onload =
+                        event => {
+
+                            const image =
+                                document.createElement(
+                                    "img"
+                                );
+
+
+                            image.src =
+                                event.target.result;
+
+
+                            image.className =
+                                "photo-preview";
+
+
+                            photoPreview.appendChild(
+                                image
+                            );
+
+                        };
+
+
+                    reader.readAsDataURL(
+                        file
+                    );
+
+                });
+
+            }
+        );
+
+    }
+
+
+    /* =========================
+       SAVE ORDER
+    ========================= */
+
+    form.addEventListener(
+        "submit",
+        event => {
+
+            event.preventDefault();
+
+
+            if (
+                !validateStep()
+            ) {
+
+                return;
+
+            }
+
+
+            const celebrationData = {
+
+                occasion:
+                    document.getElementById(
+                        "occasion"
+                    ).value,
+
+                relationship:
+                    document.getElementById(
+                        "relationship"
+                    ).value,
+
+                theme:
+                    document.getElementById(
+                        "theme"
+                    ).value,
+
+                personName:
+                    document.getElementById(
+                        "personName"
+                    ).value,
+
+                customerName:
+                    document.getElementById(
+                        "customerName"
+                    ).value,
+
+                specialDate:
+                    document.getElementById(
+                        "specialDate"
+                    ).value,
+
+                email:
+                    document.getElementById(
+                        "email"
+                    ).value,
+
+                message:
+                    document.getElementById(
+                        "message"
+                    ).value,
+
+                package:
+                    document.getElementById(
+                        "package"
+                    ).value
+
+            };
+
+
+            console.log(
+                "Saving order:",
+                celebrationData
+            );
+
+
+            localStorage.setItem(
+                "celebrateVerseOrder",
+                JSON.stringify(
+                    celebrationData
+                )
+            );
+
+
+            window.location.href =
+                "payment.html";
 
         }
     );
+
+
+    /* =========================
+       START PAGE
+    ========================= */
+
+    showStep(1);
 
 });
