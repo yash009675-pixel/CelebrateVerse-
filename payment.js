@@ -255,35 +255,177 @@ document.addEventListener(
 
 
 
-        /* =========================
-           PAYMENT BUTTON
-        ========================= */
+      /* =========================
+   CREATE REAL ORDER
+========================= */
 
-        const payButton =
-            document.getElementById(
-                "payButton"
-            );
-
-
-        payButton.addEventListener(
-            "click",
-            () => {
+const payButton =
+    document.getElementById(
+        "payButton"
+    );
 
 
-                /*
-                 REAL PAYMENT GATEWAY
-                 WILL BE CONNECTED
-                 IN A FUTURE PART.
-                */
+payButton.addEventListener(
+    "click",
+    async () => {
 
 
-                alert(
-                    "Payment gateway will be connected soon! 💳"
+        payButton.disabled = true;
+
+
+        payButton.innerHTML =
+            `
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Creating Your Order...
+            `;
+
+
+        try {
+
+
+            const orderData = {
+
+                occasion:
+                    order.occasion,
+
+                relationship:
+                    order.relationship,
+
+                theme:
+                    order.theme,
+
+                person_name:
+                    order.personName,
+
+                customer_name:
+                    order.customerName,
+
+                special_date:
+                    order.specialDate,
+
+                email:
+                    order.email,
+
+                message:
+                    order.message || "",
+
+                package:
+                    order.package,
+
+                amount:
+                    price,
+
+                payment_status:
+                    "pending",
+
+                order_status:
+                    "new"
+
+            };
+
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .from("orders")
+                    .insert([
+                        orderData
+                    ])
+                    .select();
+
+
+            if (error) {
+
+                console.error(
+                    error
                 );
 
 
+                alert(
+                    "Something went wrong while creating your order. Please try again."
+                );
+
+
+                payButton.disabled =
+                    false;
+
+
+                payButton.innerHTML =
+                    `
+                    <i class="fa-solid fa-lock"></i>
+                    <span>
+                        Continue to Secure Payment
+                    </span>
+                    `;
+
+
+                return;
+
             }
-        );
+
+
+            console.log(
+                "Order Created:",
+                data
+            );
+
+
+            /*
+             SAVE ORDER ID
+             FOR PAYMENT
+            */
+
+            localStorage.setItem(
+                "celebrateVerseOrderId",
+                data[0].id
+            );
+
+
+            alert(
+                "🎉 Order created successfully!"
+            );
+
+
+            /*
+             PAYMENT GATEWAY
+             NEXT PART
+            */
+
+            payButton.innerHTML =
+                `
+                <i class="fa-solid fa-check"></i>
+                Order Created Successfully
+                `;
+
+
+        } catch (error) {
+
+
+            console.error(
+                error
+            );
+
+
+            alert(
+                "An unexpected error occurred."
+            );
+
+
+            payButton.disabled =
+                false;
+
+
+            payButton.innerHTML =
+                `
+                <i class="fa-solid fa-lock"></i>
+                <span>
+                    Continue to Secure Payment
+                </span>
+                `;
+
+        }
 
 
     }
