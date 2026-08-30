@@ -1,38 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     let currentStep = 1;
-
     const totalSteps = 5;
 
-
     const form =
-        document.getElementById(
-            "celebrationForm"
-        );
-
+        document.getElementById("celebrationForm");
 
     const nextBtn =
-        document.getElementById(
-            "nextBtn"
-        );
-
+        document.getElementById("nextBtn");
 
     const prevBtn =
-        document.getElementById(
-            "prevBtn"
-        );
-
+        document.getElementById("prevBtn");
 
     const submitBtn =
-        document.getElementById(
-            "submitBtn"
-        );
-
+        document.getElementById("submitBtn");
 
     const progressFill =
-        document.getElementById(
-            "progressFill"
-        );
+        document.getElementById("progressFill");
 
 
     /* =========================
@@ -45,9 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
             .querySelectorAll(".form-step")
             .forEach(item => {
 
-                item.classList.remove(
-                    "active"
-                );
+                item.classList.remove("active");
 
             });
 
@@ -60,9 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (activeStep) {
 
-            activeStep.classList.add(
-                "active"
-            );
+            activeStep.classList.add("active");
 
         }
 
@@ -71,23 +51,17 @@ document.addEventListener("DOMContentLoaded", () => {
             .querySelectorAll(".progress-step")
             .forEach(item => {
 
-                const itemStep =
-                    Number(
-                        item.dataset.step
-                    );
+                const stepNumber =
+                    Number(item.dataset.step);
 
 
-                if (itemStep <= step) {
+                if (stepNumber <= step) {
 
-                    item.classList.add(
-                        "active"
-                    );
+                    item.classList.add("active");
 
                 } else {
 
-                    item.classList.remove(
-                        "active"
-                    );
+                    item.classList.remove("active");
 
                 }
 
@@ -98,9 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const progress =
                 ((step - 1) /
-                    (totalSteps - 1))
-                * 100;
-
+                    (totalSteps - 1)) * 100;
 
             progressFill.style.width =
                 progress + "%";
@@ -140,26 +112,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-
     /* =========================
        CARD SELECTION
     ========================= */
 
-    function setupSelection(
-        selector,
-        inputId
-    ) {
+    function setupSelection(selector, inputId) {
 
         const cards =
-            document.querySelectorAll(
-                selector
-            );
-
+            document.querySelectorAll(selector);
 
         const hiddenInput =
-            document.getElementById(
-                inputId
-            );
+            document.getElementById(inputId);
 
 
         cards.forEach(card => {
@@ -191,18 +154,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
 
 
-                    console.log(
-                        inputId,
-                        "=",
-                        card.dataset.value
-                    );
+                    /* PACKAGE BACKUP */
 
-
-                    /* SAVE PACKAGE IMMEDIATELY */
-
-                    if (
-                        inputId === "package"
-                    ) {
+                    if (inputId === "package") {
 
                         localStorage.setItem(
                             "celebrateVerseSelectedPackage",
@@ -212,6 +166,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
 
 
+                    console.log(
+                        "Selected:",
+                        inputId,
+                        card.dataset.value
+                    );
+
                 }
             );
 
@@ -220,9 +180,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-
     /* =========================
-       SETUP ALL SELECTIONS
+       SETUP SELECTIONS
     ========================= */
 
     setupSelection(
@@ -249,6 +208,61 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
+    /* =========================
+       NEXT BUTTON
+    ========================= */
+
+    if (nextBtn) {
+
+        nextBtn.addEventListener(
+            "click",
+            () => {
+
+
+                if (!validateStep()) {
+
+                    return;
+
+                }
+
+
+                if (currentStep < totalSteps) {
+
+                    currentStep++;
+
+                    showStep(currentStep);
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================
+       PREVIOUS BUTTON
+    ========================= */
+
+    if (prevBtn) {
+
+        prevBtn.addEventListener(
+            "click",
+            () => {
+
+                if (currentStep > 1) {
+
+                    currentStep--;
+
+                    showStep(currentStep);
+
+                }
+
+            }
+        );
+
+    }
+
 
     /* =========================
        VALIDATE STEP
@@ -259,13 +273,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (currentStep === 1) {
 
-            const value =
+            const occasion =
                 document.getElementById(
                     "occasion"
                 ).value;
 
 
-            if (!value) {
+            if (!occasion) {
 
                 alert(
                     "Please select an occasion 🎉"
@@ -278,16 +292,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-
         if (currentStep === 2) {
 
-            const value =
+            const relationship =
                 document.getElementById(
                     "relationship"
                 ).value;
 
 
-            if (!value) {
+            if (!relationship) {
 
                 alert(
                     "Please select who the celebration is for ❤️"
@@ -300,16 +313,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-
         if (currentStep === 3) {
 
-            const value =
+            const theme =
                 document.getElementById(
                     "theme"
                 ).value;
 
 
-            if (!value) {
+            if (!theme) {
 
                 alert(
                     "Please select a website theme 🎨"
@@ -320,7 +332,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
         }
-
 
 
         if (currentStep === 4) {
@@ -367,7 +378,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-
         if (currentStep === 5) {
 
             const packageInput =
@@ -376,23 +386,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-            let selectedPackage =
-                packageInput.value;
-
-
-            /* BACKUP PACKAGE */
-
-            if (!selectedPackage) {
-
-                selectedPackage =
-                    localStorage.getItem(
-                        "celebrateVerseSelectedPackage"
-                    ) || "";
-
-            }
-
-
-            if (!selectedPackage) {
+            if (!packageInput.value) {
 
                 alert(
                     "Please select a package 💎"
@@ -402,10 +396,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
-
-            packageInput.value =
-                selectedPackage;
-
         }
 
 
@@ -414,74 +404,88 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-
     /* =========================
-       NEXT BUTTON
+       PHOTO PREVIEW
     ========================= */
 
-    if (nextBtn) {
+    const photoInput =
+        document.getElementById("photos");
 
-        nextBtn.addEventListener(
-            "click",
+
+    const photoPreview =
+        document.getElementById(
+            "photoPreview"
+        );
+
+
+    if (photoInput && photoPreview) {
+
+        photoInput.addEventListener(
+            "change",
             () => {
 
 
-                if (!validateStep()) {
-
-                    return;
-
-                }
+                photoPreview.innerHTML = "";
 
 
-                if (
-                    currentStep < totalSteps
-                ) {
-
-                    currentStep++;
-
-                    showStep(
-                        currentStep
+                const files =
+                    Array.from(
+                        photoInput.files
                     );
 
-                }
+
+                files.forEach(file => {
+
+
+                    if (
+                        !file.type.startsWith(
+                            "image/"
+                        )
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const reader =
+                        new FileReader();
+
+
+                    reader.onload =
+                        event => {
+
+
+                            const image =
+                                document.createElement(
+                                    "img"
+                                );
+
+
+                            image.src =
+                                event.target.result;
+
+
+                            image.className =
+                                "photo-preview";
+
+
+                            photoPreview.appendChild(
+                                image
+                            );
+
+                        };
+
+
+                    reader.readAsDataURL(file);
+
+                });
 
 
             }
         );
 
     }
-
-
-
-    /* =========================
-       PREVIOUS BUTTON
-    ========================= */
-
-    if (prevBtn) {
-
-        prevBtn.addEventListener(
-            "click",
-            () => {
-
-
-                if (
-                    currentStep > 1
-                ) {
-
-                    currentStep--;
-
-                    showStep(
-                        currentStep
-                    );
-
-                }
-
-
-            }
-        );
-
-    }
-
 
 
     /* =========================
@@ -505,15 +509,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
 
-                /* GET PACKAGE */
-
-                const packageValue =
+                const selectedPackage =
                     document.getElementById(
                         "package"
                     ).value;
 
 
-                /* CREATE ORDER */
+                /* PACKAGE SAFETY CHECK */
+
+                const validPackages =
+                    [
+                        "basic",
+                        "premium",
+                        "ultimate"
+                    ];
+
+
+                if (
+                    !validPackages.includes(
+                        selectedPackage
+                    )
+                ) {
+
+                    alert(
+                        "Please select a valid package."
+                    );
+
+                    return;
+
+                }
+
 
                 const celebrationData = {
 
@@ -566,16 +591,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                     package:
-                        packageValue
+                        selectedPackage
 
                 };
 
 
-                /* DEBUG */
+                /* SAVE PACKAGE */
 
-                console.log(
-                    "FINAL ORDER:",
-                    celebrationData
+                localStorage.setItem(
+                    "celebrateVerseSelectedPackage",
+                    selectedPackage
                 );
 
 
@@ -589,7 +614,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
-                /* REDIRECT */
+                console.log(
+                    "ORDER SAVED:",
+                    celebrationData
+                );
+
 
                 window.location.href =
                     "payment.html";
@@ -601,13 +630,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-
-    /* =========================
-       START
-    ========================= */
-
-    showStep(
-        currentStep
-    );
+    showStep(currentStep);
 
 });
