@@ -3,20 +3,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentStep = 1;
     const totalSteps = 5;
 
-    const form =
-        document.getElementById("celebrationForm");
-
-    const nextBtn =
-        document.getElementById("nextBtn");
-
-    const prevBtn =
-        document.getElementById("prevBtn");
-
-    const submitBtn =
-        document.getElementById("submitBtn");
-
-    const progressFill =
-        document.getElementById("progressFill");
+    const form = document.getElementById("celebrationForm");
+    const nextBtn = document.getElementById("nextBtn");
+    const prevBtn = document.getElementById("prevBtn");
+    const submitBtn = document.getElementById("submitBtn");
+    const progressFill = document.getElementById("progressFill");
 
 
     /* =========================
@@ -25,57 +16,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function showStep(step) {
 
-        document
-            .querySelectorAll(".form-step")
-            .forEach(item => {
+        document.querySelectorAll(".form-step").forEach(item => {
+            item.classList.remove("active");
+        });
 
-                item.classList.remove("active");
-
-            });
-
-
-        const activeStep =
-            document.querySelector(
-                `.form-step[data-step="${step}"]`
-            );
-
+        const activeStep = document.querySelector(
+            `.form-step[data-step="${step}"]`
+        );
 
         if (activeStep) {
-
             activeStep.classList.add("active");
-
         }
 
 
-        document
-            .querySelectorAll(".progress-step")
-            .forEach(item => {
+        document.querySelectorAll(".progress-step").forEach(item => {
 
-                const stepNumber =
-                    Number(item.dataset.step);
+            const stepNumber =
+                Number(item.dataset.step);
 
+            if (stepNumber <= step) {
+                item.classList.add("active");
+            } else {
+                item.classList.remove("active");
+            }
 
-                if (stepNumber <= step) {
-
-                    item.classList.add("active");
-
-                } else {
-
-                    item.classList.remove("active");
-
-                }
-
-            });
+        });
 
 
         if (progressFill) {
 
             const progress =
-                ((step - 1) /
-                    (totalSteps - 1)) * 100;
+                ((step - 1) / (totalSteps - 1)) * 100;
 
             progressFill.style.width =
-                progress + "%";
+                `${progress}%`;
 
         }
 
@@ -127,53 +101,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
         cards.forEach(card => {
 
-            card.addEventListener(
-                "click",
-                () => {
+            card.addEventListener("click", () => {
+
+                cards.forEach(item => {
+                    item.classList.remove("selected");
+                });
 
 
-                    cards.forEach(item => {
-
-                        item.classList.remove(
-                            "selected"
-                        );
-
-                    });
+                card.classList.add("selected");
 
 
-                    card.classList.add(
-                        "selected"
-                    );
+                if (hiddenInput) {
 
-
-                    if (hiddenInput) {
-
-                        hiddenInput.value =
-                            card.dataset.value;
-
-                    }
-
-
-                    /* PACKAGE BACKUP */
-
-                    if (inputId === "package") {
-
-                        localStorage.setItem(
-                            "celebrateVerseSelectedPackage",
-                            card.dataset.value
-                        );
-
-                    }
-
+                    hiddenInput.value =
+                        card.dataset.value;
 
                     console.log(
-                        "Selected:",
-                        inputId,
-                        card.dataset.value
+                        inputId + " selected:",
+                        hiddenInput.value
                     );
 
                 }
-            );
+
+            });
 
         });
 
@@ -181,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================
-       SETUP SELECTIONS
+       SETUP ALL SELECTIONS
     ========================= */
 
     setupSelection(
@@ -209,6 +159,137 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================
+       VALIDATE CURRENT STEP
+    ========================= */
+
+    function validateStep() {
+
+        if (currentStep === 1) {
+
+            const value =
+                document.getElementById("occasion").value;
+
+            if (!value) {
+
+                alert("Please select an occasion 🎉");
+
+                return false;
+
+            }
+
+        }
+
+
+        if (currentStep === 2) {
+
+            const value =
+                document.getElementById("relationship").value;
+
+            if (!value) {
+
+                alert(
+                    "Please select who the celebration is for ❤️"
+                );
+
+                return false;
+
+            }
+
+        }
+
+
+        if (currentStep === 3) {
+
+            const value =
+                document.getElementById("theme").value;
+
+            if (!value) {
+
+                alert(
+                    "Please select a website theme 🎨"
+                );
+
+                return false;
+
+            }
+
+        }
+
+
+        if (currentStep === 4) {
+
+            const requiredInputs =
+                document.querySelectorAll(
+                    '.form-step[data-step="4"] [required]'
+                );
+
+
+            for (const input of requiredInputs) {
+
+                if (!input.value.trim()) {
+
+                    alert(
+                        "Please fill all required details."
+                    );
+
+                    input.focus();
+
+                    return false;
+
+                }
+
+            }
+
+        }
+
+
+        if (currentStep === 5) {
+
+            const selectedCard =
+                document.querySelector(
+                    ".package-option.selected"
+                );
+
+
+            const packageInput =
+                document.getElementById("package");
+
+
+            /* FORCE PACKAGE VALUE */
+
+            if (
+                selectedCard &&
+                selectedCard.dataset.value
+            ) {
+
+                packageInput.value =
+                    selectedCard.dataset.value;
+
+            }
+
+
+            if (
+                !packageInput ||
+                !packageInput.value
+            ) {
+
+                alert(
+                    "Please select a package 💎"
+                );
+
+                return false;
+
+            }
+
+        }
+
+
+        return true;
+
+    }
+
+
+    /* =========================
        NEXT BUTTON
     ========================= */
 
@@ -218,15 +299,14 @@ document.addEventListener("DOMContentLoaded", () => {
             "click",
             () => {
 
-
                 if (!validateStep()) {
-
                     return;
-
                 }
 
 
-                if (currentStep < totalSteps) {
+                if (
+                    currentStep < totalSteps
+                ) {
 
                     currentStep++;
 
@@ -265,165 +345,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================
-       VALIDATE STEP
-    ========================= */
-
-    function validateStep() {
-
-
-        if (currentStep === 1) {
-
-            const occasion =
-                document.getElementById(
-                    "occasion"
-                ).value;
-
-
-            if (!occasion) {
-
-                alert(
-                    "Please select an occasion 🎉"
-                );
-
-                return false;
-
-            }
-
-        }
-
-
-        if (currentStep === 2) {
-
-            const relationship =
-                document.getElementById(
-                    "relationship"
-                ).value;
-
-
-            if (!relationship) {
-
-                alert(
-                    "Please select who the celebration is for ❤️"
-                );
-
-                return false;
-
-            }
-
-        }
-
-
-        if (currentStep === 3) {
-
-            const theme =
-                document.getElementById(
-                    "theme"
-                ).value;
-
-
-            if (!theme) {
-
-                alert(
-                    "Please select a website theme 🎨"
-                );
-
-                return false;
-
-            }
-
-        }
-
-
-        if (currentStep === 4) {
-
-            const personName =
-                document.getElementById(
-                    "personName"
-                ).value.trim();
-
-
-            const customerName =
-                document.getElementById(
-                    "customerName"
-                ).value.trim();
-
-
-            const specialDate =
-                document.getElementById(
-                    "specialDate"
-                ).value;
-
-
-            const email =
-                document.getElementById(
-                    "email"
-                ).value.trim();
-
-
-            if (
-                !personName ||
-                !customerName ||
-                !specialDate ||
-                !email
-            ) {
-
-                alert(
-                    "Please fill all required details."
-                );
-
-                return false;
-
-            }
-
-        }
-
-
-        if (currentStep === 5) {
-
-            const packageInput =
-                document.getElementById(
-                    "package"
-                );
-
-
-            if (!packageInput.value) {
-
-                alert(
-                    "Please select a package 💎"
-                );
-
-                return false;
-
-            }
-
-        }
-
-
-        return true;
-
-    }
-
-
-    /* =========================
        PHOTO PREVIEW
     ========================= */
 
     const photoInput =
         document.getElementById("photos");
 
-
     const photoPreview =
-        document.getElementById(
-            "photoPreview"
-        );
+        document.getElementById("photoPreview");
 
 
-    if (photoInput && photoPreview) {
+    if (
+        photoInput &&
+        photoPreview
+    ) {
 
         photoInput.addEventListener(
             "change",
             () => {
-
 
                 photoPreview.innerHTML = "";
 
@@ -436,15 +375,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 files.forEach(file => {
 
-
                     if (
                         !file.type.startsWith(
                             "image/"
                         )
                     ) {
-
                         return;
-
                     }
 
 
@@ -454,7 +390,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     reader.onload =
                         event => {
-
 
                             const image =
                                 document.createElement(
@@ -481,7 +416,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 });
 
-
             }
         );
 
@@ -489,7 +423,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================
-       SUBMIT ORDER
+       SAVE ORDER
     ========================= */
 
     if (form) {
@@ -498,47 +432,56 @@ document.addEventListener("DOMContentLoaded", () => {
             "submit",
             event => {
 
-
                 event.preventDefault();
 
 
-                if (!validateStep()) {
+                /* FORCE PACKAGE DETECTION */
 
-                    return;
+                const selectedPackageCard =
+                    document.querySelector(
+                        ".package-option.selected"
+                    );
+
+
+                const packageInput =
+                    document.getElementById("package");
+
+
+                if (
+                    selectedPackageCard &&
+                    selectedPackageCard.dataset.value
+                ) {
+
+                    packageInput.value =
+                        selectedPackageCard.dataset.value;
 
                 }
 
 
                 const selectedPackage =
-                    document.getElementById(
-                        "package"
-                    ).value;
+                    packageInput
+                        ? packageInput.value
+                        : "";
 
 
-                /* PACKAGE SAFETY CHECK */
-
-                const validPackages =
-                    [
-                        "basic",
-                        "premium",
-                        "ultimate"
-                    ];
+                console.log(
+                    "FINAL PACKAGE:",
+                    selectedPackage
+                );
 
 
-                if (
-                    !validPackages.includes(
-                        selectedPackage
-                    )
-                ) {
+                if (!selectedPackage) {
 
                     alert(
-                        "Please select a valid package."
+                        "Please select a package 💎"
                     );
 
                     return;
 
                 }
 
+
+                /* CREATE ORDER */
 
                 const celebrationData = {
 
@@ -547,48 +490,42 @@ document.addEventListener("DOMContentLoaded", () => {
                             "occasion"
                         ).value,
 
-
                     relationship:
                         document.getElementById(
                             "relationship"
                         ).value,
-
 
                     theme:
                         document.getElementById(
                             "theme"
                         ).value,
 
-
                     personName:
                         document.getElementById(
                             "personName"
-                        ).value.trim(),
-
+                        ).value,
 
                     customerName:
                         document.getElementById(
                             "customerName"
-                        ).value.trim(),
-
+                        ).value,
 
                     specialDate:
                         document.getElementById(
                             "specialDate"
                         ).value,
 
-
                     email:
                         document.getElementById(
                             "email"
-                        ).value.trim(),
-
+                        ).value,
 
                     message:
                         document.getElementById(
                             "message"
-                        ).value.trim(),
+                        ).value,
 
+                    /* IMPORTANT */
 
                     package:
                         selectedPackage
@@ -596,15 +533,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 };
 
 
-                /* SAVE PACKAGE */
-
-                localStorage.setItem(
-                    "celebrateVerseSelectedPackage",
-                    selectedPackage
+                console.log(
+                    "SAVING FULL ORDER:",
+                    celebrationData
                 );
 
 
-                /* SAVE COMPLETE ORDER */
+                /* CLEAR OLD DATA FIRST */
+
+                localStorage.removeItem(
+                    "celebrateVerseOrder"
+                );
+
+
+                /* SAVE NEW DATA */
 
                 localStorage.setItem(
                     "celebrateVerseOrder",
@@ -614,15 +556,24 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
 
+                /* VERIFY SAVED DATA */
+
+                const verifyOrder =
+                    localStorage.getItem(
+                        "celebrateVerseOrder"
+                    );
+
+
                 console.log(
-                    "ORDER SAVED:",
-                    celebrationData
+                    "VERIFIED SAVED ORDER:",
+                    verifyOrder
                 );
 
 
+                /* GO TO PAYMENT */
+
                 window.location.href =
                     "payment.html";
-
 
             }
         );
@@ -630,6 +581,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    showStep(currentStep);
+    /* =========================
+       START
+    ========================= */
+
+    showStep(1);
 
 });
