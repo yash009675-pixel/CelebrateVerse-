@@ -541,3 +541,7 @@ form.addEventListener(
 
     }
 );
+setupSelection(
+    ".package-option",
+    "package"
+);
