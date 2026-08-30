@@ -572,8 +572,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 /* GO TO PAYMENT */
 
-                window.location.href =
-                    "payment.html";
+                const finalPackage =
+    String(selectedPackage)
+        .trim()
+        .toLowerCase();
+
+console.log("GOING TO PAYMENT WITH:", finalPackage);
+
+window.location.href =
+    "payment.html?package=" +
+    encodeURIComponent(finalPackage);
 
             }
         );
