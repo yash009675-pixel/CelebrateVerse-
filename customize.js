@@ -1,9 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    /* =========================
-       BASIC SETTINGS
-    ========================= */
-
     let currentStep = 1;
 
     const totalSteps = 5;
@@ -40,61 +36,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================
-       CHECK FORM
-    ========================= */
-
-    if (!form) {
-
-        console.error(
-            "celebrationForm not found"
-        );
-
-        return;
-
-    }
-
-
-    /* =========================
-       URL PARAMETERS
-    ========================= */
-
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-
-
-    const selectedOccasion =
-        params.get(
-            "occasion"
-        );
-
-
-    const selectedPackage =
-        params.get(
-            "package"
-        );
-
-
-    /* =========================
-       SHOW CURRENT STEP
+       SHOW STEP
     ========================= */
 
     function showStep(step) {
 
         document
-            .querySelectorAll(
-                ".form-step"
-            )
-            .forEach(
-                formStep => {
+            .querySelectorAll(".form-step")
+            .forEach(item => {
 
-                    formStep.classList.remove(
-                        "active"
-                    );
+                item.classList.remove(
+                    "active"
+                );
 
-                }
-            );
+            });
 
 
         const activeStep =
@@ -112,59 +67,46 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        /* Progress Steps */
-
         document
-            .querySelectorAll(
-                ".progress-step"
-            )
-            .forEach(
-                progressStep => {
+            .querySelectorAll(".progress-step")
+            .forEach(item => {
 
-                    const stepNumber =
-                        Number(
-                            progressStep.dataset.step
-                        );
+                const itemStep =
+                    Number(
+                        item.dataset.step
+                    );
 
 
-                    if (
-                        stepNumber <= step
-                    ) {
+                if (itemStep <= step) {
 
-                        progressStep.classList.add(
-                            "active"
-                        );
+                    item.classList.add(
+                        "active"
+                    );
 
-                    } else {
+                } else {
 
-                        progressStep.classList.remove(
-                            "active"
-                        );
-
-                    }
+                    item.classList.remove(
+                        "active"
+                    );
 
                 }
-            );
 
-
-        /* Progress Bar */
-
-        const progress =
-            (
-                (step - 1) /
-                (totalSteps - 1)
-            ) * 100;
+            });
 
 
         if (progressFill) {
 
+            const progress =
+                ((step - 1) /
+                    (totalSteps - 1))
+                * 100;
+
+
             progressFill.style.width =
-                `${progress}%`;
+                progress + "%";
 
         }
 
-
-        /* Previous Button */
 
         if (prevBtn) {
 
@@ -176,8 +118,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        /* Next Button */
-
         if (nextBtn) {
 
             nextBtn.style.display =
@@ -188,8 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        /* Submit Button */
-
         if (submitBtn) {
 
             submitBtn.style.display =
@@ -199,20 +137,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
 
-
-        window.scrollTo({
-
-            top: 0,
-
-            behavior: "smooth"
-
-        });
-
     }
 
 
+
     /* =========================
-       GENERAL CARD SELECTION
+       CARD SELECTION
     ========================= */
 
     function setupSelection(
@@ -226,96 +156,73 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-        cards.forEach(
-            card => {
-
-                card.addEventListener(
-                    "click",
-                    () => {
-
-                        /* Remove Previous Selection */
-
-                        cards.forEach(
-                            item => {
-
-                                item.classList.remove(
-                                    "selected"
-                                );
-
-                            }
-                        );
+        const hiddenInput =
+            document.getElementById(
+                inputId
+            );
 
 
-                        /* Add New Selection */
+        cards.forEach(card => {
 
-                        card.classList.add(
+            card.addEventListener(
+                "click",
+                () => {
+
+
+                    cards.forEach(item => {
+
+                        item.classList.remove(
                             "selected"
                         );
 
-
-                        /* Hidden Input */
-
-                        const hiddenInput =
-                            document.getElementById(
-                                inputId
-                            );
+                    });
 
 
-                        if (!hiddenInput) {
-
-                            console.error(
-                                `${inputId} input not found`
-                            );
-
-                            return;
-
-                        }
+                    card.classList.add(
+                        "selected"
+                    );
 
 
-                        /* Get Value */
-
-                        let value =
-                            card.dataset.value ||
-                            card.dataset.package ||
-                            "";
-
-
-                        /*
-                           Extra fallback
-                        */
-
-                        if (!value) {
-
-                            value =
-                                card.getAttribute(
-                                    "data-value"
-                                ) || "";
-
-                        }
-
+                    if (hiddenInput) {
 
                         hiddenInput.value =
-                            value
-                                .toLowerCase()
-                                .trim();
+                            card.dataset.value;
+
+                    }
 
 
-                        console.log(
-                            `${inputId} selected:`,
-                            hiddenInput.value
+                    console.log(
+                        inputId,
+                        "=",
+                        card.dataset.value
+                    );
+
+
+                    /* SAVE PACKAGE IMMEDIATELY */
+
+                    if (
+                        inputId === "package"
+                    ) {
+
+                        localStorage.setItem(
+                            "celebrateVerseSelectedPackage",
+                            card.dataset.value
                         );
 
                     }
-                );
 
-            }
-        );
+
+                }
+            );
+
+        });
 
     }
 
 
+
     /* =========================
-       OCCASION SELECTION
+       SETUP ALL SELECTIONS
     ========================= */
 
     setupSelection(
@@ -324,19 +231,11 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    /* =========================
-       RELATIONSHIP SELECTION
-    ========================= */
-
     setupSelection(
         ".relationship-selection .selection-card",
         "relationship"
     );
 
-
-    /* =========================
-       THEME SELECTION
-    ========================= */
 
     setupSelection(
         ".theme-card",
@@ -344,251 +243,11 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
-    /* =========================
-       PACKAGE SELECTION
-    ========================= */
-
-    const packageCards =
-        document.querySelectorAll(
-            ".package-option"
-        );
-
-
-    const packageInput =
-        document.getElementById(
-            "package"
-        );
-
-
-    packageCards.forEach(
-        card => {
-
-            card.addEventListener(
-                "click",
-                () => {
-
-                    /* Remove Previous Selection */
-
-                    packageCards.forEach(
-                        item => {
-
-                            item.classList.remove(
-                                "selected"
-                            );
-
-                        }
-                    );
-
-
-                    /* Select Current Package */
-
-                    card.classList.add(
-                        "selected"
-                    );
-
-
-                    /* Get Package Value */
-
-                    let packageValue =
-                        card.dataset.value ||
-                        card.dataset.package ||
-                        "";
-
-
-                    /*
-                       If data-value is missing,
-                       detect package from text
-                    */
-
-                    if (!packageValue) {
-
-                        const cardText =
-                            card.textContent
-                                .toLowerCase();
-
-
-                        if (
-                            cardText.includes(
-                                "basic"
-                            )
-                        ) {
-
-                            packageValue =
-                                "basic";
-
-                        }
-
-
-                        else if (
-                            cardText.includes(
-                                "premium"
-                            )
-                        ) {
-
-                            packageValue =
-                                "premium";
-
-                        }
-
-
-                        else if (
-                            cardText.includes(
-                                "ultimate"
-                            )
-                        ) {
-
-                            packageValue =
-                                "ultimate";
-
-                        }
-
-                    }
-
-
-                    /* Save Package */
-
-                    if (packageInput) {
-
-                        packageInput.value =
-                            String(
-                                packageValue
-                            )
-                                .toLowerCase()
-                                .trim();
-
-
-                        console.log(
-                            "PACKAGE SELECTED:",
-                            packageInput.value
-                        );
-
-
-                        console.log(
-                            "PACKAGE CARD:",
-                            card
-                        );
-
-                    }
-
-
-                }
-            );
-
-        }
+    setupSelection(
+        ".package-option",
+        "package"
     );
 
-
-    /* =========================
-       PRESELECT OCCASION
-    ========================= */
-
-    if (selectedOccasion) {
-
-        const occasionInput =
-            document.getElementById(
-                "occasion"
-            );
-
-
-        if (occasionInput) {
-
-            occasionInput.value =
-                selectedOccasion
-                    .toLowerCase()
-                    .trim();
-
-        }
-
-
-        const occasionCard =
-            document.querySelector(
-                `.occasion-selection .selection-card[data-value="${selectedOccasion}"]`
-            );
-
-
-        if (occasionCard) {
-
-            document
-                .querySelectorAll(
-                    ".occasion-selection .selection-card"
-                )
-                .forEach(
-                    card => {
-
-                        card.classList.remove(
-                            "selected"
-                        );
-
-                    }
-                );
-
-
-            occasionCard.classList.add(
-                "selected"
-            );
-
-        }
-
-    }
-
-
-    /* =========================
-       PRESELECT PACKAGE
-    ========================= */
-
-    if (selectedPackage) {
-
-        const normalizedPackage =
-            selectedPackage
-                .toLowerCase()
-                .trim();
-
-
-        if (packageInput) {
-
-            packageInput.value =
-                normalizedPackage;
-
-        }
-
-
-        packageCards.forEach(
-            card => {
-
-                let cardValue =
-                    card.dataset.value ||
-                    card.dataset.package ||
-                    "";
-
-
-                if (
-                    cardValue
-                        .toLowerCase()
-                        .trim() ===
-                    normalizedPackage
-                ) {
-
-                    packageCards.forEach(
-                        item => {
-
-                            item.classList.remove(
-                                "selected"
-                            );
-
-                        }
-                    );
-
-
-                    card.classList.add(
-                        "selected"
-                    );
-
-                }
-
-            }
-        );
-
-    }
 
 
     /* =========================
@@ -597,23 +256,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function validateStep() {
 
-        /* STEP 1 */
 
         if (currentStep === 1) {
 
-            const occasionInput =
+            const value =
                 document.getElementById(
                     "occasion"
-                );
+                ).value;
 
 
-            const occasion =
-                occasionInput
-                    ? occasionInput.value.trim()
-                    : "";
-
-
-            if (!occasion) {
+            if (!value) {
 
                 alert(
                     "Please select an occasion 🎉"
@@ -626,23 +278,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        /* STEP 2 */
 
         if (currentStep === 2) {
 
-            const relationshipInput =
+            const value =
                 document.getElementById(
                     "relationship"
-                );
+                ).value;
 
 
-            const relationship =
-                relationshipInput
-                    ? relationshipInput.value.trim()
-                    : "";
-
-
-            if (!relationship) {
+            if (!value) {
 
                 alert(
                     "Please select who the celebration is for ❤️"
@@ -655,23 +300,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        /* STEP 3 */
 
         if (currentStep === 3) {
 
-            const themeInput =
+            const value =
                 document.getElementById(
                     "theme"
-                );
+                ).value;
 
 
-            const theme =
-                themeInput
-                    ? themeInput.value.trim()
-                    : "";
-
-
-            if (!theme) {
+            if (!value) {
 
                 alert(
                     "Please select a website theme 🎨"
@@ -684,63 +322,77 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        /* STEP 4 */
 
         if (currentStep === 4) {
 
-            const requiredInputs =
-                document.querySelectorAll(
-                    '.form-step[data-step="4"] [required]'
-                );
+            const personName =
+                document.getElementById(
+                    "personName"
+                ).value.trim();
 
 
-            for (
-                const input
-                of requiredInputs
+            const customerName =
+                document.getElementById(
+                    "customerName"
+                ).value.trim();
+
+
+            const specialDate =
+                document.getElementById(
+                    "specialDate"
+                ).value;
+
+
+            const email =
+                document.getElementById(
+                    "email"
+                ).value.trim();
+
+
+            if (
+                !personName ||
+                !customerName ||
+                !specialDate ||
+                !email
             ) {
 
-                if (
-                    !input.value.trim()
-                ) {
+                alert(
+                    "Please fill all required details."
+                );
 
-                    alert(
-                        "Please fill all required details."
-                    );
-
-
-                    input.focus();
-
-
-                    return false;
-
-                }
+                return false;
 
             }
 
         }
 
 
-        /* STEP 5 */
 
         if (currentStep === 5) {
 
-            const selectedPackageValue =
-                packageInput
-                    ? packageInput.value
-                        .toLowerCase()
-                        .trim()
-                    : "";
+            const packageInput =
+                document.getElementById(
+                    "package"
+                );
 
 
-            console.log(
-                "FINAL PACKAGE:",
-                selectedPackageValue
-            );
+            let selectedPackage =
+                packageInput.value;
 
 
-            if (
-                !selectedPackageValue
-            ) {
+            /* BACKUP PACKAGE */
+
+            if (!selectedPackage) {
+
+                selectedPackage =
+                    localStorage.getItem(
+                        "celebrateVerseSelectedPackage"
+                    ) || "";
+
+            }
+
+
+            if (!selectedPackage) {
 
                 alert(
                     "Please select a package 💎"
@@ -751,31 +403,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            /*
-               Check valid package
-            */
-
-            const validPackages =
-                [
-                    "basic",
-                    "premium",
-                    "ultimate"
-                ];
-
-
-            if (
-                !validPackages.includes(
-                    selectedPackageValue
-                )
-            ) {
-
-                alert(
-                    "Invalid package selected. Please select again."
-                );
-
-                return false;
-
-            }
+            packageInput.value =
+                selectedPackage;
 
         }
 
@@ -783,6 +412,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return true;
 
     }
+
 
 
     /* =========================
@@ -795,9 +425,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "click",
             () => {
 
-                if (
-                    !validateStep()
-                ) {
+
+                if (!validateStep()) {
 
                     return;
 
@@ -805,12 +434,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 if (
-                    currentStep <
-                    totalSteps
+                    currentStep < totalSteps
                 ) {
 
                     currentStep++;
-
 
                     showStep(
                         currentStep
@@ -818,10 +445,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 }
 
+
             }
         );
 
     }
+
 
 
     /* =========================
@@ -834,12 +463,12 @@ document.addEventListener("DOMContentLoaded", () => {
             "click",
             () => {
 
+
                 if (
                     currentStep > 1
                 ) {
 
                     currentStep--;
-
 
                     showStep(
                         currentStep
@@ -847,95 +476,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 }
 
-            }
-        );
-
-    }
-
-
-    /* =========================
-       PHOTO PREVIEW
-    ========================= */
-
-    const photoInput =
-        document.getElementById(
-            "photos"
-        );
-
-
-    const photoPreview =
-        document.getElementById(
-            "photoPreview"
-        );
-
-
-    if (
-        photoInput &&
-        photoPreview
-    ) {
-
-        photoInput.addEventListener(
-            "change",
-            () => {
-
-                photoPreview.innerHTML =
-                    "";
-
-
-                const files =
-                    Array.from(
-                        photoInput.files
-                    );
-
-
-                files.forEach(
-                    file => {
-
-                        if (
-                            !file.type.startsWith(
-                                "image/"
-                            )
-                        ) {
-
-                            return;
-
-                        }
-
-
-                        const reader =
-                            new FileReader();
-
-
-                        reader.onload =
-                            event => {
-
-                                const image =
-                                    document.createElement(
-                                        "img"
-                                    );
-
-
-                                image.src =
-                                    event.target.result;
-
-
-                                image.className =
-                                    "photo-preview";
-
-
-                                photoPreview.appendChild(
-                                    image
-                                );
-
-                            };
-
-
-                        reader.readAsDataURL(
-                            file
-                        );
-
-                    }
-                );
 
             }
         );
@@ -943,146 +483,127 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+
     /* =========================
-       SAVE ORDER
+       SUBMIT ORDER
     ========================= */
 
-    form.addEventListener(
-        "submit",
-        event => {
+    if (form) {
 
-            event.preventDefault();
-
-
-            if (
-                !validateStep()
-            ) {
-
-                return;
-
-            }
+        form.addEventListener(
+            "submit",
+            event => {
 
 
-            /* Get Package Safely */
-
-            const finalPackage =
-                packageInput
-                    ? packageInput.value
-                        .toLowerCase()
-                        .trim()
-                    : "";
+                event.preventDefault();
 
 
-            const celebrationData = {
+                if (!validateStep()) {
 
-                occasion:
+                    return;
+
+                }
+
+
+                /* GET PACKAGE */
+
+                const packageValue =
                     document.getElementById(
-                        "occasion"
-                    )?.value || "",
+                        "package"
+                    ).value;
 
 
-                relationship:
-                    document.getElementById(
-                        "relationship"
-                    )?.value || "",
+                /* CREATE ORDER */
+
+                const celebrationData = {
+
+                    occasion:
+                        document.getElementById(
+                            "occasion"
+                        ).value,
 
 
-                theme:
-                    document.getElementById(
-                        "theme"
-                    )?.value || "",
+                    relationship:
+                        document.getElementById(
+                            "relationship"
+                        ).value,
 
 
-                personName:
-                    document.getElementById(
-                        "personName"
-                    )?.value || "",
+                    theme:
+                        document.getElementById(
+                            "theme"
+                        ).value,
 
 
-                customerName:
-                    document.getElementById(
-                        "customerName"
-                    )?.value || "",
+                    personName:
+                        document.getElementById(
+                            "personName"
+                        ).value.trim(),
 
 
-                specialDate:
-                    document.getElementById(
-                        "specialDate"
-                    )?.value || "",
+                    customerName:
+                        document.getElementById(
+                            "customerName"
+                        ).value.trim(),
 
 
-                email:
-                    document.getElementById(
-                        "email"
-                    )?.value || "",
+                    specialDate:
+                        document.getElementById(
+                            "specialDate"
+                        ).value,
 
 
-                message:
-                    document.getElementById(
-                        "message"
-                    )?.value || "",
+                    email:
+                        document.getElementById(
+                            "email"
+                        ).value.trim(),
 
 
-                package:
-                    finalPackage
-
-            };
-
-
-            console.log(
-                "FINAL ORDER DATA:",
-                celebrationData
-            );
+                    message:
+                        document.getElementById(
+                            "message"
+                        ).value.trim(),
 
 
-            /* Check Package Again */
+                    package:
+                        packageValue
 
-            if (
-                !celebrationData.package
-            ) {
-
-                alert(
-                    "Package was not saved. Please select your package again."
-                );
-
-                return;
-
-            }
+                };
 
 
-            /* Save To LocalStorage */
+                /* DEBUG */
 
-            localStorage.setItem(
-                "celebrateVerseOrder",
-                JSON.stringify(
+                console.log(
+                    "FINAL ORDER:",
                     celebrationData
-                )
-            );
+                );
 
 
-            console.log(
-                "ORDER SAVED SUCCESSFULLY"
-            );
+                /* SAVE COMPLETE ORDER */
+
+                localStorage.setItem(
+                    "celebrateVerseOrder",
+                    JSON.stringify(
+                        celebrationData
+                    )
+                );
 
 
-            console.log(
-                localStorage.getItem(
-                    "celebrateVerseOrder"
-                )
-            );
+                /* REDIRECT */
+
+                window.location.href =
+                    "payment.html";
 
 
-            /* Go To Payment */
+            }
+        );
 
-            window.location.href =
-                "payment.html";
+    }
 
-        }
-    );
 
 
     /* =========================
-       START PAGE
+       START
     ========================= */
 
     showStep(
