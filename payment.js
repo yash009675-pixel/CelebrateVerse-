@@ -12,96 +12,97 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================
+       GET URL PACKAGE
+    ========================= */
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const urlPackage =
+        params.get("package");
+
+
+    /* =========================
        GET SAVED ORDER
     ========================= */
 
+    let order = {};
+
+
     const savedOrder =
-        localStorage.getItem("celebrateVerseOrder");
-
-
-    if (!savedOrder) {
-
-        console.error("No saved order found");
-
-        alert(
-            "No celebration details found. Please create your celebration first."
-        );
-
-        window.location.href =
-            "customize.html";
-
-        return;
-
-    }
-
-
-    let order;
-
-
-    try {
-
-        order =
-            JSON.parse(savedOrder);
-
-    } catch (error) {
-
-        console.error(
-            "Order JSON Error:",
-            error
-        );
-
-        alert(
-            "Saved order data is corrupted. Please create your celebration again."
-        );
-
-        localStorage.removeItem(
+        localStorage.getItem(
             "celebrateVerseOrder"
         );
 
-        window.location.href =
-            "customize.html";
 
-        return;
+    if (savedOrder) {
+
+        try {
+
+            order =
+                JSON.parse(savedOrder);
+
+        } catch (error) {
+
+            console.error(
+                "LocalStorage Error:",
+                error
+            );
+
+        }
 
     }
 
 
     console.log(
-        "FULL SAVED ORDER:",
+        "SAVED ORDER:",
         order
     );
 
 
+    console.log(
+        "URL PACKAGE:",
+        urlPackage
+    );
+
+
     /* =========================
-       FIX PACKAGE VALUE
+       GET PACKAGE
+       URL HAS FIRST PRIORITY
     ========================= */
 
     let selectedPackage =
-        order.package;
+        urlPackage ||
+        order.package ||
+        "";
 
 
-    if (selectedPackage) {
-
-        selectedPackage =
-            String(selectedPackage)
-                .trim()
-                .toLowerCase();
-
-    }
+    selectedPackage =
+        String(selectedPackage)
+            .trim()
+            .toLowerCase();
 
 
     console.log(
-        "SELECTED PACKAGE:",
+        "FINAL PACKAGE:",
         selectedPackage
     );
 
 
+    /* =========================
+       GET PRICE
+    ========================= */
+
     const price =
-        packagePrices[selectedPackage] || 0;
+        packagePrices[selectedPackage] ||
+        0;
 
 
     console.log(
-        "PACKAGE PRICE:",
+        "FINAL PRICE:",
         price
     );
 
@@ -123,8 +124,8 @@ document.addEventListener("DOMContentLoaded", () => {
             .replace(/-/g, " ")
             .replace(
                 /\b\w/g,
-                character =>
-                    character.toUpperCase()
+                letter =>
+                    letter.toUpperCase()
             );
 
     }
@@ -147,63 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================
-       FORMAT DATE
-    ========================= */
-
-    function formatDate(dateValue) {
-
-        if (!dateValue) {
-
-            return "-";
-
-        }
-
-
-        try {
-
-            const date =
-                new Date(
-                    dateValue +
-                    "T00:00:00"
-                );
-
-
-            if (
-                isNaN(
-                    date.getTime()
-                )
-            ) {
-
-                return dateValue;
-
-            }
-
-
-            return date.toLocaleDateString(
-                "en-IN",
-                {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric"
-                }
-            );
-
-        } catch (error) {
-
-            console.error(
-                "Date Error:",
-                error
-            );
-
-            return "-";
-
-        }
-
-    }
-
-
-    /* =========================
-       SAFE UPDATE FUNCTION
+       UPDATE ELEMENT
     ========================= */
 
     function updateElement(
@@ -220,20 +165,13 @@ document.addEventListener("DOMContentLoaded", () => {
             element.textContent =
                 value;
 
-        } else {
-
-            console.warn(
-                "Element not found:",
-                id
-            );
-
         }
 
     }
 
 
     /* =========================
-       UPDATE ORDER SUMMARY
+       UPDATE SUMMARY
     ========================= */
 
     updateElement(
@@ -267,13 +205,53 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
+    /* =========================
+       DATE
+    ========================= */
+
+    let formattedDate =
+        "-";
+
+
+    if (order.specialDate) {
+
+        const date =
+            new Date(
+                order.specialDate +
+                "T00:00:00"
+            );
+
+
+        if (
+            !isNaN(
+                date.getTime()
+            )
+        ) {
+
+            formattedDate =
+                date.toLocaleDateString(
+                    "en-IN",
+                    {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric"
+                    }
+                );
+
+        }
+
+    }
+
+
     updateElement(
         "summaryDate",
-        formatDate(
-            order.specialDate
-        )
+        formattedDate
     );
 
+
+    /* =========================
+       PACKAGE SUMMARY
+    ========================= */
 
     updateElement(
         "summaryPackage",
@@ -313,9 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (
             order.message &&
-            String(
-                order.message
-            ).trim() !== ""
+            order.message.trim()
         ) {
 
             messageBox.textContent =
@@ -333,28 +309,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =========================
-       PACKAGE ERROR CHECK
-    ========================= */
-
-    if (price === 0) {
-
-        console.error(
-            "INVALID PACKAGE:",
-            selectedPackage
-        );
-
-        console.error(
-            "Available packages:",
-            Object.keys(
-                packagePrices
-            )
-        );
-
-    }
-
-
-    /* =========================
-       PAYMENT METHOD SELECT
+       PAYMENT METHODS
     ========================= */
 
     const paymentMethods =
@@ -385,12 +340,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         "active-payment"
                     );
 
-
-                    console.log(
-                        "Payment method:",
-                        method.dataset.method
-                    );
-
                 }
             );
 
@@ -410,10 +359,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!payButton) {
 
-        console.error(
-            "payButton not found"
-        );
-
         return;
 
     }
@@ -424,43 +369,12 @@ document.addEventListener("DOMContentLoaded", () => {
         async () => {
 
 
-            /* =========================
-               CHECK PACKAGE
-            ========================= */
-
             if (
-                !selectedPackage ||
-                !packagePrices[selectedPackage]
+                price === 0
             ) {
 
                 alert(
-                    "Package information is missing. Please select your package again."
-                );
-
-
-                window.location.href =
-                    "customize.html";
-
-                return;
-
-            }
-
-
-            /* =========================
-               CHECK SUPABASE
-            ========================= */
-
-            if (
-                typeof supabaseClient ===
-                "undefined"
-            ) {
-
-                console.error(
-                    "supabaseClient is undefined"
-                );
-
-                alert(
-                    "Database connection error. Please check supabase.js."
+                    "Package price is missing. Please go back and select your package again."
                 );
 
                 return;
@@ -468,214 +382,19 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            /* =========================
-               GET PAYMENT METHOD
-            ========================= */
-
-            const activePayment =
-                document.querySelector(
-                    ".payment-method.active-payment"
-                );
-
-
-            const paymentMethod =
-                activePayment
-                    ? activePayment.dataset.method
-                    : "upi";
-
-
-            /* =========================
-               PREVENT DOUBLE CLICK
-            ========================= */
-
-            payButton.disabled =
-                true;
-
-
-            const originalButtonHTML =
-                payButton.innerHTML;
-
-
-            payButton.innerHTML = `
-                <i class="fa-solid fa-spinner fa-spin"></i>
-                Creating Your Order...
-            `;
-
-
-            try {
-
-
-                /* =========================
-                   ORDER DATA
-                ========================= */
-
-                const orderData = {
-
-                    occasion:
-                        order.occasion || null,
-
-                    relationship:
-                        order.relationship || null,
-
-                    theme:
-                        order.theme || null,
-
-                    person_name:
-                        order.personName || null,
-
-                    customer_name:
-                        order.customerName || null,
-
-                    special_date:
-                        order.specialDate || null,
-
-                    email:
-                        order.email || null,
-
-                    message:
-                        order.message || null,
-
-                    package:
-                        selectedPackage,
-
-                    amount:
-                        Number(price),
-
-                    payment_method:
-                        paymentMethod,
-
-                    payment_status:
-                        "pending",
-
-                    order_status:
-                        "new"
-
-                };
-
-
-                console.log(
-                    "SENDING ORDER:",
-                    orderData
-                );
-
-
-                /* =========================
-                   INSERT INTO SUPABASE
-                ========================= */
-
-                const {
-                    data,
-                    error
-                } =
-                    await supabaseClient
-                        .from("orders")
-                        .insert(
-                            [orderData]
-                        )
-                        .select();
-
-
-                /* =========================
-                   DATABASE ERROR
-                ========================= */
-
-                if (error) {
-
-                    console.error(
-                        "SUPABASE ERROR:",
-                        error
-                    );
-
-                    throw new Error(
-                        error.message
-                    );
-
-                }
-
-
-                console.log(
-                    "ORDER CREATED:",
-                    data
-                );
-
-
-                /* =========================
-                   SAVE ORDER ID
-                ========================= */
-
-                if (
-                    data &&
-                    data.length > 0 &&
-                    data[0].id
-                ) {
-
-                    localStorage.setItem(
-                        "celebrateVerseOrderId",
-                        data[0].id
-                    );
-
-                }
-
-
-                /* =========================
-                   SUCCESS
-                ========================= */
-
-                payButton.innerHTML = `
-                    <i class="fa-solid fa-check"></i>
-                    Order Created Successfully
-                `;
-
-
-                alert(
-                    "🎉 Order created successfully!"
-                );
-
-
-                /* =========================
-                   FUTURE PAYMENT PAGE
-                ========================= */
-
-                setTimeout(
-                    () => {
-
-                        /*
-                        window.location.href =
-                            "payment-success.html";
-                        */
-
-                    },
-                    500
-                );
-
-
-            } catch (error) {
-
-
-                console.error(
-                    "ORDER ERROR:",
-                    error
-                );
-
-
-                alert(
-                    "Order Error: " +
-                    (
-                        error.message ||
-                        "An unexpected error occurred."
-                    )
-                );
-
-
-                payButton.disabled =
-                    false;
-
-
-                payButton.innerHTML =
-                    originalButtonHTML;
-
-            }
-
+            alert(
+                "Selected Package: " +
+                formatText(selectedPackage) +
+                "\nAmount: " +
+                formatPrice(price)
+            );
+
+
+            /*
+            SUPABASE ORDER CODE
+            WILL BE ADDED HERE
+            AFTER PRICE IS CONFIRMED
+            */
 
         }
     );
