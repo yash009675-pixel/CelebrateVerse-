@@ -1,19 +1,38 @@
 /* =========================
+   CELEBRATEVERSE MAIN JS
+========================= */
+
+
+/* =========================
    PAGE LOADER
 ========================= */
 
-window.addEventListener("load", () => {
+window.addEventListener(
+    "load",
+    () => {
 
-  const loader =
-    document.getElementById("loader");
+        const loader =
+            document.getElementById(
+                "loader"
+            );
 
-  setTimeout(() => {
 
-    loader.classList.add("hidden");
+        if (!loader) return;
 
-  }, 1600);
 
-});
+        setTimeout(
+            () => {
+
+                loader.classList.add(
+                    "hidden"
+                );
+
+            },
+            1600
+        );
+
+    }
+);
 
 
 /* =========================
@@ -21,24 +40,32 @@ window.addEventListener("load", () => {
 ========================= */
 
 const mobileMenuBtn =
-  document.getElementById("mobileMenuBtn");
+    document.getElementById(
+        "mobileMenuBtn"
+    );
+
 
 const mobileMenu =
-  document.getElementById("mobileMenu");
+    document.getElementById(
+        "mobileMenu"
+    );
 
 
-if (mobileMenuBtn) {
+if (
+    mobileMenuBtn &&
+    mobileMenu
+) {
 
-  mobileMenuBtn.addEventListener(
-    "click",
-    () => {
+    mobileMenuBtn.addEventListener(
+        "click",
+        () => {
 
-      mobileMenu.classList.toggle(
-        "active"
-      );
+            mobileMenu.classList.toggle(
+                "active"
+            );
 
-    }
-  );
+        }
+    );
 
 }
 
@@ -47,22 +74,28 @@ if (mobileMenuBtn) {
    CLOSE MOBILE MENU
 ========================= */
 
-document.querySelectorAll(
-  ".mobile-menu a"
-).forEach(link => {
+if (mobileMenu) {
 
-  link.addEventListener(
-    "click",
-    () => {
+    document.querySelectorAll(
+        ".mobile-menu a"
+    ).forEach(
+        link => {
 
-      mobileMenu.classList.remove(
-        "active"
-      );
+            link.addEventListener(
+                "click",
+                () => {
 
-    }
-  );
+                    mobileMenu.classList.remove(
+                        "active"
+                    );
 
-});
+                }
+            );
+
+        }
+    );
+
+}
 
 
 /* =========================
@@ -70,52 +103,61 @@ document.querySelectorAll(
 ========================= */
 
 const themeToggle =
-  document.getElementById("themeToggle");
+    document.getElementById(
+        "themeToggle"
+    );
 
 
 if (themeToggle) {
 
-  themeToggle.addEventListener(
-    "click",
-    () => {
+    themeToggle.addEventListener(
+        "click",
+        () => {
 
-      document.body.classList.toggle(
-        "light-mode"
-      );
-
-
-      const icon =
-        themeToggle.querySelector("i");
+            document.body.classList.toggle(
+                "light-mode"
+            );
 
 
-      if (
-        document.body.classList.contains(
-          "light-mode"
-        )
-      ) {
+            const icon =
+                themeToggle.querySelector(
+                    "i"
+                );
 
-        icon.classList.remove(
-          "fa-moon"
-        );
 
-        icon.classList.add(
-          "fa-sun"
-        );
+            if (!icon) return;
 
-      } else {
 
-        icon.classList.remove(
-          "fa-sun"
-        );
+            if (
+                document.body.classList.contains(
+                    "light-mode"
+                )
+            ) {
 
-        icon.classList.add(
-          "fa-moon"
-        );
+                icon.classList.remove(
+                    "fa-moon"
+                );
 
-      }
 
-    }
-  );
+                icon.classList.add(
+                    "fa-sun"
+                );
+
+            } else {
+
+                icon.classList.remove(
+                    "fa-sun"
+                );
+
+
+                icon.classList.add(
+                    "fa-moon"
+                );
+
+            }
+
+        }
+    );
 
 }
 
@@ -125,124 +167,118 @@ if (themeToggle) {
 ========================= */
 
 const navbar =
-  document.querySelector(".navbar");
+    document.querySelector(
+        ".navbar"
+    );
 
 
-window.addEventListener(
-  "scroll",
-  () => {
+if (navbar) {
 
-    if (window.scrollY > 50) {
+    window.addEventListener(
+        "scroll",
+        () => {
 
-      navbar.style.boxShadow =
-        "0 10px 40px rgba(0,0,0,0.15)";
+            if (
+                window.scrollY > 50
+            ) {
 
-    } else {
+                navbar.style.boxShadow =
+                    "0 10px 40px rgba(0,0,0,0.15)";
 
-      navbar.style.boxShadow =
-        "none";
+            } else {
 
-    }
+                navbar.style.boxShadow =
+                    "none";
 
-  }
-);
+            }
+
+        }
+    );
+
+}
 
 
 /* =========================
    SCROLL ANIMATION
 ========================= */
 
-const observer =
-  new IntersectionObserver(
+const animatedElements =
+    document.querySelectorAll(
+        ".occasion-card, .step, .price-card, .relationship-item"
+    );
 
-    (entries) => {
-
-      entries.forEach(entry => {
-
-        if (
-          entry.isIntersecting
-        ) {
-
-          entry.target.style.opacity =
-            "1";
-
-          entry.target.style.transform =
-            "translateY(0)";
-
-        }
-
-      });
-
-    },
-
-    {
-      threshold: 0.1
-    }
-
-  );
-
-
-document.querySelectorAll(
-  ".occasion-card, .step, .price-card, .relationship-item"
-).forEach(element => {
-
-  element.style.opacity = "0";
-
-  element.style.transform =
-    "translateY(30px)";
-
-  element.style.transition =
-    "0.6s ease";
-
-  observer.observe(element);
-
-});
-/* =========================
-   CELEBRATEVERSE WEB APP
-========================= */
 
 if (
-    "serviceWorker"
-    in navigator
+    "IntersectionObserver" in window &&
+    animatedElements.length > 0
 ) {
 
-    window.addEventListener(
-        "load",
-        () => {
+    const observer =
+        new IntersectionObserver(
 
-            navigator.serviceWorker
-                .register(
-                    "./service-worker.js"
-                )
+            entries => {
 
-                .then(
-                    registration => {
+                entries.forEach(
+                    entry => {
 
-                        console.log(
-                            "CelebrateVerse App Ready:",
-                            registration
-                        );
+                        if (
+                            entry.isIntersecting
+                        ) {
 
-                    }
-                )
+                            entry.target.style.opacity =
+                                "1";
 
-                .catch(
-                    error => {
 
-                        console.error(
-                            "Service Worker Error:",
-                            error
-                        );
+                            entry.target.style.transform =
+                                "translateY(0)";
+
+
+                            observer.unobserve(
+                                entry.target
+                            );
+
+                        }
 
                     }
                 );
+
+            },
+
+            {
+                threshold: 0.1
+            }
+
+        );
+
+
+    animatedElements.forEach(
+        element => {
+
+            element.style.opacity =
+                "0";
+
+
+            element.style.transform =
+                "translateY(30px)";
+
+
+            element.style.transition =
+                "opacity 0.6s ease, transform 0.6s ease";
+
+
+            observer.observe(
+                element
+            );
 
         }
     );
 
 }
+
+
 /* =========================
-   PWA SERVICE WORKER
+   CELEBRATEVERSE PWA
+   SERVICE WORKER
 ========================= */
 
 if (
@@ -251,36 +287,220 @@ if (
 
     window.addEventListener(
         "load",
-        () => {
+        async () => {
 
-            navigator.serviceWorker
-                .register(
-                    "sw.js"
-                )
+            try {
 
-                .then(
-                    registration => {
+                const registration =
+                    await navigator.serviceWorker.register(
+                        "./sw.js"
+                    );
 
-                        console.log(
-                            "CelebrateVerse PWA Ready:",
-                            registration
-                        );
 
-                    }
-                )
-
-                .catch(
-                    error => {
-
-                        console.error(
-                            "Service Worker Error:",
-                            error
-                        );
-
-                    }
+                console.log(
+                    "CelebrateVerse Web App Ready:",
+                    registration
                 );
 
+
+            } catch (error) {
+
+                console.error(
+                    "CelebrateVerse Service Worker Error:",
+                    error
+                );
+
+            }
+
         }
+    );
+
+}
+
+
+/* =========================
+   PWA INSTALL SYSTEM
+========================= */
+
+let deferredInstallPrompt =
+    null;
+
+
+window.addEventListener(
+    "beforeinstallprompt",
+    event => {
+
+        event.preventDefault();
+
+
+        deferredInstallPrompt =
+            event;
+
+
+        console.log(
+            "CelebrateVerse can now be installed."
+        );
+
+
+        showInstallButton();
+
+    }
+);
+
+
+/* =========================
+   SHOW INSTALL BUTTON
+========================= */
+
+function showInstallButton() {
+
+    const installButton =
+        document.getElementById(
+            "installAppBtn"
+        );
+
+
+    if (!installButton) return;
+
+
+    installButton.style.display =
+        "inline-flex";
+
+}
+
+
+/* =========================
+   INSTALL BUTTON CLICK
+========================= */
+
+document.addEventListener(
+    "click",
+    async event => {
+
+        const installButton =
+            event.target.closest(
+                "#installAppBtn"
+            );
+
+
+        if (!installButton) return;
+
+
+        /* =========================
+           ANDROID / CHROME INSTALL
+        ========================= */
+
+        if (
+            deferredInstallPrompt
+        ) {
+
+            deferredInstallPrompt.prompt();
+
+
+            const choice =
+                await deferredInstallPrompt.userChoice;
+
+
+            console.log(
+                "Install choice:",
+                choice.outcome
+            );
+
+
+            deferredInstallPrompt =
+                null;
+
+
+            installButton.style.display =
+                "none";
+
+
+            return;
+
+        }
+
+
+        /* =========================
+           iPHONE / SAFARI MESSAGE
+        ========================= */
+
+        const isIOS =
+            /iphone|ipad|ipod/i.test(
+                navigator.userAgent
+            );
+
+
+        if (isIOS) {
+
+            alert(
+                "To install CelebrateVerse:\n\n" +
+                "1. Tap the Share button ⎋\n\n" +
+                "2. Scroll down\n\n" +
+                "3. Tap 'Add to Home Screen'\n\n" +
+                "4. Tap Add"
+            );
+
+        } else {
+
+            alert(
+                "Install is not available yet. Please open CelebrateVerse in a supported browser such as Chrome or Safari."
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================
+   APP INSTALLED
+========================= */
+
+window.addEventListener(
+    "appinstalled",
+    () => {
+
+        console.log(
+            "CelebrateVerse installed successfully."
+        );
+
+
+        deferredInstallPrompt =
+            null;
+
+
+        const installButton =
+            document.getElementById(
+                "installAppBtn"
+            );
+
+
+        if (installButton) {
+
+            installButton.style.display =
+                "none";
+
+        }
+
+    }
+);
+
+
+/* =========================
+   PWA STANDALONE MODE
+========================= */
+
+const isStandalone =
+    window.matchMedia(
+        "(display-mode: standalone)"
+    ).matches ||
+    window.navigator.standalone === true;
+
+
+if (isStandalone) {
+
+    document.body.classList.add(
+        "app-mode"
     );
 
 }
