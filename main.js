@@ -1234,3 +1234,210 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 });
+/* ==========================================
+   PHASE THREE - ACTIVE NAVIGATION SYSTEM
+========================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const navLinks =
+        document.querySelectorAll(
+            ".nav-links a"
+        );
+
+
+    const mobileNavLinks =
+        document.querySelectorAll(
+            ".mobile-menu a"
+        );
+
+
+    const sections =
+        document.querySelectorAll(
+            "main section[id]"
+        );
+
+
+    /* ==========================================
+       ACTIVE SECTION DETECTION
+    ========================================== */
+
+    function updateActiveNavigation() {
+
+        let currentSection =
+            "home";
+
+
+        const scrollPosition =
+            window.scrollY +
+            window.innerHeight * 0.35;
+
+
+        sections.forEach(
+            section => {
+
+                const sectionTop =
+                    section.offsetTop;
+
+
+                const sectionHeight =
+                    section.offsetHeight;
+
+
+                if (
+                    scrollPosition >=
+                    sectionTop
+                    &&
+                    scrollPosition <
+                    sectionTop +
+                    sectionHeight
+                ) {
+
+                    currentSection =
+                        section.id;
+
+                }
+
+            }
+        );
+
+
+        /* Desktop Navigation */
+
+        navLinks.forEach(
+            link => {
+
+                const target =
+                    link.getAttribute("href");
+
+
+                link.classList.toggle(
+
+                    "active",
+
+                    target ===
+                    `#${currentSection}`
+
+                );
+
+            }
+        );
+
+
+        /* Mobile Navigation */
+
+        mobileNavLinks.forEach(
+            link => {
+
+                const target =
+                    link.getAttribute("href");
+
+
+                link.classList.toggle(
+
+                    "active",
+
+                    target ===
+                    `#${currentSection}`
+
+                );
+
+            }
+        );
+
+    }
+
+
+    window.addEventListener(
+        "scroll",
+        updateActiveNavigation,
+        {
+            passive: true
+        }
+    );
+
+
+    window.addEventListener(
+        "resize",
+        updateActiveNavigation
+    );
+
+
+    updateActiveNavigation();
+
+
+    /* ==========================================
+       SMOOTH NAVIGATION
+    ========================================== */
+
+    document
+        .querySelectorAll(
+            'a[href^="#"]'
+        )
+        .forEach(
+            link => {
+
+                link.addEventListener(
+                    "click",
+                    event => {
+
+                        const targetId =
+                            link.getAttribute(
+                                "href"
+                            );
+
+
+                        const target =
+                            document.querySelector(
+                                targetId
+                            );
+
+
+                        if (!target) {
+
+                            return;
+
+                        }
+
+
+                        event.preventDefault();
+
+
+                        const navbar =
+                            document.querySelector(
+                                ".navbar"
+                            );
+
+
+                        const navbarHeight =
+                            navbar
+                                ? navbar.offsetHeight
+                                : 0;
+
+
+                        const targetPosition =
+                            target.getBoundingClientRect()
+                                .top +
+                            window.pageYOffset -
+                            navbarHeight -
+                            12;
+
+
+                        window.scrollTo({
+
+                            top:
+                                targetPosition,
+
+                            behavior:
+                                "smooth"
+
+                        });
+
+
+                    }
+                );
+
+            }
+        );
+
+});
