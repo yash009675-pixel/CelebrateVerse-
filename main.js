@@ -853,3 +853,7 @@ function showToast(
     );
 
 }
+showToast(
+    "Welcome to CelebrateVerse! ✨",
+    "celebration"
+);
