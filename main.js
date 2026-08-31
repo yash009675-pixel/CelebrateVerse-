@@ -241,3 +241,46 @@ if (
     );
 
 }
+/* =========================
+   PWA SERVICE WORKER
+========================= */
+
+if (
+    "serviceWorker" in navigator
+) {
+
+    window.addEventListener(
+        "load",
+        () => {
+
+            navigator.serviceWorker
+                .register(
+                    "sw.js"
+                )
+
+                .then(
+                    registration => {
+
+                        console.log(
+                            "CelebrateVerse PWA Ready:",
+                            registration
+                        );
+
+                    }
+                )
+
+                .catch(
+                    error => {
+
+                        console.error(
+                            "Service Worker Error:",
+                            error
+                        );
+
+                    }
+                );
+
+        }
+    );
+
+}
