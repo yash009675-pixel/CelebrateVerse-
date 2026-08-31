@@ -197,3 +197,47 @@ document.querySelectorAll(
   observer.observe(element);
 
 });
+/* =========================
+   CELEBRATEVERSE WEB APP
+========================= */
+
+if (
+    "serviceWorker"
+    in navigator
+) {
+
+    window.addEventListener(
+        "load",
+        () => {
+
+            navigator.serviceWorker
+                .register(
+                    "./service-worker.js"
+                )
+
+                .then(
+                    registration => {
+
+                        console.log(
+                            "CelebrateVerse App Ready:",
+                            registration
+                        );
+
+                    }
+                )
+
+                .catch(
+                    error => {
+
+                        console.error(
+                            "Service Worker Error:",
+                            error
+                        );
+
+                    }
+                );
+
+        }
+    );
+
+}
