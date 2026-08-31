@@ -1,64 +1,102 @@
-const CACHE_NAME = "celebrateverse-app-v5";
+/* ==========================================
+   CELEBRATEVERSE SERVICE WORKER
+   VERSION 6 - CLEAN UPDATE SYSTEM
+========================================== */
 
-const APP_SHELL = [
-  "./",
-  "./index.html",
-  "./customize.html",
-  "./payment.html",
-  "./offline.html",
-  "./style.css",
-  "./main.js",
-  "./customize.js",
-  "./payment.js",
-  "./supabase.js",
-  "./manifest.json",
-  "./icon-192.png",
-  "./icon-512.png"
-];
+const CACHE_NAME =
+    "celebrateverse-v6";
 
-self.addEventListener("install", event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
-  );
-});
 
-self.addEventListener("activate", event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)))
-    ).then(() => self.clients.claim())
-  );
-});
+/* ==========================================
+   INSTALL
+========================================== */
 
-self.addEventListener("fetch", event => {
-  if (event.request.method !== "GET") return;
+self.addEventListener(
+    "install",
+    event => {
 
-  const request = event.request;
+        self.skipWaiting();
 
-  event.respondWith(
-    fetch(request)
-      .then(response => {
-        if (response && response.status === 200 && response.type === "basic") {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+    }
+);
+
+
+/* ==========================================
+   ACTIVATE
+   DELETE ALL OLD CACHES
+========================================== */
+
+self.addEventListener(
+    "activate",
+    event => {
+
+        event.waitUntil(
+
+            caches.keys()
+                .then(keys => {
+
+                    return Promise.all(
+
+                        keys.map(
+                            key =>
+                                caches.delete(
+                                    key
+                                )
+                        )
+
+                    );
+
+                })
+                .then(() => {
+
+                    return self.clients.claim();
+
+                })
+
+        );
+
+    }
+);
+
+
+/* ==========================================
+   FETCH
+   ALWAYS USE LATEST WEBSITE FILES
+========================================== */
+
+self.addEventListener(
+    "fetch",
+    event => {
+
+        /*
+         Don't intercept requests.
+         Browser will always load the latest
+         version from GitHub Pages.
+        */
+
+        return;
+
+    }
+);
+
+
+/* ==========================================
+   FORCE UPDATE MESSAGE
+========================================== */
+
+self.addEventListener(
+    "message",
+    event => {
+
+        if (
+            event.data &&
+            event.data.type ===
+            "SKIP_WAITING"
+        ) {
+
+            self.skipWaiting();
+
         }
-        return response;
-      })
-      .catch(async () => {
-        const cached = await caches.match(request);
-        if (cached) return cached;
 
-        if (request.mode === "navigate") {
-          return caches.match("./offline.html");
-        }
-      })
-  );
-});
-
-self.addEventListener("message", event => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
-    self.skipWaiting();
-  }
-});
+    }
+);
