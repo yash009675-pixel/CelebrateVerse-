@@ -1441,3 +1441,191 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 });
+/* ==========================================
+   PHASE THREE - INTERACTIVE CURSOR GLOW
+   + PREMIUM CARD TILT EFFECT
+========================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* ------------------------------------------
+       CURSOR GLOW
+    ------------------------------------------ */
+
+    const supportsHover =
+        window.matchMedia(
+            "(hover: hover) and (pointer: fine)"
+        ).matches;
+
+
+    if (supportsHover) {
+
+        const cursorGlow =
+            document.createElement("div");
+
+
+        cursorGlow.id =
+            "cvCursorGlow";
+
+
+        document.body.appendChild(
+            cursorGlow
+        );
+
+
+        let mouseX = 0;
+        let mouseY = 0;
+
+        let glowX = 0;
+        let glowY = 0;
+
+
+        window.addEventListener(
+            "mousemove",
+            event => {
+
+                mouseX =
+                    event.clientX;
+
+                mouseY =
+                    event.clientY;
+
+
+                cursorGlow.classList.add(
+                    "active"
+                );
+
+            }
+        );
+
+
+        function animateCursorGlow() {
+
+            glowX +=
+                (mouseX - glowX) *
+                0.12;
+
+
+            glowY +=
+                (mouseY - glowY) *
+                0.12;
+
+
+            cursorGlow.style.transform =
+                `translate3d(
+                    ${glowX}px,
+                    ${glowY}px,
+                    0
+                ) translate(
+                    -50%,
+                    -50%
+                )`;
+
+
+            requestAnimationFrame(
+                animateCursorGlow
+            );
+
+        }
+
+
+        animateCursorGlow();
+
+
+        /* ------------------------------------------
+           HIDE GLOW WHEN MOUSE LEAVES WINDOW
+        ------------------------------------------ */
+
+        document.addEventListener(
+            "mouseleave",
+            () => {
+
+                cursorGlow.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+        /* ------------------------------------------
+           PREMIUM CARD TILT
+        ------------------------------------------ */
+
+        const tiltCards =
+            document.querySelectorAll(
+                ".occasion-card, .price-card, .relationship-item, .step"
+            );
+
+
+        tiltCards.forEach(
+            card => {
+
+                card.addEventListener(
+                    "mousemove",
+                    event => {
+
+                        const rect =
+                            card.getBoundingClientRect();
+
+
+                        const x =
+                            event.clientX -
+                            rect.left;
+
+
+                        const y =
+                            event.clientY -
+                            rect.top;
+
+
+                        const centerX =
+                            rect.width / 2;
+
+
+                        const centerY =
+                            rect.height / 2;
+
+
+                        const rotateY =
+                            (
+                                (x - centerX) /
+                                centerX
+                            ) * 4;
+
+
+                        const rotateX =
+                            (
+                                (centerY - y) /
+                                centerY
+                            ) * 4;
+
+
+                        card.style.transform =
+                            `
+                            perspective(900px)
+                            rotateX(${rotateX}deg)
+                            rotateY(${rotateY}deg)
+                            translateY(-6px)
+                            `;
+
+                    }
+                );
+
+
+                card.addEventListener(
+                    "mouseleave",
+                    () => {
+
+                        card.style.transform =
+                            "";
+
+                    }
+                );
+
+            }
+        );
+
+    }
+
+});
