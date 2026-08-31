@@ -1,3 +1,5 @@
+alert("NEW MAIN.JS IS LOADING SUCCESSFULLY");
+
 /* ==========================================
    CELEBRATEVERSE - MAIN JAVASCRIPT
    CLEAN WEB APP / PWA VERSION
