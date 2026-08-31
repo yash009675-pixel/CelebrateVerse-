@@ -1115,3 +1115,122 @@ function showCelebrationSuccess(
     }
 
 }
+/* ==========================================
+   PHASE THREE - SCROLL PROGRESS SYSTEM
+========================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* Create scroll progress bar */
+
+    const progressBar =
+        document.createElement("div");
+
+
+    progressBar.id =
+        "cvScrollProgress";
+
+
+    document.body.appendChild(
+        progressBar
+    );
+
+
+    /* Create back to top button */
+
+    const backToTop =
+        document.createElement("button");
+
+
+    backToTop.id =
+        "cvBackToTop";
+
+
+    backToTop.setAttribute(
+        "aria-label",
+        "Back to top"
+    );
+
+
+    backToTop.innerHTML = `
+        <i class="fa-solid fa-arrow-up"></i>
+    `;
+
+
+    document.body.appendChild(
+        backToTop
+    );
+
+
+    /* Update scroll progress */
+
+    function updateScrollProgress() {
+
+        const scrollTop =
+            window.scrollY;
+
+
+        const documentHeight =
+            document.documentElement.scrollHeight -
+            window.innerHeight;
+
+
+        const progress =
+            documentHeight > 0
+                ? (scrollTop / documentHeight) * 100
+                : 0;
+
+
+        progressBar.style.width =
+            `${progress}%`;
+
+
+        /* Show back button */
+
+        if (scrollTop > 500) {
+
+            backToTop.classList.add(
+                "show"
+            );
+
+        } else {
+
+            backToTop.classList.remove(
+                "show"
+            );
+
+        }
+
+    }
+
+
+    window.addEventListener(
+        "scroll",
+        updateScrollProgress,
+        {
+            passive: true
+        }
+    );
+
+
+    updateScrollProgress();
+
+
+    /* Back to top */
+
+    backToTop.addEventListener(
+        "click",
+        () => {
+
+            window.scrollTo({
+
+                top: 0,
+
+                behavior: "smooth"
+
+            });
+
+        }
+    );
+
+});
