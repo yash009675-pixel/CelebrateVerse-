@@ -708,3 +708,148 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 });
+/* ==========================================
+   PHASE TWO - PREMIUM TOAST NOTIFICATIONS
+========================================== */
+
+function showToast(
+    message,
+    type = "success",
+    duration = 3500
+) {
+
+    let toastContainer =
+        document.getElementById(
+            "cvToastContainer"
+        );
+
+
+    if (!toastContainer) {
+
+        toastContainer =
+            document.createElement(
+                "div"
+            );
+
+
+        toastContainer.id =
+            "cvToastContainer";
+
+
+        toastContainer.className =
+            "cv-toast-container";
+
+
+        document.body.appendChild(
+            toastContainer
+        );
+
+    }
+
+
+    const icons = {
+
+        success:
+            '<i class="fa-solid fa-circle-check"></i>',
+
+        error:
+            '<i class="fa-solid fa-circle-xmark"></i>',
+
+        info:
+            '<i class="fa-solid fa-circle-info"></i>',
+
+        celebration:
+            '<i class="fa-solid fa-sparkles"></i>'
+
+    };
+
+
+    const toast =
+        document.createElement(
+            "div"
+        );
+
+
+    toast.className =
+        `cv-toast ${type}`;
+
+
+    toast.innerHTML = `
+
+        <div class="cv-toast-icon">
+
+            ${icons[type] || icons.info}
+
+        </div>
+
+
+        <div class="cv-toast-message">
+
+            ${message}
+
+        </div>
+
+
+        <button
+            class="cv-toast-close"
+            aria-label="Close notification">
+
+            ×
+
+        </button>
+
+    `;
+
+
+    toastContainer.appendChild(
+        toast
+    );
+
+
+    requestAnimationFrame(
+        () => {
+
+            toast.classList.add(
+                "show"
+            );
+
+        }
+    );
+
+
+    const closeToast =
+        () => {
+
+            toast.classList.remove(
+                "show"
+            );
+
+
+            setTimeout(
+                () => {
+
+                    toast.remove();
+
+                },
+                350
+            );
+
+        };
+
+
+    toast
+        .querySelector(
+            ".cv-toast-close"
+        )
+        .addEventListener(
+            "click",
+            closeToast
+        );
+
+
+    setTimeout(
+        closeToast,
+        duration
+    );
+
+}
