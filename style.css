@@ -4830,3 +4830,94 @@ body.light-mode .package-option h3 {
     }
 
 }
+/* ==========================================
+   PHASE TWO - CELEBRATION CONFETTI SYSTEM
+========================================== */
+
+.cv-confetti-container {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 999998;
+
+    pointer-events: none;
+
+    overflow: hidden;
+
+}
+
+
+.cv-confetti-particle {
+
+    position: absolute;
+
+    top: -60px;
+
+    animation:
+        cvConfettiFall
+        linear
+        forwards;
+
+    will-change:
+        transform,
+        opacity;
+
+}
+
+
+@keyframes cvConfettiFall {
+
+    0% {
+
+        transform:
+            translateY(-60px)
+            rotate(0deg);
+
+        opacity: 0;
+
+    }
+
+
+    10% {
+
+        opacity: 1;
+
+    }
+
+
+    100% {
+
+        transform:
+            translateY(
+                calc(
+                    100vh + 120px
+                )
+            )
+            rotate(720deg);
+
+        opacity: 0;
+
+    }
+
+}
+
+
+/* Reduce animation if user prefers it */
+
+@media (
+    prefers-reduced-motion: reduce
+) {
+
+    .cv-confetti-particle {
+
+        animation:
+            none;
+
+        display:
+            none;
+
+    }
+
+}
