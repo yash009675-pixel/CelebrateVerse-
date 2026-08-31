@@ -4436,3 +4436,96 @@ body.light-mode .package-option h3 {
     }
 
 }
+/* ==========================================
+   PHASE TWO - PREMIUM SCROLL ANIMATIONS
+========================================== */
+
+.reveal {
+
+    opacity: 0;
+
+    transform:
+        translateY(40px);
+
+    transition:
+        opacity 0.8s ease,
+        transform 0.8s ease;
+
+    will-change:
+        opacity,
+        transform;
+
+}
+
+
+.reveal.reveal-active {
+
+    opacity: 1;
+
+    transform:
+        translateY(0);
+
+}
+
+
+/* Cards smooth hover */
+
+.occasion-card,
+.price-card,
+.relationship-item,
+.step {
+
+    transition:
+        transform 0.35s ease,
+        box-shadow 0.35s ease,
+        border-color 0.35s ease;
+
+}
+
+
+.occasion-card:hover,
+.price-card:hover,
+.relationship-item:hover,
+.step:hover {
+
+    transform:
+        translateY(-8px);
+
+}
+
+
+/* Premium stagger effect */
+
+.occasion-card.reveal {
+
+    transform:
+        translateY(50px)
+        scale(0.97);
+
+}
+
+
+.occasion-card.reveal-active {
+
+    transform:
+        translateY(0)
+        scale(1);
+
+}
+
+
+/* Disable heavy animation if user prefers reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .reveal {
+
+        opacity: 1 !important;
+
+        transform: none !important;
+
+        transition: none !important;
+
+    }
+
+}
