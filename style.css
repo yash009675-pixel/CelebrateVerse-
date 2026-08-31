@@ -5327,3 +5327,351 @@ body.light-mode .package-option h3 {
     }
 
 }
+/* ==========================================
+   PHASE TWO - LIVE CELEBRATION PREVIEW
+========================================== */
+
+.cv-live-preview-section {
+
+    max-width: 850px;
+
+    margin:
+        80px auto 0;
+
+}
+
+
+.cv-preview-header {
+
+    text-align: center;
+
+    margin-bottom: 30px;
+
+}
+
+
+.cv-preview-header span {
+
+    color:
+        var(--pink);
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+}
+
+
+.cv-preview-header h2 {
+
+    margin-top: 12px;
+
+    font-family:
+        "Playfair Display",
+        serif;
+
+    font-size:
+        clamp(
+            28px,
+            5vw,
+            42px
+        );
+
+}
+
+
+.cv-preview-header em {
+
+    font-style: normal;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--purple),
+            var(--pink)
+        );
+
+    -webkit-background-clip:
+        text;
+
+    color:
+        transparent;
+
+}
+
+
+.cv-live-preview {
+
+    padding: 12px;
+
+    border-radius: 30px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(139,92,246,.3),
+            rgba(236,72,153,.25)
+        );
+
+}
+
+
+.cv-preview-browser {
+
+    overflow: hidden;
+
+    border-radius: 24px;
+
+    background:
+        #0c0c18;
+
+    border:
+        1px solid
+        rgba(255,255,255,.12);
+
+    box-shadow:
+        0 25px 70px
+        rgba(0,0,0,.35);
+
+}
+
+
+.cv-browser-bar {
+
+    display: flex;
+
+    gap: 7px;
+
+    padding: 15px 18px;
+
+    background:
+        rgba(255,255,255,.04);
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.08);
+
+}
+
+
+.cv-browser-bar span {
+
+    width: 10px;
+
+    height: 10px;
+
+    border-radius: 50%;
+
+    background:
+        var(--pink);
+
+}
+
+
+.cv-browser-bar span:nth-child(2) {
+
+    background:
+        var(--purple);
+
+}
+
+
+.cv-browser-bar span:nth-child(3) {
+
+    background:
+        var(--blue);
+
+}
+
+
+.cv-preview-content {
+
+    min-height: 420px;
+
+    padding:
+        60px 30px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    color: white;
+
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(139,92,246,.3),
+            transparent 45%
+        ),
+        linear-gradient(
+            145deg,
+            #111122,
+            #090912
+        );
+
+    transition:
+        0.4s ease;
+
+}
+
+
+.cv-preview-icon {
+
+    width: 90px;
+
+    height: 90px;
+
+    display: grid;
+
+    place-items: center;
+
+    border-radius: 50%;
+
+    font-size: 40px;
+
+    margin-bottom: 25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(236,72,153,.25),
+            rgba(139,92,246,.25)
+        );
+
+    animation:
+        cvPreviewFloat
+        3s ease-in-out infinite;
+
+}
+
+
+@keyframes cvPreviewFloat {
+
+    0%,
+    100% {
+
+        transform:
+            translateY(0);
+
+    }
+
+    50% {
+
+        transform:
+            translateY(-10px);
+
+    }
+
+}
+
+
+.cv-preview-small {
+
+    color:
+        #f9a8d4;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+}
+
+
+.cv-preview-content h1 {
+
+    margin:
+        16px 0;
+
+    font-family:
+        "Playfair Display",
+        serif;
+
+    font-size:
+        clamp(
+            35px,
+            6vw,
+            58px
+        );
+
+}
+
+
+.cv-preview-message {
+
+    max-width: 500px;
+
+    color:
+        rgba(255,255,255,.7);
+
+    line-height: 1.7;
+
+    font-size: 16px;
+
+}
+
+
+.cv-preview-divider {
+
+    margin:
+        30px 0;
+
+    color:
+        var(--pink);
+
+}
+
+
+.cv-preview-from {
+
+    color:
+        rgba(255,255,255,.6);
+
+}
+
+
+.cv-preview-from strong {
+
+    color: white;
+
+    margin-left: 5px;
+
+}
+
+
+/* MOBILE */
+
+@media (
+    max-width: 600px
+) {
+
+    .cv-preview-content {
+
+        min-height: 360px;
+
+        padding:
+            45px 20px;
+
+    }
+
+
+    .cv-preview-icon {
+
+        width: 75px;
+
+        height: 75px;
+
+        font-size: 32px;
+
+    }
+
+}
