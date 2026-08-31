@@ -1,149 +1,64 @@
-const CACHE_NAME = "celebrateverse-v2";
+const CACHE_NAME = "celebrateverse-app-v5";
 
-
-const ASSETS = [
-
-    "./",
-
-    "./index.html",
-
-    "./customize.html",
-
-    "./payment.html",
-
-    "./style.css",
-
-    "./main.js",
-
-    "./customize.js",
-
-    "./payment.js",
-
-    "./supabase.js",
-
-    "./manifest.json",
-
-    "./icon-192.png",
-
-    "./icon-512.png"
-
+const APP_SHELL = [
+  "./",
+  "./index.html",
+  "./customize.html",
+  "./payment.html",
+  "./offline.html",
+  "./style.css",
+  "./main.js",
+  "./customize.js",
+  "./payment.js",
+  "./supabase.js",
+  "./manifest.json",
+  "./icon-192.png",
+  "./icon-512.png"
 ];
 
+self.addEventListener("install", event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(APP_SHELL))
+      .then(() => self.skipWaiting())
+  );
+});
 
-/* =========================
-   INSTALL SERVICE WORKER
-========================= */
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)))
+    ).then(() => self.clients.claim())
+  );
+});
 
-self.addEventListener(
-    "install",
-    event => {
+self.addEventListener("fetch", event => {
+  if (event.request.method !== "GET") return;
 
-        event.waitUntil(
+  const request = event.request;
 
-            caches.open(
-                CACHE_NAME
-            )
+  event.respondWith(
+    fetch(request)
+      .then(response => {
+        if (response && response.status === 200 && response.type === "basic") {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+        }
+        return response;
+      })
+      .catch(async () => {
+        const cached = await caches.match(request);
+        if (cached) return cached;
 
-            .then(
-                cache => {
+        if (request.mode === "navigate") {
+          return caches.match("./offline.html");
+        }
+      })
+  );
+});
 
-                    return cache.addAll(
-                        ASSETS
-                    );
-
-                }
-            )
-
-        );
-
-
-        self.skipWaiting();
-
-    }
-);
-
-
-/* =========================
-   ACTIVATE SERVICE WORKER
-========================= */
-
-self.addEventListener(
-    "activate",
-    event => {
-
-        event.waitUntil(
-
-            caches.keys()
-
-            .then(
-                keys => {
-
-                    return Promise.all(
-
-                        keys.map(
-                            key => {
-
-                                if (
-                                    key !==
-                                    CACHE_NAME
-                                ) {
-
-                                    return caches.delete(
-                                        key
-                                    );
-
-                                }
-
-                            }
-                        )
-
-                    );
-
-                }
-            )
-
-        );
-
-
-        self.clients.claim();
-
-    }
-);
-
-
-/* =========================
-   FETCH FILES
-========================= */
-
-self.addEventListener(
-    "fetch",
-    event => {
-
-        event.respondWith(
-
-            fetch(
-                event.request
-            )
-
-            .then(
-                response => {
-
-                    return response;
-
-                }
-            )
-
-            .catch(
-                () => {
-
-                    return caches.match(
-                        event.request
-                    );
-
-                }
-            )
-
-        );
-
-    }
-);
+self.addEventListener("message", event => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});

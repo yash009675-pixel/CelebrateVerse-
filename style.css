@@ -3281,3 +3281,96 @@ body.light-mode .package-option h3 {
   justify-content: center;
   gap: 10px;
 }
+
+
+/* ==========================================
+   CELEBRATEVERSE COMPLETE WEB APP UI
+========================================== */
+
+.connection-status{
+    position:fixed;
+    left:50%;
+    bottom:20px;
+    transform:translate(-50%,120px);
+    z-index:99999;
+    padding:12px 18px;
+    border-radius:999px;
+    color:#fff;
+    background:#b91c1c;
+    box-shadow:0 10px 30px rgba(0,0,0,.22);
+    transition:transform .3s ease;
+    font-family:"DM Sans",sans-serif;
+    font-weight:700;
+}
+.connection-status.show{transform:translate(-50%,0)}
+.connection-status.online{background:#15803d}
+
+.cv-app-modal{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    opacity:0;
+    visibility:hidden;
+    transition:.25s ease;
+    background:rgba(3,5,15,.72);
+    backdrop-filter:blur(8px);
+    z-index:100000;
+}
+.cv-app-modal.show{
+    opacity:1;
+    visibility:visible;
+}
+.cv-app-modal-card{
+    width:min(100%,430px);
+    position:relative;
+    padding:32px 26px;
+    text-align:center;
+    border-radius:26px;
+    color:#fff;
+    background:#12172b;
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:0 30px 80px rgba(0,0,0,.45);
+}
+.cv-app-modal-icon{font-size:50px;margin-bottom:10px}
+.cv-app-modal-card h3{
+    margin:0 0 12px;
+    font-family:"Playfair Display",serif;
+    font-size:28px;
+}
+.cv-app-modal-card p{
+    margin:0;
+    white-space:pre-line;
+    line-height:1.65;
+    color:rgba(255,255,255,.8);
+}
+.cv-app-modal-close{
+    position:absolute;
+    top:12px;
+    right:14px;
+    width:36px;
+    height:36px;
+    border:0;
+    border-radius:50%;
+    cursor:pointer;
+    color:#fff;
+    background:rgba(255,255,255,.1);
+    font-size:25px;
+}
+.cv-update-button{
+    position:fixed;
+    right:18px;
+    bottom:18px;
+    z-index:99998;
+    border:0;
+    border-radius:14px;
+    padding:13px 17px;
+    color:#fff;
+    cursor:pointer;
+    font-family:"DM Sans",sans-serif;
+    font-weight:700;
+    background:#7c3aed;
+    box-shadow:0 12px 30px rgba(0,0,0,.28);
+}
