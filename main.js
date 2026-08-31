@@ -951,3 +951,167 @@ function launchCelebration() {
     );
 
 }
+/* ==========================================
+   PHASE TWO - CELEBRATION SUCCESS SCREEN
+========================================== */
+
+function showCelebrationSuccess(
+    title = "Your Celebration Is Ready! 🎉",
+    message = "Your special celebration has been created successfully."
+) {
+
+    let successScreen =
+        document.getElementById(
+            "cvSuccessScreen"
+        );
+
+
+    if (!successScreen) {
+
+        successScreen =
+            document.createElement(
+                "div"
+            );
+
+
+        successScreen.id =
+            "cvSuccessScreen";
+
+
+        successScreen.className =
+            "cv-success-screen";
+
+
+        successScreen.innerHTML = `
+
+            <div class="cv-success-card">
+
+                <div class="cv-success-glow glow-one"></div>
+
+                <div class="cv-success-glow glow-two"></div>
+
+
+                <div class="cv-success-icon">
+
+                    <i class="fa-solid fa-check"></i>
+
+                </div>
+
+
+                <span class="cv-success-label">
+
+                    CELEBRATION COMPLETE
+
+                </span>
+
+
+                <h2></h2>
+
+
+                <p></p>
+
+
+                <div class="cv-success-actions">
+
+                    <button
+                        class="cv-success-close">
+
+                        Continue
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        document.body.appendChild(
+            successScreen
+        );
+
+
+        successScreen
+            .querySelector(
+                ".cv-success-close"
+            )
+            .addEventListener(
+                "click",
+                () => {
+
+                    successScreen.classList.remove(
+                        "show"
+                    );
+
+                }
+            );
+
+
+        successScreen.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target ===
+                    successScreen
+                ) {
+
+                    successScreen.classList.remove(
+                        "show"
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    successScreen
+        .querySelector("h2")
+        .textContent =
+        title;
+
+
+    successScreen
+        .querySelector("p")
+        .textContent =
+        message;
+
+
+    successScreen.classList.add(
+        "show"
+    );
+
+
+    /* Launch confetti */
+
+    if (
+        typeof launchCelebration ===
+        "function"
+    ) {
+
+        launchCelebration();
+
+    }
+
+
+    /* Show toast */
+
+    if (
+        typeof showToast ===
+        "function"
+    ) {
+
+        showToast(
+            "Your celebration was successful! 🎉",
+            "celebration"
+        );
+
+    }
+
+}
