@@ -1,4 +1,4 @@
-const CACHE_NAME = "celebrateverse-v1";
+const CACHE_NAME = "celebrateverse-v2";
 
 
 const ASSETS = [
@@ -19,7 +19,13 @@ const ASSETS = [
 
     "./payment.js",
 
-    "./supabase.js"
+    "./supabase.js",
+
+    "./manifest.json",
+
+    "./icon-192.png",
+
+    "./icon-512.png"
 
 ];
 

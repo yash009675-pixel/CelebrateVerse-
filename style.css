@@ -3253,3 +3253,21 @@ body.light-mode .package-option h3 {
     }
 
 }
+
+
+/* CELEBRATEVERSE PWA INSTALL BUTTON - CLEAN OVERRIDE */
+.install-app-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.install-app-btn:disabled {
+    cursor: default;
+    opacity: 0.75;
+}
+
+.app-mode {
+    min-height: 100vh;
+}
