@@ -596,3 +596,215 @@ window.location.href =
     showStep(1);
 
 });
+/* ==========================================
+   PHASE TWO - AUTO SAVE CUSTOMIZATION DATA
+========================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const AUTO_SAVE_KEY =
+        "celebrateVerseCustomization";
+
+
+    const formFields =
+        document.querySelectorAll(
+            "input, textarea, select"
+        );
+
+
+    /* Restore previously saved values */
+
+    const savedData =
+        JSON.parse(
+            localStorage.getItem(
+                AUTO_SAVE_KEY
+            ) || "{}"
+        );
+
+
+    formFields.forEach(field => {
+
+        const fieldKey =
+            field.name ||
+            field.id;
+
+
+        if (
+            !fieldKey
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            savedData[fieldKey] !==
+            undefined
+        ) {
+
+            if (
+                field.type ===
+                "checkbox"
+            ) {
+
+                field.checked =
+                    savedData[fieldKey];
+
+            } else {
+
+                field.value =
+                    savedData[fieldKey];
+
+            }
+
+        }
+
+    });
+
+
+    /* Save all field changes */
+
+    function saveCustomization() {
+
+        const data = {};
+
+
+        formFields.forEach(field => {
+
+            const fieldKey =
+                field.name ||
+                field.id;
+
+
+            if (
+                !fieldKey
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                field.type ===
+                "file"
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                field.type ===
+                "checkbox"
+            ) {
+
+                data[fieldKey] =
+                    field.checked;
+
+            } else {
+
+                data[fieldKey] =
+                    field.value;
+
+            }
+
+        });
+
+
+        localStorage.setItem(
+            AUTO_SAVE_KEY,
+            JSON.stringify(data)
+        );
+
+    }
+
+
+    /* Listen for changes */
+
+    formFields.forEach(field => {
+
+        field.addEventListener(
+            "input",
+            saveCustomization
+        );
+
+
+        field.addEventListener(
+            "change",
+            saveCustomization
+        );
+
+    });
+
+
+    /* Optional success feedback */
+
+    let saveTimer;
+
+
+    formFields.forEach(field => {
+
+        field.addEventListener(
+            "input",
+            () => {
+
+                clearTimeout(
+                    saveTimer
+                );
+
+
+                saveTimer =
+                    setTimeout(
+                        () => {
+
+                            if (
+                                typeof showToast ===
+                                "function"
+                            ) {
+
+                                showToast(
+                                    "Changes saved automatically 💾",
+                                    "info",
+                                    1800
+                                );
+
+                            }
+
+                        },
+                        1200
+                    );
+
+            }
+        );
+
+    });
+
+
+    /* Make function available globally */
+
+    window.clearCustomizationData =
+        function () {
+
+            localStorage.removeItem(
+                AUTO_SAVE_KEY
+            );
+
+
+            if (
+                typeof showToast ===
+                "function"
+            ) {
+
+                showToast(
+                    "Saved customization cleared.",
+                    "info"
+                );
+
+            }
+
+        };
+
+});
