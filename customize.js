@@ -928,3 +928,262 @@ document.addEventListener(
 
     }
 );
+/* ==========================================
+   CELEBRATEVERSE LIVE PREVIEW SYSTEM
+========================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* Preview Elements */
+
+    const previewOccasion =
+        document.getElementById("previewOccasion");
+
+    const previewRelationship =
+        document.getElementById("previewRelationship");
+
+    const previewName =
+        document.getElementById("previewName");
+
+    const previewMessage =
+        document.getElementById("previewMessage");
+
+    const previewTheme =
+        document.getElementById("previewTheme");
+
+    const previewDate =
+        document.getElementById("previewDate");
+
+
+    /* ==========================================
+       OCCASION LIVE UPDATE
+    ========================================== */
+
+    document
+        .querySelectorAll(
+            ".occasion-selection .selection-card"
+        )
+        .forEach(card => {
+
+            card.addEventListener(
+                "click",
+                () => {
+
+                    const value =
+                        card.dataset.value;
+
+
+                    if (previewOccasion) {
+
+                        previewOccasion.textContent =
+                            value
+                                .charAt(0)
+                                .toUpperCase() +
+                            value.slice(1);
+
+                    }
+
+                }
+            );
+
+        });
+
+
+    /* ==========================================
+       RELATIONSHIP LIVE UPDATE
+    ========================================== */
+
+    document
+        .querySelectorAll(
+            ".relationship-selection .selection-card"
+        )
+        .forEach(card => {
+
+            card.addEventListener(
+                "click",
+                () => {
+
+                    const value =
+                        card.dataset.value;
+
+
+                    if (previewRelationship) {
+
+                        previewRelationship.textContent =
+                            value
+                                .replace("-", " ")
+                                .replace(
+                                    /\b\w/g,
+                                    letter =>
+                                        letter.toUpperCase()
+                                );
+
+                    }
+
+                }
+            );
+
+        });
+
+
+    /* ==========================================
+       NAME LIVE UPDATE
+    ========================================== */
+
+    const personNameInput =
+        document.getElementById(
+            "personName"
+        );
+
+
+    if (personNameInput) {
+
+        personNameInput.addEventListener(
+            "input",
+            () => {
+
+                if (previewName) {
+
+                    previewName.textContent =
+                        personNameInput.value ||
+                        "Someone Special";
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* ==========================================
+       MESSAGE LIVE UPDATE
+    ========================================== */
+
+    const messageInput =
+        document.getElementById(
+            "message"
+        );
+
+
+    if (messageInput) {
+
+        messageInput.addEventListener(
+            "input",
+            () => {
+
+                if (previewMessage) {
+
+                    previewMessage.textContent =
+                        messageInput.value ||
+                        "Your beautiful message will appear here...";
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* ==========================================
+       DATE LIVE UPDATE
+    ========================================== */
+
+    const specialDateInput =
+        document.getElementById(
+            "specialDate"
+        );
+
+
+    if (specialDateInput) {
+
+        specialDateInput.addEventListener(
+            "change",
+            () => {
+
+                if (
+                    specialDateInput.value &&
+                    previewDate
+                ) {
+
+                    const date =
+                        new Date(
+                            specialDateInput.value
+                        );
+
+
+                    previewDate.textContent =
+                        date.toLocaleDateString(
+                            "en-IN",
+                            {
+                                day:
+                                    "numeric",
+
+                                month:
+                                    "long",
+
+                                year:
+                                    "numeric"
+                            }
+                        );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* ==========================================
+       THEME LIVE UPDATE
+    ========================================== */
+
+    document
+        .querySelectorAll(
+            ".theme-card"
+        )
+        .forEach(card => {
+
+            card.addEventListener(
+                "click",
+                () => {
+
+                    const theme =
+                        card.dataset.value;
+
+
+                    if (previewTheme) {
+
+                        previewTheme.textContent =
+                            theme
+                                .charAt(0)
+                                .toUpperCase() +
+                            theme.slice(1);
+
+                    }
+
+
+                    const previewCard =
+                        document.querySelector(
+                            ".live-preview-card"
+                        );
+
+
+                    if (previewCard) {
+
+                        previewCard.className =
+                            "live-preview-card " +
+                            theme +
+                            "-preview";
+
+                    }
+
+                }
+            );
+
+        });
+
+
+});
