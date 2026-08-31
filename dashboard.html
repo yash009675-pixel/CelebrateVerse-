@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+  <title>Dashboard | CelebrateVerse</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"
+    rel="stylesheet">
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+  <div class="dashboard-page">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="dashboard-sidebar">
+
+      <a
+        href="index.html"
+        class="dashboard-logo">
+
+        Celebrate<span>Verse</span>
+
+      </a>
+
+
+      <nav class="dashboard-nav">
+
+        <button
+          class="dashboard-nav-item active"
+          data-tab="overview">
+
+          <i class="fa-solid fa-grid-2"></i>
+
+          Overview
+
+        </button>
+
+
+        <button
+          class="dashboard-nav-item"
+          data-tab="drafts">
+
+          <i class="fa-solid fa-pen"></i>
+
+          My Drafts
+
+        </button>
+
+
+        <button
+          class="dashboard-nav-item"
+          data-tab="orders">
+
+          <i class="fa-solid fa-box"></i>
+
+          Orders
+
+        </button>
+
+
+        <button
+          class="dashboard-nav-item"
+          data-tab="templates">
+
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+
+          Templates
+
+        </button>
+
+      </nav>
+
+
+      <button
+        id="logoutBtn"
+        class="logout-btn">
+
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+
+        Logout
+
+      </button>
+
+    </aside>
+
+
+
+    <!-- MAIN -->
+
+    <main class="dashboard-main">
+
+
+      <!-- HEADER -->
+
+      <header class="dashboard-header">
+
+        <div>
+
+          <p class="dashboard-small">
+            YOUR CELEBRATION UNIVERSE
+          </p>
+
+          <h1>
+            Hello,
+            <span id="userName">
+              Creator
+            </span> 👋
+          </h1>
+
+        </div>
+
+
+        <a
+          href="customize.html"
+          class="primary-btn">
+
+          <i class="fa-solid fa-plus"></i>
+
+          Create New
+
+        </a>
+
+      </header>
+
+
+
+      <!-- OVERVIEW -->
+
+      <section
+        class="dashboard-tab active"
+        id="overview">
+
+        <div class="dashboard-stats">
+
+          <div class="dashboard-stat-card">
+
+            <div class="stat-icon purple">
+
+              <i class="fa-solid fa-heart"></i>
+
+            </div>
+
+            <div>
+
+              <p>Total Celebrations</p>
+
+              <h2 id="totalCelebrations">
+                0
+              </h2>
+
+            </div>
+
+          </div>
+
+
+          <div class="dashboard-stat-card">
+
+            <div class="stat-icon pink">
+
+              <i class="fa-solid fa-pen"></i>
+
+            </div>
+
+            <div>
+
+              <p>Saved Drafts</p>
+
+              <h2 id="totalDrafts">
+                0
+              </h2>
+
+            </div>
+
+          </div>
+
+
+          <div class="dashboard-stat-card">
+
+            <div class="stat-icon blue">
+
+              <i class="fa-solid fa-box"></i>
+
+            </div>
+
+            <div>
+
+              <p>Orders</p>
+
+              <h2 id="totalOrders">
+                0
+              </h2>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="dashboard-section-title">
+
+          <div>
+
+            <h2>
+              Quick Start
+            </h2>
+
+            <p>
+              Create something unforgettable.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="quick-action-grid">
+
+          <a
+            href="customize.html?occasion=birthday"
+            class="quick-action">
+
+            <span>🎂</span>
+
+            <h3>Birthday</h3>
+
+            <p>
+              Create a birthday surprise.
+            </p>
+
+          </a>
+
+
+          <a
+            href="customize.html?occasion=anniversary"
+            class="quick-action">
+
+            <span>❤️</span>
+
+            <h3>Anniversary</h3>
+
+            <p>
+              Celebrate your journey.
+            </p>
+
+          </a>
+
+
+          <a
+            href="customize.html?occasion=surprise"
+            class="quick-action">
+
+            <span>🎁</span>
+
+            <h3>Surprise</h3>
+
+            <p>
+              Create something unexpected.
+            </p>
+
+          </a>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- DRAFTS -->
+
+      <section
+        class="dashboard-tab"
+        id="drafts">
+
+        <div class="dashboard-section-title">
+
+          <div>
+
+            <h2>
+              My Drafts
+            </h2>
+
+            <p>
+              Continue creating your saved celebrations.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div
+          id="draftList"
+          class="dashboard-list">
+
+        </div>
+
+      </section>
+
+
+
+      <!-- ORDERS -->
+
+      <section
+        class="dashboard-tab"
+        id="orders">
+
+        <div class="dashboard-section-title">
+
+          <div>
+
+            <h2>
+              Order History
+            </h2>
+
+            <p>
+              Track your CelebrateVerse orders.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div
+          id="orderList"
+          class="dashboard-list">
+
+        </div>
+
+      </section>
+
+
+
+      <!-- TEMPLATES -->
+
+      <section
+        class="dashboard-tab"
+        id="templates">
+
+        <div class="dashboard-section-title">
+
+          <div>
+
+            <h2>
+              Premium Templates
+            </h2>
+
+            <p>
+              Choose a universe for your celebration.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="template-grid">
+
+          <a
+            href="customize.html?theme=romantic"
+            class="template-card romantic-template">
+
+            <div class="template-overlay">
+
+              <span>❤️</span>
+
+              <h3>
+                Romantic Universe
+              </h3>
+
+              <p>
+                Love, memories and magic.
+              </p>
+
+            </div>
+
+          </a>
+
+
+          <a
+            href="customize.html?theme=luxury"
+            class="template-card luxury-template">
+
+            <div class="template-overlay">
+
+              <span>✨</span>
+
+              <h3>
+                Luxury Gold
+              </h3>
+
+              <p>
+                Elegant and timeless.
+              </p>
+
+            </div>
+
+          </a>
+
+
+          <a
+            href="customize.html?theme=space"
+            class="template-card space-template">
+
+            <div class="template-overlay">
+
+              <span>🌌</span>
+
+              <h3>
+                Galaxy Story
+              </h3>
+
+              <p>
+                A universe of memories.
+              </p>
+
+            </div>
+
+          </a>
+
+        </div>
+
+      </section>
+
+
+    </main>
+
+  </div>
+
+
+  <script src="auth.js"></script>
+
+  <script src="dashboard.js"></script>
+
+</body>
+
+</html>
