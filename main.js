@@ -1813,3 +1813,102 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 });
+/* ==========================================
+   PHASE THREE - MAGNETIC BUTTON SYSTEM
+========================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* Only enable on mouse / desktop devices */
+
+    const supportsHover =
+        window.matchMedia(
+            "(hover: hover) and (pointer: fine)"
+        ).matches;
+
+
+    if (!supportsHover) {
+
+        return;
+
+    }
+
+
+    /* Buttons that will have magnetic effect */
+
+    const magneticButtons =
+        document.querySelectorAll(
+            ".primary-btn, " +
+            ".secondary-btn, " +
+            ".nav-cta, " +
+            ".mobile-cta, " +
+            ".price-btn, " +
+            ".install-app-btn"
+        );
+
+
+    magneticButtons.forEach(
+        button => {
+
+            button.addEventListener(
+                "mousemove",
+                event => {
+
+                    const rect =
+                        button.getBoundingClientRect();
+
+
+                    const x =
+                        event.clientX -
+                        rect.left;
+
+
+                    const y =
+                        event.clientY -
+                        rect.top;
+
+
+                    const centerX =
+                        rect.width / 2;
+
+
+                    const centerY =
+                        rect.height / 2;
+
+
+                    /* Magnetic strength */
+
+                    const moveX =
+                        (x - centerX) *
+                        0.18;
+
+
+                    const moveY =
+                        (y - centerY) *
+                        0.18;
+
+
+                    button.style.transform =
+                        `translate(
+                            ${moveX}px,
+                            ${moveY}px
+                        )`;
+
+                }
+            );
+
+
+            button.addEventListener(
+                "mouseleave",
+                () => {
+
+                    button.style.transform =
+                        "";
+
+                }
+            );
+
+        }
+    );
+
+});
