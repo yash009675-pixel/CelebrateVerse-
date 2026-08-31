@@ -5898,3 +5898,102 @@ body.light-mode .nav-links a.active {
     color: #7c3aed;
 
 }
+/* ==========================================
+   PHASE THREE - CURSOR GLOW
+========================================== */
+
+#cvCursorGlow {
+
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+    width: 280px;
+
+    height: 280px;
+
+    pointer-events: none;
+
+    z-index: 0;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(124, 58, 237, 0.16),
+            rgba(236, 72, 153, 0.07) 35%,
+            transparent 70%
+        );
+
+    filter:
+        blur(8px);
+
+    opacity: 0;
+
+    transition:
+        opacity 0.35s ease;
+
+}
+
+
+#cvCursorGlow.active {
+
+    opacity: 1;
+
+}
+
+
+/* ==========================================
+   PREMIUM CARD TILT
+========================================== */
+
+.occasion-card,
+.price-card,
+.relationship-item,
+.step {
+
+    transform-style:
+        preserve-3d;
+
+    will-change:
+        transform;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+
+}
+
+
+/* Better depth while hovering */
+
+@media (hover: hover) and (pointer: fine) {
+
+    .occasion-card:hover,
+    .price-card:hover,
+    .relationship-item:hover,
+    .step:hover {
+
+        box-shadow:
+            0 25px 60px
+            rgba(0, 0, 0, 0.18);
+
+    }
+
+}
+
+
+/* Disable on touch devices */
+
+@media (hover: none) {
+
+    #cvCursorGlow {
+
+        display: none;
+
+    }
+
+}
