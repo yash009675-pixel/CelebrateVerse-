@@ -628,3 +628,83 @@ window.addEventListener(
 
     }
 );
+/* ==========================================
+   PHASE TWO - SCROLL REVEAL ANIMATIONS
+========================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const revealElements = document.querySelectorAll(
+        `
+        .section-header,
+        .occasion-card,
+        .relationship-content,
+        .relationship-item,
+        .step,
+        .price-card,
+        .final-cta
+        `
+    );
+
+
+    revealElements.forEach((element, index) => {
+
+        element.classList.add("reveal");
+
+        if (
+            element.classList.contains("occasion-card") ||
+            element.classList.contains("relationship-item") ||
+            element.classList.contains("step") ||
+            element.classList.contains("price-card")
+        ) {
+
+            element.style.transitionDelay =
+                `${(index % 6) * 0.08}s`;
+
+        }
+
+    });
+
+
+    const revealObserver =
+        new IntersectionObserver(
+
+            entries => {
+
+                entries.forEach(entry => {
+
+                    if (
+                        entry.isIntersecting
+                    ) {
+
+                        entry.target.classList.add(
+                            "reveal-active"
+                        );
+
+
+                        revealObserver.unobserve(
+                            entry.target
+                        );
+
+                    }
+
+                });
+
+            },
+
+            {
+                threshold: 0.12
+            }
+
+        );
+
+
+    revealElements.forEach(element => {
+
+        revealObserver.observe(
+            element
+        );
+
+    });
+
+});
