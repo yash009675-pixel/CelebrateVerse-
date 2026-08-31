@@ -5675,3 +5675,145 @@ body.light-mode .package-option h3 {
     }
 
 }
+/* ==========================================
+   PHASE THREE - SCROLL PROGRESS
+========================================== */
+
+#cvScrollProgress {
+
+    position: fixed;
+
+    top: 0;
+
+    left: 0;
+
+    width: 0;
+
+    height: 3px;
+
+    z-index: 9999;
+
+    background: linear-gradient(
+        90deg,
+        #7c3aed,
+        #ec4899,
+        #8b5cf6
+    );
+
+    transition:
+        width 0.12s linear;
+
+}
+
+
+/* ==========================================
+   BACK TO TOP BUTTON
+========================================== */
+
+#cvBackToTop {
+
+    position: fixed;
+
+    right: 28px;
+
+    bottom: 28px;
+
+    width: 52px;
+
+    height: 52px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    z-index: 999;
+
+    font-size: 18px;
+
+    color: #ffffff;
+
+    background: linear-gradient(
+        135deg,
+        #7c3aed,
+        #ec4899
+    );
+
+    box-shadow:
+        0 12px 30px
+        rgba(124, 58, 237, 0.35);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transform:
+        translateY(20px)
+        scale(0.9);
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease,
+        visibility 0.3s ease;
+
+}
+
+
+#cvBackToTop.show {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    transform:
+        translateY(0)
+        scale(1);
+
+}
+
+
+#cvBackToTop:hover {
+
+    transform:
+        translateY(-4px)
+        scale(1.05);
+
+}
+
+
+#cvBackToTop:active {
+
+    transform:
+        scale(0.94);
+
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 600px) {
+
+    #cvBackToTop {
+
+        width: 46px;
+
+        height: 46px;
+
+        right: 18px;
+
+        bottom: 18px;
+
+        font-size: 16px;
+
+    }
+
+}
