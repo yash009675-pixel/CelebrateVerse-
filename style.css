@@ -3271,3 +3271,13 @@ body.light-mode .package-option h3 {
 .app-mode {
     min-height: 100vh;
 }
+
+/* FINAL PWA INSTALL BUTTON FIX */
+#installAppBtn.install-app-btn {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
