@@ -6144,3 +6144,38 @@ body.light-mode .nav-links a.active {
     }
 
 }
+/* ==========================================
+   PHASE THREE - MAGNETIC BUTTONS
+========================================== */
+
+.primary-btn,
+.secondary-btn,
+.nav-cta,
+.mobile-cta,
+.price-btn,
+.install-app-btn {
+
+    will-change:
+        transform;
+
+}
+
+
+/* Smooth magnetic return */
+
+@media (hover: hover) and (pointer: fine) {
+
+    .primary-btn,
+    .secondary-btn,
+    .nav-cta,
+    .mobile-cta,
+    .price-btn,
+    .install-app-btn {
+
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease;
+
+    }
+
+}
