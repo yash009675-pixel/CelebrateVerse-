@@ -808,126 +808,135 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
 });
-/* ==========================================
-   PHASE TWO - LIVE PREVIEW SYSTEM
-========================================== */
+    /* ==========================================
+       LOAD SAVED DATA INTO LIVE PREVIEW
+    ========================================== */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
+    function refreshLivePreview() {
 
-        const recipientInput =
-            document.getElementById(
-                "recipientName"
+        const savedCustomization =
+            JSON.parse(
+                localStorage.getItem(
+                    "celebrateVerseCustomization"
+                ) || "{}"
             );
 
 
-        const senderInput =
-            document.getElementById(
-                "senderName"
-            );
+        if (
+            savedCustomization.occasion &&
+            previewOccasion
+        ) {
+
+            const value =
+                savedCustomization.occasion;
+
+            previewOccasion.textContent =
+                value.charAt(0).toUpperCase() +
+                value.slice(1);
+
+        }
 
 
-        const messageInput =
-            document.getElementById(
-                "specialMessage"
-            );
+        if (
+            savedCustomization.relationship &&
+            previewRelationship
+        ) {
+
+            const value =
+                savedCustomization.relationship;
+
+            previewRelationship.textContent =
+                value
+                    .replace("-", " ")
+                    .replace(
+                        /\b\w/g,
+                        letter =>
+                            letter.toUpperCase()
+                    );
+
+        }
 
 
-        const previewRecipient =
-            document.getElementById(
-                "previewRecipientName"
-            );
+        if (
+            savedCustomization.personName &&
+            previewName
+        ) {
+
+            previewName.textContent =
+                savedCustomization.personName;
+
+        }
 
 
-        const previewSender =
-            document.getElementById(
-                "previewSenderName"
-            );
+        if (
+            savedCustomization.message &&
+            previewMessage
+        ) {
+
+            previewMessage.textContent =
+                savedCustomization.message;
+
+        }
 
 
-        const previewMessage =
-            document.getElementById(
-                "previewMessage"
-            );
+        if (
+            savedCustomization.specialDate &&
+            previewDate
+        ) {
+
+            const date =
+                new Date(
+                    savedCustomization.specialDate
+                );
 
 
-        function updatePreview() {
+            previewDate.textContent =
+                date.toLocaleDateString(
+                    "en-IN",
+                    {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric"
+                    }
+                );
 
-            if (
-                recipientInput &&
-                previewRecipient
-            ) {
+        }
 
-                previewRecipient.textContent =
-                    recipientInput.value.trim() ||
-                    "Someone Special";
+
+        if (
+            savedCustomization.theme &&
+            previewTheme
+        ) {
+
+            const theme =
+                savedCustomization.theme;
+
+            previewTheme.textContent =
+                theme.charAt(0).toUpperCase() +
+                theme.slice(1);
+
+
+            const previewCard =
+                document.querySelector(
+                    ".live-preview-card"
+                );
+
+
+            if (previewCard) {
+
+                previewCard.className =
+                    "live-preview-card " +
+                    theme +
+                    "-preview";
 
             }
 
-
-            if (
-                senderInput &&
-                previewSender
-            ) {
-
-                previewSender.textContent =
-                    senderInput.value.trim() ||
-                    "Someone Special";
-
-            }
-
-
-            if (
-                messageInput &&
-                previewMessage
-            ) {
-
-                previewMessage.textContent =
-                    messageInput.value.trim() ||
-                    "Your beautiful message will appear here.";
-
-            }
-
         }
-
-
-        if (recipientInput) {
-
-            recipientInput.addEventListener(
-                "input",
-                updatePreview
-            );
-
-        }
-
-
-        if (senderInput) {
-
-            senderInput.addEventListener(
-                "input",
-                updatePreview
-            );
-
-        }
-
-
-        if (messageInput) {
-
-            messageInput.addEventListener(
-                "input",
-                updatePreview
-            );
-
-        }
-
-
-        /* Load existing saved data */
-
-        updatePreview();
 
     }
-);
+
+
+    refreshLivePreview();
 /* ==========================================
    CELEBRATEVERSE LIVE PREVIEW SYSTEM
 ========================================== */
