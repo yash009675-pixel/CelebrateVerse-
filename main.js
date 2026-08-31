@@ -1,4 +1,3 @@
-alert("NEW MAIN.JS IS LOADING SUCCESSFULLY");
 
 /* ==========================================
    CELEBRATEVERSE - MAIN JAVASCRIPT
@@ -857,3 +856,98 @@ showToast(
     "Welcome to CelebrateVerse! ✨",
     "celebration"
 );
+/* ==========================================
+   PHASE TWO - CELEBRATION CONFETTI SYSTEM
+========================================== */
+
+function launchCelebration() {
+
+    const container =
+        document.createElement(
+            "div"
+        );
+
+
+    container.className =
+        "cv-confetti-container";
+
+
+    document.body.appendChild(
+        container
+    );
+
+
+    const symbols = [
+        "🎉",
+        "🎊",
+        "✨",
+        "💖",
+        "⭐",
+        "🎈"
+    ];
+
+
+    const totalParticles =
+        window.innerWidth < 600
+            ? 35
+            : 70;
+
+
+    for (
+        let i = 0;
+        i < totalParticles;
+        i++
+    ) {
+
+        const particle =
+            document.createElement(
+                "span"
+            );
+
+
+        particle.className =
+            "cv-confetti-particle";
+
+
+        particle.textContent =
+            symbols[
+                Math.floor(
+                    Math.random() *
+                    symbols.length
+                )
+            ];
+
+
+        particle.style.left =
+            `${Math.random() * 100}%`;
+
+
+        particle.style.animationDelay =
+            `${Math.random() * 0.8}s`;
+
+
+        particle.style.animationDuration =
+            `${2.5 + Math.random() * 2}s`;
+
+
+        particle.style.fontSize =
+            `${14 + Math.random() * 18}px`;
+
+
+        container.appendChild(
+            particle
+        );
+
+    }
+
+
+    setTimeout(
+        () => {
+
+            container.remove();
+
+        },
+        5500
+    );
+
+}
