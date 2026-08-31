@@ -1629,3 +1629,187 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 });
+/* ==========================================
+   PHASE THREE - DYNAMIC PARTICLE SYSTEM
+========================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* Respect reduced motion preference */
+
+    if (
+        window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        ).matches
+    ) {
+
+        return;
+
+    }
+
+
+    /* Create particle background */
+
+    const particleBackground =
+        document.createElement("div");
+
+
+    particleBackground.id =
+        "cvParticleBackground";
+
+
+    particleBackground.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+
+    document.body.prepend(
+        particleBackground
+    );
+
+
+    /* Number of particles */
+
+    const particleCount =
+        window.innerWidth < 600
+            ? 18
+            : 35;
+
+
+    const particleSymbols = [
+        "✦",
+        "✧",
+        "•"
+    ];
+
+
+    /* Create particles */
+
+    for (
+        let i = 0;
+        i < particleCount;
+        i++
+    ) {
+
+        const particle =
+            document.createElement(
+                "span"
+            );
+
+
+        particle.className =
+            "cv-particle";
+
+
+        particle.textContent =
+            particleSymbols[
+                Math.floor(
+                    Math.random() *
+                    particleSymbols.length
+                )
+            ];
+
+
+        const size =
+            5 +
+            Math.random() * 16;
+
+
+        const left =
+            Math.random() * 100;
+
+
+        const top =
+            Math.random() * 100;
+
+
+        const duration =
+            8 +
+            Math.random() * 12;
+
+
+        const delay =
+            Math.random() * -15;
+
+
+        particle.style.left =
+            `${left}%`;
+
+
+        particle.style.top =
+            `${top}%`;
+
+
+        particle.style.fontSize =
+            `${size}px`;
+
+
+        particle.style.animationDuration =
+            `${duration}s`;
+
+
+        particle.style.animationDelay =
+            `${delay}s`;
+
+
+        particle.style.opacity =
+            0.15 +
+            Math.random() * 0.55;
+
+
+        particleBackground.appendChild(
+            particle
+        );
+
+    }
+
+
+    /* ==========================================
+       PARALLAX EFFECT
+    ========================================== */
+
+    let ticking =
+        false;
+
+
+    window.addEventListener(
+        "scroll",
+        () => {
+
+            if (ticking) {
+
+                return;
+
+            }
+
+
+            window.requestAnimationFrame(
+                () => {
+
+                    const offset =
+                        window.scrollY *
+                        0.04;
+
+
+                    particleBackground.style.transform =
+                        `translateY(${offset}px)`;
+
+
+                    ticking =
+                        false;
+
+                }
+            );
+
+
+            ticking =
+                true;
+
+        },
+        {
+            passive: true
+        }
+    );
+
+});
