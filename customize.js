@@ -808,3 +808,123 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
 });
+/* ==========================================
+   PHASE TWO - LIVE PREVIEW SYSTEM
+========================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const recipientInput =
+            document.getElementById(
+                "recipientName"
+            );
+
+
+        const senderInput =
+            document.getElementById(
+                "senderName"
+            );
+
+
+        const messageInput =
+            document.getElementById(
+                "specialMessage"
+            );
+
+
+        const previewRecipient =
+            document.getElementById(
+                "previewRecipientName"
+            );
+
+
+        const previewSender =
+            document.getElementById(
+                "previewSenderName"
+            );
+
+
+        const previewMessage =
+            document.getElementById(
+                "previewMessage"
+            );
+
+
+        function updatePreview() {
+
+            if (
+                recipientInput &&
+                previewRecipient
+            ) {
+
+                previewRecipient.textContent =
+                    recipientInput.value.trim() ||
+                    "Someone Special";
+
+            }
+
+
+            if (
+                senderInput &&
+                previewSender
+            ) {
+
+                previewSender.textContent =
+                    senderInput.value.trim() ||
+                    "Someone Special";
+
+            }
+
+
+            if (
+                messageInput &&
+                previewMessage
+            ) {
+
+                previewMessage.textContent =
+                    messageInput.value.trim() ||
+                    "Your beautiful message will appear here.";
+
+            }
+
+        }
+
+
+        if (recipientInput) {
+
+            recipientInput.addEventListener(
+                "input",
+                updatePreview
+            );
+
+        }
+
+
+        if (senderInput) {
+
+            senderInput.addEventListener(
+                "input",
+                updatePreview
+            );
+
+        }
+
+
+        if (messageInput) {
+
+            messageInput.addEventListener(
+                "input",
+                updatePreview
+            );
+
+        }
+
+
+        /* Load existing saved data */
+
+        updatePreview();
+
+    }
+);
