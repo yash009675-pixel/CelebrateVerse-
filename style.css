@@ -5997,3 +5997,150 @@ body.light-mode .nav-links a.active {
     }
 
 }
+/* ==========================================
+   PHASE THREE - DYNAMIC PARTICLE BACKGROUND
+========================================== */
+
+#cvParticleBackground {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    overflow: hidden;
+
+    pointer-events: none;
+
+    z-index: -1;
+
+}
+
+
+/* Individual particle */
+
+.cv-particle {
+
+    position: absolute;
+
+    display: block;
+
+    pointer-events: none;
+
+    user-select: none;
+
+    color: #a78bfa;
+
+    text-shadow:
+        0 0 15px
+        rgba(124, 58, 237, 0.6);
+
+    animation-name:
+        cvParticleFloat;
+
+    animation-timing-function:
+        ease-in-out;
+
+    animation-iteration-count:
+        infinite;
+
+    will-change:
+        transform;
+
+}
+
+
+/* Floating movement */
+
+@keyframes cvParticleFloat {
+
+    0% {
+
+        transform:
+            translate3d(0, 0, 0)
+            rotate(0deg);
+
+    }
+
+
+    25% {
+
+        transform:
+            translate3d(
+                20px,
+                -35px,
+                0
+            )
+            rotate(90deg);
+
+    }
+
+
+    50% {
+
+        transform:
+            translate3d(
+                -15px,
+                -70px,
+                0
+            )
+            rotate(180deg);
+
+    }
+
+
+    75% {
+
+        transform:
+            translate3d(
+                -30px,
+                -35px,
+                0
+            )
+            rotate(270deg);
+
+    }
+
+
+    100% {
+
+        transform:
+            translate3d(0, 0, 0)
+            rotate(360deg);
+
+    }
+
+}
+
+
+/* ==========================================
+   MOBILE OPTIMIZATION
+========================================== */
+
+@media (max-width: 600px) {
+
+    .cv-particle {
+
+        filter:
+            blur(0.2px);
+
+    }
+
+}
+
+
+/* Accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .cv-particle {
+
+        animation:
+            none;
+
+    }
+
+}
