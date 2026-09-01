@@ -1,162 +1,58 @@
 /* Responsive homepage repair - iPhone and small tablet */
-
-/* Some mobile browsers report a wider layout viewport, so use 900px for the compact layout. */
 @media (max-width: 900px) {
   html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
-
   .navbar { width: 100%; }
-  .nav-container {
-    height: 72px;
-    padding: 0 20px;
-  }
-
+  .nav-container { height: 72px; padding: 0 20px; }
   .logo { font-size: 25px; flex-shrink: 0; }
+  .nav-links, .nav-buttons { display: none !important; }
+  .mobile-menu-btn { display:grid !important; place-items:center; width:42px; height:42px; flex:0 0 42px; border:1px solid var(--border); border-radius:12px; background:rgba(255,255,255,.04); color:var(--text); font-size:18px; cursor:pointer; }
+  .mobile-menu { position:absolute; top:72px; left:0; right:0; z-index:1001; background:var(--bg-secondary); border-bottom:1px solid var(--border); box-shadow:0 20px 40px rgba(0,0,0,.25); }
 
-  /* Never allow desktop navigation to wrap on phone-sized screens. */
-  .nav-links,
-  .nav-buttons { display: none !important; }
+  .hero { min-height:auto; padding:108px 16px 52px; display:block; }
+  .hero-container { width:100%; max-width:100%; display:flex !important; flex-direction:column; gap:34px; align-items:center; text-align:center; }
+  .hero-content, .hero-visual { width:100%; max-width:100%; }
+  .hero-badge { max-width:100%; justify-content:center; font-size:12px; }
+  .hero-content h1 { font-size:clamp(42px, 10.5vw, 58px); line-height:1.05; margin:22px 0 18px; }
+  .hero-content p { margin:0 auto; max-width:620px; font-size:16px; line-height:1.65; }
+  .hero-buttons { justify-content:center; gap:12px; margin-top:28px; }
+  .primary-btn, .install-app-btn { min-height:52px; padding:14px 18px; }
+  .secondary-btn { min-height:52px; }
+  .hero-stats { justify-content:center; gap:16px; margin-top:34px; }
+  .floating-card { display:none !important; }
+  .hero-visual { position:relative; min-height:0; height:auto; display:flex; align-items:center; justify-content:center; }
+  .celebration-preview { position:relative; width:min(100%, 390px); min-height:0; margin:0 auto; }
+  .scroll-indicator { position:static !important; display:flex; justify-content:center; margin:16px auto 0; text-align:center; }
 
-  .mobile-menu-btn {
-    display: grid !important;
-    place-items: center;
-    width: 42px;
-    height: 42px;
-    flex: 0 0 42px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: rgba(255,255,255,.04);
-    color: var(--text);
-    font-size: 18px;
-    cursor: pointer;
-  }
-
-  .mobile-menu {
-    position: absolute;
-    top: 72px;
-    left: 0;
-    right: 0;
-    z-index: 1001;
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border);
-    box-shadow: 0 20px 40px rgba(0,0,0,.25);
-  }
-
-  .hero {
-    min-height: auto;
-    padding: 116px 20px 56px;
-    display: block;
-  }
-
-  .hero-container {
-    width: 100%;
-    max-width: 100%;
-    display: flex !important;
-    flex-direction: column;
-    gap: 42px;
-    align-items: center;
-    text-align: center;
-  }
-
-  .hero-content,
-  .hero-visual { width: 100%; max-width: 100%; }
-
-  .hero-badge {
-    max-width: 100%;
-    justify-content: center;
-    font-size: 12px;
-  }
-
-  .hero-content h1 {
-    font-size: clamp(42px, 10vw, 58px);
-    line-height: 1.05;
-    margin: 22px 0 18px;
-  }
-
-  .hero-content p {
-    margin: 0 auto;
-    max-width: 620px;
-    font-size: 16px;
-    line-height: 1.65;
-  }
-
-  .hero-buttons {
-    justify-content: center;
-    gap: 12px;
-    margin-top: 28px;
-  }
-
-  .primary-btn,
-  .install-app-btn { min-height: 52px; padding: 14px 18px; }
-
-  .secondary-btn { min-height: 52px; }
-
-  .hero-stats {
-    justify-content: center;
-    gap: 16px;
-    margin-top: 36px;
-  }
-
-  /* The two floating labels were causing the overlap visible on mobile. */
-  .floating-card { display: none !important; }
-
-  .hero-visual {
-    position: relative;
-    min-height: 0;
-    height: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .celebration-preview {
-    position: relative;
-    width: min(100%, 390px);
-    min-height: 0;
-    margin: 0 auto;
-  }
-
-  .scroll-indicator {
-    position: static !important;
-    display: flex;
-    justify-content: center;
-    margin: 18px auto 0;
-    text-align: center;
-  }
+  /* The section visible below the hero now has its own mobile layout. */
+  .section { padding:72px 20px; }
+  .celebrations { overflow:hidden; }
+  .section-header { margin:0 auto 38px; padding:0; }
+  .section-header h2 { font-size:clamp(34px, 9vw, 46px); line-height:1.12; }
+  .section-header p { font-size:15px; }
+  .occasion-grid { display:grid !important; grid-template-columns:repeat(2, minmax(0, 1fr)) !important; gap:14px !important; width:100%; max-width:620px; margin:0 auto; }
+  .occasion-card { display:flex !important; flex-direction:column; min-width:0; min-height:160px; padding:20px 16px; border:1px solid var(--border); border-radius:20px; background:linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025)); box-shadow:0 14px 35px rgba(0,0,0,.16); }
+  .occasion-card h3 { font-size:18px; margin:12px 0 6px; }
+  .occasion-card p { font-size:13px; line-height:1.45; color:var(--text-muted); }
+  .occasion-icon { font-size:28px; }
+  .steps-grid, .pricing-grid { grid-template-columns:1fr !important; gap:16px; }
 }
 
 @media (max-width: 480px) {
-  .hero { padding-left: 16px; padding-right: 16px; }
-  .hero-content h1 { font-size: 44px; }
-  .hero-badge { padding: 8px 12px; }
-
-  .hero-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: 100%;
-  }
-
-  .hero-buttons .primary-btn,
-  .hero-buttons .install-app-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .hero-buttons .secondary-btn {
-    grid-column: 1 / -1;
-    justify-content: center;
-  }
-
-  .hero-stats { gap: 10px; }
-  .stat h3 { font-size: 21px; }
-  .stat p { font-size: 11px; }
-
-  .celebration-preview {
-    width: min(100%, 330px);
-    padding: 16px;
-  }
-
-  .preview-content { padding: 34px 18px; }
-  .preview-content h2 { font-size: 28px; }
-  .preview-photos { margin: 30px 0; }
-  .photo { width: 76px; height: 100px; }
+  .hero { padding-left:14px; padding-right:14px; }
+  .hero-content h1 { font-size:42px; }
+  .hero-badge { padding:8px 12px; }
+  .hero-buttons { display:grid; grid-template-columns:1fr 1fr; width:100%; }
+  .hero-buttons .primary-btn, .hero-buttons .install-app-btn { width:100%; justify-content:center; }
+  .hero-buttons .secondary-btn { grid-column:1 / -1; justify-content:center; }
+  .hero-stats { gap:10px; }
+  .stat h3 { font-size:21px; }
+  .stat p { font-size:11px; }
+  .celebration-preview { width:min(100%, 330px); padding:16px; }
+  .preview-content { padding:34px 18px; }
+  .preview-content h2 { font-size:28px; }
+  .preview-photos { margin:30px 0; }
+  .photo { width:76px; height:100px; }
+  .occasion-grid { grid-template-columns:1fr !important; }
+  .occasion-card { min-height:130px; flex-direction:row; align-items:center; gap:14px; padding:18px; }
+  .occasion-card h3 { margin:0 0 5px; }
 }
