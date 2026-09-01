@@ -6179,3 +6179,38 @@ body.light-mode .nav-links a.active {
     }
 
 }
+
+/* Visible account actions */
+.cv-auth-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-left:16px;
+}
+.cv-login-btn,.cv-signup-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  padding:0 18px;
+  border-radius:999px;
+  text-decoration:none;
+  font-weight:700;
+  transition:transform .2s ease,opacity .2s ease;
+}
+.cv-login-btn{
+  border:1px solid currentColor;
+}
+.cv-signup-btn{
+  background:#7c3aed;
+  color:#fff;
+}
+.cv-login-btn:hover,.cv-signup-btn:hover{transform:translateY(-1px);opacity:.92}
+@media(max-width:768px){
+  .cv-auth-actions{
+    width:100%;
+    margin:12px 0 0;
+    justify-content:center;
+  }
+  .cv-login-btn,.cv-signup-btn{flex:1}
+}
