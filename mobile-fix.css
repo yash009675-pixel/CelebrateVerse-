@@ -1,0 +1,149 @@
+/* Final responsive homepage layout fix for CelebrateVerse */
+
+@media (max-width: 900px) {
+  .nav-container { padding: 0 24px; }
+  .nav-links { gap: 18px; }
+  .cv-auth-actions { gap: 8px; }
+}
+
+@media (max-width: 700px) {
+  body { overflow-x: hidden; }
+
+  .navbar { width: 100%; }
+  .nav-container { height: 72px; padding: 0 20px; }
+  .logo { font-size: 25px; flex-shrink: 0; }
+
+  /* Desktop links must not squeeze/wrap on iPhone screens */
+  .nav-links,
+  .nav-buttons { display: none !important; }
+
+  .mobile-menu-btn {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(255,255,255,.04);
+    color: var(--text);
+    font-size: 18px;
+  }
+
+  .mobile-menu {
+    position: absolute;
+    top: 72px;
+    left: 0;
+    right: 0;
+    z-index: 1001;
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 20px 40px rgba(0,0,0,.25);
+  }
+
+  .hero {
+    min-height: auto;
+    padding: 116px 20px 56px;
+    display: block;
+  }
+
+  .hero-container {
+    display: flex;
+    flex-direction: column;
+    gap: 44px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .hero-content { width: 100%; }
+  .hero-badge { max-width: 100%; justify-content: center; font-size: 12px; }
+
+  .hero-content h1 {
+    font-size: clamp(42px, 12vw, 58px);
+    line-height: 1.05;
+    margin: 22px 0 18px;
+  }
+
+  .hero-content p {
+    margin: 0 auto;
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  .primary-btn,
+  .install-app-btn {
+    min-height: 52px;
+    padding: 14px 18px;
+  }
+
+  .secondary-btn { min-height: 52px; }
+
+  .hero-stats {
+    justify-content: center;
+    gap: 16px;
+    margin-top: 36px;
+  }
+
+  .stat-line { height: 42px; }
+
+  /* Keep the preview and floating cards inside the viewport */
+  .hero-visual {
+    width: 100%;
+    min-height: auto;
+    height: 560px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .celebration-preview {
+    width: min(100%, 340px);
+    min-height: 480px;
+    padding: 16px;
+    margin: 0 auto;
+  }
+
+  .preview-content { padding: 34px 18px; }
+  .preview-content h2 { font-size: 28px; }
+  .preview-photos { margin: 30px 0; }
+  .photo { width: 76px; height: 100px; }
+
+  .floating-card {
+    position: absolute;
+    z-index: 3;
+    max-width: 135px;
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .floating-card small { font-size: 10px; }
+  .card-one { left: 0 !important; top: 32px !important; }
+  .card-two { right: 0 !important; bottom: 28px !important; }
+
+  .scroll-indicator {
+    position: static !important;
+    justify-content: center;
+    margin: 8px auto 0;
+    text-align: center;
+  }
+}
+
+@media (max-width: 430px) {
+  .hero { padding-left: 16px; padding-right: 16px; }
+  .hero-content h1 { font-size: 44px; }
+  .hero-badge { padding: 8px 12px; }
+  .hero-buttons { display: grid; grid-template-columns: 1fr 1fr; }
+  .hero-buttons .primary-btn,
+  .hero-buttons .install-app-btn { width: 100%; justify-content: center; }
+  .hero-buttons .secondary-btn { grid-column: 1 / -1; justify-content: center; }
+  .hero-stats { gap: 10px; }
+  .stat h3 { font-size: 21px; }
+  .stat p { font-size: 11px; }
+  .hero-visual { height: 530px; }
+  .celebration-preview { width: 310px; min-height: 455px; }
+  .floating-card { display: none; }
+}
