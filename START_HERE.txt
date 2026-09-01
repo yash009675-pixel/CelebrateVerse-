@@ -1,0 +1,12 @@
+CELEBRATEVERSE - START HERE
+
+1. Open schema.sql (this file is now in the MAIN project folder).
+2. Copy all its contents.
+3. Go to Supabase Dashboard > SQL Editor > New Query.
+4. Paste the code and click Run.
+5. Create a Storage bucket named: celebration-photos
+
+After that, upload the project files to your website hosting/GitHub Pages.
+
+Important: Real Razorpay payments still require secure backend/Edge Function setup.
+See PAYMENT_SETUP.md for details.
