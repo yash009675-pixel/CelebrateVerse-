@@ -148,8 +148,10 @@ document.addEventListener("DOMContentLoaded", () => {
        AUTO SAVE KEY
     ========================================== */
 
-    const AUTO_SAVE_KEY =
-        "celebrateVerseCustomization";
+    const AUTO_SAVE_KEY = "celebrateVerseCustomization";
+    const MAX_PHOTOS = 10;
+    const MAX_FILE_SIZE = 5 * 1024 * 1024;
+    let currentDraftId = new URLSearchParams(window.location.search).get("draft");
 
 
     /* ==========================================
@@ -1236,98 +1238,115 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+
     /* ==========================================
-       SUBMIT ORDER
+       SAVE DRAFT + CREATE CHECKOUT SESSION
     ========================================== */
 
-    if (form) {
-
-        form.addEventListener(
-
-            "submit",
-
-            event => {
-
-                event.preventDefault();
-
-
-                if (
-                    !validateStep()
-                ) {
-
-                    return;
-
-                }
-
-
-                const celebrationData = {
-
-                    occasion:
-                        occasionInput?.value || "",
-
-                    relationship:
-                        relationshipInput?.value || "",
-
-                    theme:
-                        themeInput?.value || "",
-
-                    personName:
-                        personNameInput?.value || "",
-
-                    customerName:
-                        customerNameInput?.value || "",
-
-                    specialDate:
-                        specialDateInput?.value || "",
-
-                    email:
-                        emailInput?.value || "",
-
-                    message:
-                        messageInput?.value || "",
-
-                    package:
-                        packageInput?.value || ""
-
-                };
-
-
-                localStorage.setItem(
-
-                    "celebrateVerseOrder",
-
-                    JSON.stringify(
-                        celebrationData
-                    )
-
-                );
-
-
-                const finalPackage =
-
-                    String(
-                        celebrationData.package
-                    )
-
-                    .trim()
-
-                    .toLowerCase();
-
-
-                window.location.href =
-
-                    "payment.html?package=" +
-
-                    encodeURIComponent(
-                        finalPackage
-                    );
-
-            }
-
-        );
-
+    async function requireUser() {
+        if (!supabaseClient) return null;
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        return user || null;
     }
 
+    async function uploadPhotos(userId, celebrationId) {
+        const files = Array.from(photoInput?.files || []);
+        if (!files.length) return [];
+
+        if (files.length > MAX_PHOTOS) throw new Error(`You can upload a maximum of ${MAX_PHOTOS} photos.`);
+        for (const file of files) {
+            if (!file.type.startsWith("image/")) throw new Error("Only image files are allowed.");
+            if (file.size > MAX_FILE_SIZE) throw new Error("Each photo must be 5 MB or smaller.");
+        }
+
+        const uploaded = [];
+        for (const file of files) {
+            const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
+            const path = `${userId}/${celebrationId}/${crypto.randomUUID()}.${ext}`;
+            const { error } = await supabaseClient.storage.from("celebration-photos").upload(path, file, {
+                cacheControl: "3600", upsert: false, contentType: file.type
+            });
+            if (error) throw error;
+            uploaded.push(path);
+        }
+        return uploaded;
+    }
+
+    async function saveDraftToCloud(status = "draft") {
+        const user = await requireUser();
+        if (!user) throw new Error("Please log in before saving your celebration.");
+
+        const celebrationData = {
+            user_id: user.id,
+            occasion: occasionInput?.value || "",
+            relationship: relationshipInput?.value || "",
+            theme: themeInput?.value || "",
+            person_name: personNameInput?.value?.trim() || "",
+            customer_name: customerNameInput?.value?.trim() || "",
+            special_date: specialDateInput?.value || null,
+            customer_email: emailInput?.value?.trim().toLowerCase() || "",
+            message: messageInput?.value?.trim() || "",
+            package: packageInput?.value || "",
+            status
+        };
+
+        let celebration;
+        if (currentDraftId) {
+            const { data, error } = await supabaseClient.from("celebrations")
+                .update(celebrationData).eq("id", currentDraftId).eq("user_id", user.id).select().single();
+            if (error) throw error;
+            celebration = data;
+        } else {
+            const { data, error } = await supabaseClient.from("celebrations")
+                .insert(celebrationData).select().single();
+            if (error) throw error;
+            celebration = data;
+            currentDraftId = celebration.id;
+        }
+
+        const photoPaths = await uploadPhotos(user.id, celebration.id);
+        if (photoPaths.length) {
+            const { error } = await supabaseClient.from("celebration_photos").insert(
+                photoPaths.map(path => ({ celebration_id: celebration.id, user_id: user.id, storage_path: path }))
+            );
+            if (error) throw error;
+        }
+        return celebration;
+    }
+
+    if (form) {
+        form.addEventListener("submit", async event => {
+            event.preventDefault();
+            if (!validateStep()) return;
+
+            const button = submitBtn || form.querySelector('button[type="submit"]');
+            const original = button?.innerHTML;
+            if (button) { button.disabled = true; button.textContent = "Saving celebration..."; }
+
+            try {
+                const celebration = await saveDraftToCloud("draft");
+                localStorage.setItem("celebrateVerseOrder", JSON.stringify({
+                    celebrationId: celebration.id,
+                    occasion: celebration.occasion,
+                    relationship: celebration.relationship,
+                    theme: celebration.theme,
+                    personName: celebration.person_name,
+                    customerName: celebration.customer_name,
+                    specialDate: celebration.special_date,
+                    email: celebration.customer_email,
+                    message: celebration.message,
+                    package: celebration.package
+                }));
+                localStorage.removeItem(AUTO_SAVE_KEY);
+                window.location.href = "payment.html?package=" + encodeURIComponent(celebration.package) + "&celebration=" + encodeURIComponent(celebration.id);
+            } catch (error) {
+                console.error(error);
+                alert(error.message || "Unable to save your celebration. Please try again.");
+            } finally {
+                if (button) { button.disabled = false; button.innerHTML = original; }
+            }
+        });
+    }
 
     /* ==========================================
        CLEAR CUSTOMIZATION
@@ -1387,11 +1406,37 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
 
+
+    async function loadCloudDraft() {
+        if (!currentDraftId || !supabaseClient) return;
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) return;
+        const { data, error } = await supabaseClient.from("celebrations").select("*")
+            .eq("id", currentDraftId).eq("user_id", user.id).maybeSingle();
+        if (error || !data) return;
+        if (occasionInput) occasionInput.value = data.occasion || "";
+        if (relationshipInput) relationshipInput.value = data.relationship || "";
+        if (themeInput) themeInput.value = data.theme || "";
+        if (packageInput) packageInput.value = data.package || "";
+        if (personNameInput) personNameInput.value = data.person_name || "";
+        if (customerNameInput) customerNameInput.value = data.customer_name || "";
+        if (specialDateInput) specialDateInput.value = data.special_date || "";
+        if (emailInput) emailInput.value = data.customer_email || "";
+        if (messageInput) messageInput.value = data.message || "";
+        document.querySelectorAll(".selected").forEach(x => x.classList.remove("selected"));
+        restoreSelectedCard(".occasion-selection .selection-card", data.occasion);
+        restoreSelectedCard(".relationship-selection .selection-card", data.relationship);
+        restoreSelectedCard(".theme-card", data.theme);
+        restoreSelectedCard(".package-option", data.package);
+        updateLivePreview();
+    }
+
     /* ==========================================
        START
     ========================================== */
 
     restoreCustomization();
+    loadCloudDraft();
 
     showStep(
         currentStep

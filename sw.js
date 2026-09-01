@@ -1,102 +1,33 @@
-/* ==========================================
-   CELEBRATEVERSE SERVICE WORKER
-   VERSION 6 - CLEAN UPDATE SYSTEM
-========================================== */
+const CACHE_NAME = "celebrateverse-v7";
+const APP_SHELL = [
+  "./","./index.html","./login.html","./signup.html","./dashboard.html",
+  "./customize.html","./payment.html","./success.html","./offline.html",
+  "./style.css","./main.js","./auth.js","./dashboard.js","./customize.js",
+  "./payment.js","./payment-config.js","./supabase.js","./manifest.json"
+];
 
-const CACHE_NAME =
-    "celebrateverse-v6";
-
-
-/* ==========================================
-   INSTALL
-========================================== */
-
-self.addEventListener(
-    "install",
-    event => {
-
-        self.skipWaiting();
-
-    }
-);
-
-
-/* ==========================================
-   ACTIVATE
-   DELETE ALL OLD CACHES
-========================================== */
-
-self.addEventListener(
-    "activate",
-    event => {
-
-        event.waitUntil(
-
-            caches.keys()
-                .then(keys => {
-
-                    return Promise.all(
-
-                        keys.map(
-                            key =>
-                                caches.delete(
-                                    key
-                                )
-                        )
-
-                    );
-
-                })
-                .then(() => {
-
-                    return self.clients.claim();
-
-                })
-
-        );
-
-    }
-);
-
-
-/* ==========================================
-   FETCH
-   ALWAYS USE LATEST WEBSITE FILES
-========================================== */
-
-self.addEventListener(
-    "fetch",
-    event => {
-
-        /*
-         Don't intercept requests.
-         Browser will always load the latest
-         version from GitHub Pages.
-        */
-
-        return;
-
-    }
-);
-
-
-/* ==========================================
-   FORCE UPDATE MESSAGE
-========================================== */
-
-self.addEventListener(
-    "message",
-    event => {
-
-        if (
-            event.data &&
-            event.data.type ===
-            "SKIP_WAITING"
-        ) {
-
-            self.skipWaiting();
-
-        }
-
-    }
-);
+self.addEventListener("install", event => {
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
+  self.skipWaiting();
+});
+self.addEventListener("activate", event => {
+  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener("fetch", event => {
+  if (event.request.method !== "GET") return;
+  const url = new URL(event.request.url);
+  if (url.origin !== location.origin) return;
+  event.respondWith(
+    fetch(event.request).then(response => {
+      const copy=response.clone();
+      caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+      return response;
+    }).catch(async () => {
+      const cached=await caches.match(event.request);
+      if(cached) return cached;
+      if(event.request.mode === "navigate") return caches.match("./offline.html");
+      return new Response("", {status: 503, statusText: "Offline"});
+    })
+  );
+});

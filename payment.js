@@ -1,403 +1,87 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const prices = { basic: 499, premium: 999, ultimate: 1999 };
+  const params = new URLSearchParams(location.search);
+  const saved = JSON.parse(localStorage.getItem("celebrateVerseOrder") || "{}");
+  const celebrationId = params.get("celebration") || saved.celebrationId;
+  const selectedPackage = String(params.get("package") || saved.package || "").trim().toLowerCase();
+  const price = prices[selectedPackage] || 0;
 
-    /* =========================
-       PACKAGE PRICES
-    ========================= */
+  const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+  const title = v => v ? String(v).replace(/-/g," ").replace(/\b\w/g, x => x.toUpperCase()) : "-";
+  const money = n => "₹" + Number(n || 0).toLocaleString("en-IN");
 
-    const packagePrices = {
-        basic: 499,
-        premium: 999,
-        ultimate: 1999
-    };
+  set("summaryPersonName", saved.personName || "Your Special Moment");
+  set("summaryOccasion", title(saved.occasion));
+  set("summaryRelationship", title(saved.relationship));
+  set("summaryTheme", title(saved.theme));
+  set("summaryPackage", title(selectedPackage));
+  set("summaryPrice", money(price));
+  set("summaryTotal", money(price));
+  set("summaryMessage", saved.message || "-");
+  if (saved.specialDate) {
+    const d = new Date(saved.specialDate + "T00:00:00");
+    set("summaryDate", isNaN(d) ? "-" : d.toLocaleDateString("en-IN",{day:"numeric",month:"long",year:"numeric"}));
+  }
 
+  document.querySelectorAll(".payment-method").forEach(card => card.addEventListener("click", () => {
+    document.querySelectorAll(".payment-method").forEach(x => x.classList.remove("active-payment"));
+    card.classList.add("active-payment");
+  }));
 
-    /* =========================
-       GET URL PACKAGE
-    ========================= */
+  document.getElementById("payButton")?.addEventListener("click", async () => {
+    if (!celebrationId || !price) return alert("Your celebration details are missing. Please return to the customization page.");
+    if (!supabaseClient) return alert("Payment service is unavailable.");
 
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) { location.href = "login.html"; return; }
 
-
-    const urlPackage =
-        params.get("package");
-
-
-    /* =========================
-       GET SAVED ORDER
-    ========================= */
-
-    let order = {};
-
-
-    const savedOrder =
-        localStorage.getItem(
-            "celebrateVerseOrder"
-        );
-
-
-    if (savedOrder) {
-
-        try {
-
-            order =
-                JSON.parse(savedOrder);
-
-        } catch (error) {
-
-            console.error(
-                "LocalStorage Error:",
-                error
-            );
-
-        }
-
+    const config = window.CELEBRATEVERSE_PAYMENT || {};
+    if (!config.createOrderEndpoint || !config.verifyPaymentEndpoint) {
+      alert("Payment backend setup is required before live payments can be accepted. Add your secure server/Edge Function URLs in payment-config.js.");
+      return;
     }
 
+    const button = document.getElementById("payButton");
+    const original = button.innerHTML;
+    button.disabled = true;
+    button.textContent = "Processing Payment...";
 
-    console.log(
-        "SAVED ORDER:",
-        order
-    );
+    try {
+      const response = await fetch(config.createOrderEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${(await supabaseClient.auth.getSession()).data.session?.access_token || ""}` },
+        body: JSON.stringify({ celebration_id: celebrationId, package: selectedPackage })
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "Unable to start payment.");
 
-
-    console.log(
-        "URL PACKAGE:",
-        urlPackage
-    );
-
-
-    /* =========================
-       GET PACKAGE
-       URL HAS FIRST PRIORITY
-    ========================= */
-
-    let selectedPackage =
-        urlPackage ||
-        order.package ||
-        "";
-
-
-    selectedPackage =
-        String(selectedPackage)
-            .trim()
-            .toLowerCase();
-
-
-    console.log(
-        "FINAL PACKAGE:",
-        selectedPackage
-    );
-
-
-    /* =========================
-       GET PRICE
-    ========================= */
-
-    const price =
-        packagePrices[selectedPackage] ||
-        0;
-
-
-    console.log(
-        "FINAL PRICE:",
-        price
-    );
-
-
-    /* =========================
-       FORMAT TEXT
-    ========================= */
-
-    function formatText(text) {
-
-        if (!text) {
-
-            return "-";
-
-        }
-
-
-        return String(text)
-            .replace(/-/g, " ")
-            .replace(
-                /\b\w/g,
-                letter =>
-                    letter.toUpperCase()
-            );
-
+      if (!window.Razorpay) throw new Error("Payment gateway failed to load.");
+      const razorpay = new Razorpay({
+        key: payload.key_id,
+        amount: payload.amount,
+        currency: payload.currency || "INR",
+        name: "CelebrateVerse",
+        description: `CelebrateVerse ${title(selectedPackage)}`,
+        order_id: payload.order_id,
+        handler: async payment => {
+          const verify = await fetch(config.verifyPaymentEndpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${(await supabaseClient.auth.getSession()).data.session?.access_token || ""}` },
+            body: JSON.stringify({ celebration_id: celebrationId, package: selectedPackage, ...payment })
+          });
+          const verified = await verify.json();
+          if (!verify.ok || !verified.success) throw new Error(verified.error || "Payment verification failed.");
+          localStorage.removeItem("celebrateVerseOrder");
+          location.href = `success.html?order=${encodeURIComponent(verified.order_number || verified.order_id || "")}`;
+        },
+        modal: { ondismiss: () => { button.disabled = false; button.innerHTML = original; } }
+      });
+      razorpay.open();
+    } catch (error) {
+      console.error(error);
+      alert(error.message || "Payment could not be completed. Please try again.");
+      button.disabled = false;
+      button.innerHTML = original;
     }
-
-
-    /* =========================
-       FORMAT PRICE
-    ========================= */
-
-    function formatPrice(amount) {
-
-        return (
-            "₹" +
-            Number(amount).toLocaleString(
-                "en-IN"
-            )
-        );
-
-    }
-
-
-    /* =========================
-       UPDATE ELEMENT
-    ========================= */
-
-    function updateElement(
-        id,
-        value
-    ) {
-
-        const element =
-            document.getElementById(id);
-
-
-        if (element) {
-
-            element.textContent =
-                value;
-
-        }
-
-    }
-
-
-    /* =========================
-       UPDATE SUMMARY
-    ========================= */
-
-    updateElement(
-        "summaryPersonName",
-        order.personName ||
-        "Your Special Moment"
-    );
-
-
-    updateElement(
-        "summaryOccasion",
-        formatText(
-            order.occasion
-        )
-    );
-
-
-    updateElement(
-        "summaryRelationship",
-        formatText(
-            order.relationship
-        )
-    );
-
-
-    updateElement(
-        "summaryTheme",
-        formatText(
-            order.theme
-        )
-    );
-
-
-    /* =========================
-       DATE
-    ========================= */
-
-    let formattedDate =
-        "-";
-
-
-    if (order.specialDate) {
-
-        const date =
-            new Date(
-                order.specialDate +
-                "T00:00:00"
-            );
-
-
-        if (
-            !isNaN(
-                date.getTime()
-            )
-        ) {
-
-            formattedDate =
-                date.toLocaleDateString(
-                    "en-IN",
-                    {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric"
-                    }
-                );
-
-        }
-
-    }
-
-
-    updateElement(
-        "summaryDate",
-        formattedDate
-    );
-
-
-    /* =========================
-       PACKAGE SUMMARY
-    ========================= */
-
-    updateElement(
-        "summaryPackage",
-        formatText(
-            selectedPackage
-        )
-    );
-
-
-    updateElement(
-        "summaryPrice",
-        formatPrice(
-            price
-        )
-    );
-
-
-    updateElement(
-        "summaryTotal",
-        formatPrice(
-            price
-        )
-    );
-
-
-    /* =========================
-       SPECIAL MESSAGE
-    ========================= */
-
-    const messageBox =
-        document.getElementById(
-            "summaryMessage"
-        );
-
-
-    if (messageBox) {
-
-        if (
-            order.message &&
-            order.message.trim()
-        ) {
-
-            messageBox.textContent =
-                "💌 " +
-                order.message;
-
-        } else {
-
-            messageBox.textContent =
-                "Your personalized celebration website will be created especially for this special moment. ✨";
-
-        }
-
-    }
-
-
-    /* =========================
-       PAYMENT METHODS
-    ========================= */
-
-    const paymentMethods =
-        document.querySelectorAll(
-            ".payment-method"
-        );
-
-
-    paymentMethods.forEach(
-        method => {
-
-            method.addEventListener(
-                "click",
-                () => {
-
-                    paymentMethods.forEach(
-                        item => {
-
-                            item.classList.remove(
-                                "active-payment"
-                            );
-
-                        }
-                    );
-
-
-                    method.classList.add(
-                        "active-payment"
-                    );
-
-                }
-            );
-
-        }
-    );
-
-
-    /* =========================
-       PAY BUTTON
-    ========================= */
-
-    const payButton =
-        document.getElementById(
-            "payButton"
-        );
-
-
-    if (!payButton) {
-
-        return;
-
-    }
-
-
-    payButton.addEventListener(
-        "click",
-        async () => {
-
-
-            if (
-                price === 0
-            ) {
-
-                alert(
-                    "Package price is missing. Please go back and select your package again."
-                );
-
-                return;
-
-            }
-
-
-            alert(
-                "Selected Package: " +
-                formatText(selectedPackage) +
-                "\nAmount: " +
-                formatPrice(price)
-            );
-
-
-            /*
-            SUPABASE ORDER CODE
-            WILL BE ADDED HERE
-            AFTER PRICE IS CONFIRMED
-            */
-
-        }
-    );
-
-
+  });
 });

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Order Confirmed | CelebrateVerse</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="auth-page">
+  <section class="auth-card" style="text-align:center">
+    <div style="font-size:56px">🎉</div>
+    <span class="section-tag">PAYMENT CONFIRMED</span>
+    <h1>Your Celebration is <span>Being Created.</span></h1>
+    <p id="orderText">Your payment was verified successfully.</p>
+    <p>Your order will now appear in your dashboard.</p>
+    <a class="primary-btn" href="dashboard.html">Go to Dashboard</a>
+  </section>
+</main>
+<script>
+const o=new URLSearchParams(location.search).get("order");
+if(o) document.getElementById("orderText").textContent="Order #"+o+" has been confirmed successfully.";
+</script>
+</body></html>

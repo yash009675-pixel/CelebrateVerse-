@@ -1,4 +1,3 @@
-
 /* ==========================================
    CELEBRATEVERSE - MAIN JAVASCRIPT
    CLEAN WEB APP / PWA VERSION
@@ -1911,4 +1910,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
+});
+
+
+/* CelebrateVerse persistent theme preference */
+(() => {
+  const saved = localStorage.getItem("celebrateVerseTheme");
+  if (saved === "light") document.body.classList.add("light-mode");
+  const toggle = document.getElementById("themeToggle");
+  if (toggle) {
+    toggle.addEventListener("click", () => {
+      setTimeout(() => localStorage.setItem("celebrateVerseTheme",
+        document.body.classList.contains("light-mode") ? "light" : "dark"), 0);
+    });
+  }
+})();
+
+document.addEventListener("click", (event) => {
+  const menu = document.querySelector(".nav-links");
+  const toggle = document.querySelector(".mobile-menu-btn, .menu-toggle");
+  if (menu && menu.classList.contains("active") && !menu.contains(event.target) && toggle && !toggle.contains(event.target)) {
+    menu.classList.remove("active");
+  }
 });
