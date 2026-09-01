@@ -1,51 +1,22 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const style = document.createElement('style');
-  style.textContent = `.cv-editor-toolbar{display:flex;align-items:end;gap:14px;flex-wrap:wrap;margin:0 auto 18px;padding:16px;border:1px solid var(--border);border-radius:18px;background:rgba(255,255,255,.045);max-width:720px}.cv-editor-title{display:flex;align-items:center;gap:10px;margin-right:auto}.cv-editor-title span{font-size:22px;color:#e879b7}.cv-editor-title strong,.cv-editor-title small{display:block}.cv-editor-title small{margin-top:3px;opacity:.65;font-size:12px}.cv-editor-toolbar label{display:flex;flex-direction:column;gap:7px;font-size:12px;font-weight:700}.cv-editor-toolbar input,.cv-editor-toolbar select{height:38px;border-radius:10px;border:1px solid var(--border);background:var(--bg-secondary);color:var(--text);padding:4px 9px}.cv-editor-toolbar input[type=color]{width:56px;padding:3px}.cv-editor-actions{display:flex;gap:8px}.cv-editor-actions button{height:38px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text);padding:0 11px;font-weight:700;cursor:pointer}.cv-preview-light{background:#fff!important;color:#17131d!important}.cv-preview-light .cv-preview-message,.cv-preview-light .cv-preview-from{color:#4b4351!important}@media(max-width:700px){.cv-editor-toolbar{align-items:stretch;padding:14px}.cv-editor-title{width:100%}.cv-editor-toolbar label{flex:1;min-width:110px}.cv-editor-actions{width:100%}.cv-editor-actions button{flex:1}}`;
-  document.head.appendChild(style);
-
-  const qs = new URLSearchParams(window.location.search);
-  const occasionInput = document.getElementById('occasion');
-  const packageInput = document.getElementById('package');
-  const themeInput = document.getElementById('theme');
-  const preview = document.getElementById('cvPreviewContent');
-
-  function selectCard(selector, value, input) {
-    if (!value || !input) return;
-    const cards = [...document.querySelectorAll(selector)];
-    const card = cards.find(item => item.dataset.value === value);
-    if (!card) return;
-    cards.forEach(item => item.classList.remove('selected'));
-    card.classList.add('selected');
-    input.value = value;
-    input.dispatchEvent(new Event('input', { bubbles:true }));
-    input.dispatchEvent(new Event('change', { bubbles:true }));
-  }
-
-  selectCard('.occasion-selection .selection-card', qs.get('occasion'), occasionInput);
-  selectCard('.package-option', qs.get('package'), packageInput);
-  selectCard('.theme-card', qs.get('theme'), themeInput);
-
-  if (!preview) return;
-  const editor = document.createElement('aside');
-  editor.className = 'cv-editor-toolbar';
-  editor.innerHTML = `<div class="cv-editor-title"><span>✦</span><div><strong>Quick Design</strong><small>Canva-style controls</small></div></div><label>Accent color <input type="color" id="cvAccent" value="#a855f7"></label><label>Text style <select id="cvFont"><option value="playfair">Elegant</option><option value="sans">Modern</option></select></label><div class="cv-editor-actions"><button type="button" id="cvLight">Light preview</button><button type="button" id="cvDark">Dark preview</button></div>`;
-  const liveSection = document.querySelector('.cv-live-preview-section');
-  if (liveSection) liveSection.insertBefore(editor, liveSection.querySelector('.cv-live-preview'));
-
-  const accent = editor.querySelector('#cvAccent');
-  const font = editor.querySelector('#cvFont');
-  function applyAccent(value) { preview.style.background = `radial-gradient(circle at top, ${value}33, transparent 42%),linear-gradient(145deg,#161622,#261829)`; }
-  accent.addEventListener('input', e => applyAccent(e.target.value));
-  font.addEventListener('change', e => { preview.style.fontFamily = e.target.value === 'sans' ? 'DM Sans,sans-serif' : 'Playfair Display,serif'; });
-  editor.querySelector('#cvLight').addEventListener('click', () => { preview.classList.add('cv-preview-light'); });
-  editor.querySelector('#cvDark').addEventListener('click', () => { preview.classList.remove('cv-preview-light'); });
-
-  document.querySelectorAll('.theme-card').forEach(card => card.addEventListener('click', () => {
-    const colors={romantic:'#ec4899',luxury:'#d4a94f',fun:'#22c55e',minimal:'#94a3b8',space:'#6366f1',custom:'#a855f7'};
-    applyAccent(colors[card.dataset.value] || '#a855f7');
-  }));
-  document.querySelectorAll('.selection-card,.theme-card,.package-option').forEach(card => {
-    card.setAttribute('tabindex','0');
-    card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();card.click();}});
-  });
+document.addEventListener('DOMContentLoaded',()=>{
+ const preview=document.getElementById('cvPreviewContent'); if(!preview)return;
+ const state={selected:null,history:[],future:[]};
+ const css=document.createElement('style');css.textContent=`
+ .cv-workspace{display:grid;grid-template-columns:210px minmax(320px,1fr) 240px;gap:14px;align-items:stretch;margin-top:18px}.cv-panel,.cv-properties{border:1px solid var(--border);border-radius:18px;padding:14px;background:rgba(255,255,255,.04)}.cv-panel button,.cv-properties button{width:100%;margin:5px 0;padding:11px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;text-align:left}.cv-panel button:hover,.cv-panel button.active{background:rgba(139,92,246,.18);border-color:var(--purple)}.cv-stage{min-height:520px;border-radius:18px;padding:18px;background:#0c0c14;border:1px solid var(--border);overflow:auto}.cv-preview-content{position:relative;min-height:480px}.cv-el{position:absolute;cursor:move;touch-action:none;user-select:none;outline:2px solid transparent;border-radius:6px;padding:3px}.cv-el.selected{outline-color:#a855f7}.cv-el.locked{cursor:default}.cv-properties label{display:block;font-size:12px;margin-top:10px;color:var(--text-muted)}.cv-properties input,.cv-properties select{width:100%;box-sizing:border-box;margin-top:5px;padding:9px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--text)}.cv-topbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.cv-topbar button{padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);cursor:pointer}.cv-empty{color:var(--text-muted);font-size:13px}.cv-el .cv-handle{position:absolute;width:12px;height:12px;border-radius:50%;right:-7px;bottom:-7px;background:#fff;border:2px solid #a855f7;cursor:nwse-resize}.cv-el .cv-rotate{position:absolute;top:-28px;left:50%;font-size:15px;cursor:grab}.cv-mode-mobile{max-width:390px;margin:auto}.cv-hidden{display:none!important}@media(max-width:900px){.cv-workspace{grid-template-columns:1fr}.cv-stage{min-height:430px}.cv-panel{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}.cv-panel h3,.cv-properties h3{grid-column:1/-1}.cv-preview-content{min-height:390px}}
+ `;document.head.appendChild(css);
+ const section=document.querySelector('.cv-live-preview-section');
+ const wrap=document.createElement('div');wrap.className='cv-workspace';
+ const left=document.createElement('aside');left.className='cv-panel';left.innerHTML='<h3>Design</h3><button data-add="text">＋ Add Text</button><button data-add="heart">❤️ Heart</button><button data-add="star">✨ Star</button><button data-add="balloon">🎈 Balloon</button><button id="cvDelete">🗑 Delete selected</button><button id="cvDuplicate">⧉ Duplicate</button><button id="cvLock">🔒 Lock / Unlock</button><button id="cvUndo">↶ Undo</button><button id="cvRedo">↷ Redo</button>';
+ const center=document.createElement('div');center.innerHTML='<div class="cv-topbar"><button id="cvDesktop">💻 Desktop</button><button id="cvMobile">📱 Mobile</button><button id="cvCenter">↔ Center</button><button id="cvFront">Bring forward</button><button id="cvBack">Send backward</button></div>';const stage=document.createElement('div');stage.className='cv-stage';
+ const props=document.createElement('aside');props.className='cv-properties';props.innerHTML='<h3>Properties</h3><div id="cvEmpty" class="cv-empty">Select an element to edit it.</div><div id="cvPropForm" hidden><label>Text<input id="cvText"></label><label>Font size<input id="cvSize" type="range" min="14" max="90"></label><label>Color<input id="cvColor" type="color"></label><label>Rotation<input id="cvRotation" type="range" min="-180" max="180"></label><label><input id="cvHide" type="checkbox"> Hide element</label></div>';
+ section.parentNode.insertBefore(wrap,section);wrap.append(left,center,props);stage.append(section);center.append(stage);
+ function snapshot(){state.history.push([...preview.querySelectorAll('.cv-el')].map(e=>e.outerHTML));if(state.history.length>30)state.history.shift();state.future=[]}
+ function restore(arr){preview.querySelectorAll('.cv-el').forEach(e=>e.remove());arr.forEach(html=>{const box=document.createElement('div');box.innerHTML=html;preview.append(box.firstElementChild)});bindAll()}
+ function select(el){preview.querySelectorAll('.cv-el').forEach(x=>x.classList.remove('selected'));state.selected=el;if(el){el.classList.add('selected');document.getElementById('cvEmpty').hidden=true;document.getElementById('cvPropForm').hidden=false;cvText.value=el.dataset.text||el.textContent.replace('⤢','');cvSize.value=parseInt(el.style.fontSize)||32;cvColor.value=el.dataset.color||'#ffffff';cvRotation.value=el.dataset.rotation||0;cvHide.checked=el.classList.contains('cv-hidden')}else{cvEmpty.hidden=false;cvPropForm.hidden=true}}
+ function make(type){snapshot();const el=document.createElement('div');el.className='cv-el';el.style.left='35%';el.style.top='35%';el.style.fontSize='32px';let text=type==='text'?'Your text':type==='heart'?'❤️':type==='star'?'✨':'🎈';el.dataset.text=text;el.textContent=text;el.insertAdjacentHTML('beforeend','<span class="cv-rotate">↻</span><span class="cv-handle"></span>');preview.append(el);bind(el);select(el)}
+ function bind(el){el.addEventListener('pointerdown',e=>{if(e.target.classList.contains('cv-handle')||e.target.classList.contains('cv-rotate'))return;if(el.classList.contains('locked'))return;select(el);const r=preview.getBoundingClientRect(),startX=e.clientX,startY=e.clientY,l=parseFloat(el.style.left)||0,t=parseFloat(el.style.top)||0;const move=x=>{el.style.left=Math.max(0,Math.min(90,l+(x.clientX-startX)/r.width*100))+'%';el.style.top=Math.max(0,Math.min(90,t+(x.clientY-startY)/r.height*100))+'%'};const up=()=>{document.removeEventListener('pointermove',move);snapshot();document.removeEventListener('pointerup',up)};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up)});el.addEventListener('click',()=>select(el));const h=el.querySelector('.cv-handle');if(h)h.addEventListener('pointerdown',e=>{e.stopPropagation();const start=e.clientX,base=parseInt(el.style.fontSize)||32;const move=x=>el.style.fontSize=Math.max(14,Math.min(120,base+(x.clientX-start)))+'px';const up=()=>{document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);snapshot()};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up)});const rot=el.querySelector('.cv-rotate');if(rot)rot.addEventListener('pointerdown',e=>{e.stopPropagation();const start=e.clientX,base=parseInt(el.dataset.rotation||0);const move=x=>{const v=base+(x.clientX-start);el.dataset.rotation=v;el.style.transform='rotate('+v+'deg)'};const up=()=>{document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);snapshot()};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up)})}
+ function bindAll(){preview.querySelectorAll('.cv-el').forEach(bind)};left.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>make(b.dataset.add));
+ cvText.oninput=e=>{if(state.selected){state.selected.dataset.text=e.target.value;const extras=state.selected.querySelectorAll('span');state.selected.textContent=e.target.value;extras.forEach(x=>state.selected.append(x))}};cvSize.oninput=e=>state.selected&&(state.selected.style.fontSize=e.target.value+'px');cvColor.oninput=e=>state.selected&&(state.selected.style.color=e.target.value,state.selected.dataset.color=e.target.value);cvRotation.oninput=e=>state.selected&&(state.selected.dataset.rotation=e.target.value,state.selected.style.transform='rotate('+e.target.value+'deg)');cvHide.onchange=e=>state.selected&&state.selected.classList.toggle('cv-hidden',e.target.checked);
+ cvDelete.onclick=()=>{if(state.selected){snapshot();state.selected.remove();select(null)}};cvDuplicate.onclick=()=>{if(state.selected){snapshot();const n=state.selected.cloneNode(true);n.style.left=(parseFloat(n.style.left)+5)+'%';n.style.top=(parseFloat(n.style.top)+5)+'%';preview.append(n);bind(n);select(n)}};cvLock.onclick=()=>state.selected&&state.selected.classList.toggle('locked');cvCenter.onclick=()=>state.selected&&(state.selected.style.left='50%',state.selected.style.transform=(state.selected.style.transform||'')+' translateX(-50%)');cvFront.onclick=()=>state.selected&&(state.selected.style.zIndex=Date.now());cvBack.onclick=()=>state.selected&&(state.selected.style.zIndex='0');cvMobile.onclick=()=>stage.classList.add('cv-mode-mobile');cvDesktop.onclick=()=>stage.classList.remove('cv-mode-mobile');cvUndo.onclick=()=>{const prev=state.history.pop();if(prev){state.future.push([...preview.querySelectorAll('.cv-el')].map(e=>e.outerHTML));restore(prev)}};cvRedo.onclick=()=>{const next=state.future.pop();if(next){state.history.push([...preview.querySelectorAll('.cv-el')].map(e=>e.outerHTML));restore(next)}};
+ snapshot();
 });
