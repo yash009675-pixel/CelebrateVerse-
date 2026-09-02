@@ -1,1 +1,78 @@
-document.addEventListener('DOMContentLoaded',()=>{const preview=document.getElementById('cvPreviewContent'),top=document.querySelector('.edbar')||document.querySelector('.cv-topbar');if(!preview||!top)return;const KEY='celebrateVerseProjects',IDKEY='celebrateVerseActiveProject';let id=localStorage.getItem(IDKEY)||('cv-'+Date.now());localStorage.setItem(IDKEY,id);const save=()=>{let ps=JSON.parse(localStorage.getItem(KEY)||'[]'),name=document.getElementById('personName')?.value||'Untitled Celebration',data={id,name,updatedAt:new Date().toISOString(),preview:preview.innerHTML};let i=ps.findIndex(x=>x.id===id);if(i>=0)ps[i]=data;else ps.unshift(data);localStorage.setItem(KEY,JSON.stringify(ps.slice(0,50)));document.getElementById('cvSaveStatus').textContent='✓ Saved'};top.insertAdjacentHTML('afterbegin','<button id="cvSaveProject">💾 Save</button><button id="cvProjects">📁 Projects</button><button id="cvPublish">🚀 Publish</button><span id="cvSaveStatus"></span>');document.getElementById('cvSaveProject').onclick=save;document.getElementById('cvProjects').onclick=()=>alert('My Projects\n\n'+(JSON.parse(localStorage.getItem(KEY)||'[]').map((x,i)=>i+1+'. '+x.name).join('\n')||'No saved projects yet.'));document.getElementById('cvPublish').onclick=()=>{save();alert('Publish foundation ready. Permanent public links require backend/cloud storage.')};let t;document.addEventListener('input',()=>{clearTimeout(t);t=setTimeout(save,700)});save();});
+document.addEventListener('DOMContentLoaded', () => {
+  const preview = document.getElementById('cvPreviewContent');
+  const top = document.querySelector('.edbar');
+  if (!preview || !top || document.getElementById('cvSaveProject')) return;
+
+  const KEY = 'celebrateVerseProjects';
+  const IDKEY = 'celebrateVerseActiveProject';
+  let id = localStorage.getItem(IDKEY) || `cv-${Date.now()}`;
+  localStorage.setItem(IDKEY, id);
+
+  const getProjects = () => {
+    try {
+      const value = JSON.parse(localStorage.getItem(KEY) || '[]');
+      return Array.isArray(value) ? value : [];
+    } catch (_) {
+      return [];
+    }
+  };
+
+  const save = () => {
+    const projects = getProjects();
+    const name = document.getElementById('personName')?.value?.trim() || 'Untitled Celebration';
+    const data = {
+      id,
+      name,
+      updatedAt: new Date().toISOString(),
+      preview: preview.innerHTML,
+      form: {
+        personName: document.getElementById('personName')?.value || '',
+        customerName: document.getElementById('customerName')?.value || '',
+        specialDate: document.getElementById('specialDate')?.value || '',
+        email: document.getElementById('email')?.value || '',
+        message: document.getElementById('message')?.value || ''
+      }
+    };
+    const index = projects.findIndex(item => item.id === id);
+    if (index >= 0) projects[index] = data;
+    else projects.unshift(data);
+    localStorage.setItem(KEY, JSON.stringify(projects.slice(0, 50)));
+    const status = document.getElementById('cvSaveStatus');
+    if (status) {
+      status.textContent = '✓ Saved';
+      clearTimeout(status._timer);
+      status._timer = setTimeout(() => { status.textContent = ''; }, 1800);
+    }
+  };
+
+  top.insertAdjacentHTML(
+    'beforeend',
+    '<button id="cvSaveProject" type="button">💾 Save</button>' +
+    '<button id="cvProjects" type="button">📁 Projects</button>' +
+    '<button id="cvPublish" type="button">🚀 Publish</button>' +
+    '<span id="cvSaveStatus" role="status" aria-live="polite"></span>'
+  );
+
+  document.getElementById('cvSaveProject').addEventListener('click', save);
+  document.getElementById('cvProjects').addEventListener('click', () => {
+    const projects = getProjects();
+    const text = projects.length
+      ? projects.map((item, index) => `${index + 1}. ${item.name}`).join('\n')
+      : 'No saved projects yet.';
+    alert(`My Projects\n\n${text}`);
+  });
+  document.getElementById('cvPublish').addEventListener('click', () => {
+    save();
+    alert('Your design is saved. Permanent public publishing requires backend/cloud storage.');
+  });
+
+  let timer;
+  const scheduleSave = () => {
+    clearTimeout(timer);
+    timer = setTimeout(save, 700);
+  };
+  document.getElementById('celebrationForm')?.addEventListener('input', scheduleSave);
+  document.addEventListener('cv:changed', scheduleSave);
+  window.addEventListener('beforeunload', save);
+  save();
+});
