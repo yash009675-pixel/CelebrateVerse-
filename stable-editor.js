@@ -1,267 +1,42 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const previewSection = document.querySelector('.cv-live-preview-section');
-  const preview = document.getElementById('cvPreviewContent');
-  if (!previewSection || !preview || document.getElementById('stableEditor')) return;
-
-  const root = document.createElement('section');
-  root.id = 'stableEditor';
-  root.innerHTML = `
-    <h2 class="ed-title">Design Editor</h2>
-    <div class="ed">
-      <aside>
-        <b>ADD</b>
-        <button type="button" data-add="Your text">＋ Text</button>
-        <button type="button" data-add="❤️">❤️ Heart</button>
-        <button type="button" data-add="✨">✨ Star</button>
-        <button type="button" data-add="🎈">🎈 Balloon</button>
-        <button type="button" data-add="🌹">🌹 Rose</button>
-        <button type="button" data-add="🎁">🎁 Gift</button>
-        <button type="button" id="edPhoto">🖼 Upload photo</button>
-        <input id="edFile" type="file" accept="image/*" hidden>
-        <hr>
-        <b>TEMPLATES</b>
-        <button type="button" data-bg="linear-gradient(135deg,#3b0764,#831843)">❤️ Romantic</button>
-        <button type="button" data-bg="linear-gradient(135deg,#111827,#4c1d95)">✨ Luxury</button>
-        <button type="button" data-bg="linear-gradient(135deg,#fce7f3,#ddd6fe)">🌸 Pastel</button>
-        <button type="button" data-bg="radial-gradient(circle at top,#312e81,#020617 70%)">🌌 Galaxy</button>
-      </aside>
-      <main>
-        <div class="edbar">
-          <button type="button" id="edUndo">↶ Undo</button>
-          <button type="button" id="edRedo">↷ Redo</button>
-          <button type="button" id="edDesk">💻 Desktop</button>
-          <button type="button" id="edMob">📱 Mobile</button>
-          <button type="button" id="edConf">🎉 Confetti</button>
-          <button type="button" id="edHearts">❤️ Hearts</button>
-        </div>
-        <div id="edCanvas"></div>
-      </main>
-      <aside>
-        <b>PROPERTIES</b>
-        <p id="edEmpty">Select an element.</p>
-        <div id="edProps" hidden>
-          <label>Text<input id="edText"></label>
-          <label>Size<input id="edSize" type="range" min="14" max="120"></label>
-          <label>Color<input id="edColor" type="color"></label>
-          <label>Font<select id="edFont"><option>DM Sans</option><option>Playfair Display</option><option>Georgia</option><option>Arial</option></select></label>
-          <label>Animation<select id="edAnim"><option value="">None</option><option value="float">Float</option><option value="pulse">Pulse</option><option value="bounce">Bounce</option></select></label>
-          <button type="button" id="edDuplicate">⧉ Duplicate</button>
-          <button type="button" id="edDelete">🗑 Delete</button>
-          <button type="button" id="edLock">🔒 Lock</button>
-        </div>
-        <hr>
-        <b>LAYERS</b>
-        <div id="edLayers"></div>
-      </aside>
-    </div>`;
-
-  previewSection.parentNode.insertBefore(root, previewSection);
-  const canvas = root.querySelector('#edCanvas');
-  canvas.append(previewSection);
-
-  const state = { selected: null, history: [], future: [], restoring: false };
-  const $ = id => root.querySelector('#' + id);
-  const snapshot = () => [...preview.querySelectorAll('.editem')].map(el => el.outerHTML);
-
-  function renderSnapshot(items) {
-    state.restoring = true;
-    preview.querySelectorAll('.editem').forEach(el => el.remove());
-    items.forEach(html => {
-      const holder = document.createElement('div');
-      holder.innerHTML = html;
-      const el = holder.firstElementChild;
-      if (el) { preview.append(el); bind(el); }
-    });
-    state.restoring = false;
-    select(null);
-    layers();
-  }
-
-  function commit() {
-    if (state.restoring) return;
-    const current = snapshot();
-    const previous = state.history[state.history.length - 1];
-    if (JSON.stringify(current) === JSON.stringify(previous)) return;
-    state.history.push(current);
-    if (state.history.length > 40) state.history.shift();
-    state.future = [];
-    document.dispatchEvent(new CustomEvent('cv:changed'));
-  }
-
-  function layers() {
-    const box = $('edLayers');
-    if (!box) return;
-    box.innerHTML = '';
-    [...preview.querySelectorAll('.editem')].reverse().forEach(el => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.textContent = el.dataset.text || (el.querySelector('img') ? 'Photo' : 'Element');
-      button.onclick = () => select(el);
-      box.append(button);
-    });
-  }
-
-  function select(el) {
-    preview.querySelectorAll('.editem').forEach(item => item.classList.remove('active'));
-    state.selected = el || null;
-    if (!el) {
-      $('edEmpty').hidden = false;
-      $('edProps').hidden = true;
-      layers();
-      return;
-    }
-    el.classList.add('active');
-    $('edEmpty').hidden = true;
-    $('edProps').hidden = false;
-    $('edText').value = el.dataset.text || '';
-    $('edSize').value = parseInt(el.style.fontSize, 10) || 32;
-    $('edColor').value = el.dataset.color || '#ffffff';
-    $('edFont').value = el.dataset.font || 'DM Sans';
-    $('edAnim').value = el.dataset.anim || '';
-    $('edLock').textContent = el.dataset.lock === '1' ? '🔓 Unlock' : '🔒 Lock';
-  }
-
-  function bind(el) {
-    if (el.dataset.bound === '1') return;
-    el.dataset.bound = '1';
-    el.addEventListener('click', event => { event.stopPropagation(); select(el); });
-    el.addEventListener('pointerdown', event => {
-      if (event.target.closest('.ed-handle') || event.target.closest('.ed-rotate') || el.dataset.lock === '1') return;
-      select(el);
-      const rect = preview.getBoundingClientRect();
-      const sx = event.clientX, sy = event.clientY;
-      const startLeft = parseFloat(el.style.left) || 40;
-      const startTop = parseFloat(el.style.top) || 40;
-      const move = e => {
-        const nx = startLeft + ((e.clientX - sx) / rect.width) * 100;
-        const ny = startTop + ((e.clientY - sy) / rect.height) * 100;
-        el.style.left = Math.max(0, Math.min(95, nx)) + '%';
-        el.style.top = Math.max(0, Math.min(95, ny)) + '%';
-      };
-      const up = () => {
-        document.removeEventListener('pointermove', move);
-        document.removeEventListener('pointerup', up);
-        commit();
-        layers();
-      };
-      document.addEventListener('pointermove', move);
-      document.addEventListener('pointerup', up);
-    });
-  }
-
-  function add(text) {
-    const el = document.createElement('div');
-    el.className = 'editem';
-    el.dataset.text = text;
-    el.style.left = '42%';
-    el.style.top = '42%';
-    el.style.fontSize = text === 'Your text' ? '32px' : '36px';
-    el.textContent = text;
-    preview.append(el);
-    bind(el);
-    select(el);
-    commit();
-    layers();
-  }
-
-  root.querySelectorAll('[data-add]').forEach(button => button.onclick = () => add(button.dataset.add));
-  root.querySelectorAll('[data-bg]').forEach(button => button.onclick = () => { preview.style.background = button.dataset.bg; document.dispatchEvent(new CustomEvent('cv:changed')); });
-  $('edPhoto').onclick = () => $('edFile').click();
-  $('edFile').onchange = event => {
-    const file = event.target.files && event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const el = document.createElement('div');
-      el.className = 'editem';
-      el.dataset.text = 'Photo';
-      el.style.left = '35%';
-      el.style.top = '25%';
-      const img = document.createElement('img');
-      img.src = reader.result;
-      img.alt = 'Uploaded celebration photo';
-      el.append(img);
-      preview.append(el);
-      bind(el);
-      select(el);
-      commit();
-      layers();
-    };
-    reader.readAsDataURL(file);
-    event.target.value = '';
-  };
-
-  $('edText').oninput = event => {
-    const el = state.selected;
-    if (!el || el.querySelector('img')) return;
-    el.dataset.text = event.target.value;
-    el.textContent = event.target.value;
-    layers();
-    document.dispatchEvent(new CustomEvent('cv:changed'));
-  };
-  $('edSize').onchange = event => { if (state.selected) { state.selected.style.fontSize = event.target.value + 'px'; commit(); } };
-  $('edColor').oninput = event => { if (state.selected) { state.selected.style.color = event.target.value; state.selected.dataset.color = event.target.value; document.dispatchEvent(new CustomEvent('cv:changed')); } };
-  $('edFont').onchange = event => { if (state.selected) { state.selected.style.fontFamily = event.target.value; state.selected.dataset.font = event.target.value; commit(); } };
-  $('edAnim').onchange = event => { if (state.selected) { state.selected.dataset.anim = event.target.value; commit(); } };
-
-  $('edDelete').onclick = () => { if (state.selected) { state.selected.remove(); select(null); commit(); } };
-  $('edDuplicate').onclick = () => {
-    if (!state.selected) return;
-    const copy = state.selected.cloneNode(true);
-    copy.dataset.bound = '0';
-    copy.style.left = (parseFloat(copy.style.left) + 5) + '%';
-    copy.style.top = (parseFloat(copy.style.top) + 5) + '%';
-    preview.append(copy);
-    bind(copy);
-    select(copy);
-    commit();
-    layers();
-  };
-  $('edLock').onclick = () => {
-    if (!state.selected) return;
-    state.selected.dataset.lock = state.selected.dataset.lock === '1' ? '0' : '1';
-    select(state.selected);
-    commit();
-  };
-
-  $('edDesk').onclick = () => canvas.classList.remove('mobile');
-  $('edMob').onclick = () => canvas.classList.add('mobile');
-  const effect = icon => {
-    canvas.querySelector('.edfx')?.remove();
-    const layer = document.createElement('div');
-    layer.className = 'edfx';
-    for (let i = 0; i < 20; i++) {
-      const span = document.createElement('span');
-      span.textContent = icon;
-      span.style.left = (i * 17 % 100) + '%';
-      span.style.animationDelay = (i * 0.12) + 's';
-      layer.append(span);
-    }
-    preview.append(layer);
-    document.dispatchEvent(new CustomEvent('cv:changed'));
-  };
-  $('edConf').onclick = () => effect('🎉');
-  $('edHearts').onclick = () => effect('❤️');
-
-  $('edUndo').onclick = () => {
-    if (state.history.length <= 1) return;
-    const current = state.history.pop();
-    state.future.push(current);
-    renderSnapshot(state.history[state.history.length - 1]);
-    document.dispatchEvent(new CustomEvent('cv:changed'));
-  };
-  $('edRedo').onclick = () => {
-    const next = state.future.pop();
-    if (!next) return;
-    state.history.push(next);
-    renderSnapshot(next);
-    document.dispatchEvent(new CustomEvent('cv:changed'));
-  };
-
-  document.addEventListener('click', event => {
-    if (event.target === preview) select(null);
-  });
-  preview.querySelectorAll('.editem').forEach(bind);
-  state.history = [snapshot()];
-  layers();
+document.addEventListener('DOMContentLoaded',()=>{
+const section=document.querySelector('.cv-live-preview-section'),preview=document.getElementById('cvPreviewContent');
+if(!section||!preview||document.getElementById('stableEditor'))return;
+const root=document.createElement('section');root.id='stableEditor';
+root.innerHTML=`<div class="ed-head"><div><span class="ed-kicker">CELEBRATEVERSE STUDIO</span><h2>Design your celebration</h2></div><div class="ed-status" id="edStatus">✓ Ready</div></div>
+<div class="ed"><aside class="ed-left"><div class="ed-tabs"><button class="ed-tab active" data-tab="design">Design</button><button class="ed-tab" data-tab="assets">Assets</button><button class="ed-tab" data-tab="pages">Pages</button></div>
+<div class="ed-panel" data-panel="design"><b>ADD</b><button type="button" data-add="Your text">T Text</button><div class="ed-grid"><button type="button" data-add="❤️">❤️ Heart</button><button type="button" data-add="✨">✨ Star</button><button type="button" data-add="🎈">🎈 Balloon</button><button type="button" data-add="🌹">🌹 Rose</button><button type="button" data-add="🎁">🎁 Gift</button><button type="button" data-add="🎂">🎂 Cake</button><button type="button" data-add="🎉">🎉 Confetti</button><button type="button" data-add="✨">✦ Sparkle</button></div><hr><b>TEMPLATES</b><button type="button" data-template="romantic">❤️ Romantic</button><button type="button" data-template="luxury">✨ Luxury</button><button type="button" data-template="pastel">🌸 Pastel</button><button type="button" data-template="galaxy">🌌 Galaxy</button><hr><b>BLOCKS</b><button type="button" data-block="countdown">⏳ Countdown</button><button type="button" data-block="letter">💌 Love Letter</button><button type="button" data-block="timeline">🗓 Timeline</button><button type="button" data-block="music">🎵 Music Player</button></div>
+<div class="ed-panel" data-panel="assets" hidden><b>PHOTOS</b><button type="button" id="edPhoto">🖼 Upload Photo</button><input id="edFile" type="file" accept="image/*" hidden><p class="ed-help">Upload an image and place it anywhere on the canvas.</p><b>MUSIC</b><button type="button" id="edMusicUpload">🎵 Upload Music</button><input id="edMusicFile" type="file" accept="audio/*" hidden><div class="ed-audio"><button type="button" id="edPlay">▶</button><button type="button" id="edPause">Ⅱ</button><label><input id="edLoop" type="checkbox" checked> Loop</label></div></div>
+<div class="ed-panel" data-panel="pages" hidden><b>PAGES</b><div id="edPages"></div><button type="button" id="edAddPage">＋ Add Page</button><button type="button" id="edDuplicatePage">⧉ Duplicate Page</button></div>
+<div class="ed-layers"><b>LAYERS</b><div id="edLayers"></div></div></aside>
+<main class="ed-main"><div class="edbar"><button type="button" id="edUndo">↶</button><button type="button" id="edRedo">↷</button><span class="ed-sep"></span><button type="button" id="edCopy">Copy</button><button type="button" id="edPaste">Paste</button><button type="button" id="edDuplicate">Duplicate</button><button type="button" id="edDelete">Delete</button><span class="ed-sep"></span><button type="button" id="edDesk">Desktop</button><button type="button" id="edMob">Mobile</button><button type="button" id="edZoomOut">−</button><span id="edZoom">100%</span><button type="button" id="edZoomIn">＋</button><button type="button" id="edFit">Fit</button><span class="ed-sep"></span><button type="button" id="edConf">🎉</button><button type="button" id="edHearts">❤️</button></div><div class="ed-align"><button type="button" data-align="left">←</button><button type="button" data-align="center">↔</button><button type="button" data-align="right">→</button><button type="button" data-align="top">↑</button><button type="button" data-align="bottom">↓</button><button type="button" id="edForward">Bring Forward</button><button type="button" id="edBackward">Send Back</button></div><div id="edCanvasWrap"><div id="edCanvas"></div></div></main>
+<aside class="ed-right"><b>PROPERTIES</b><p id="edEmpty">Select an element.</p><div id="edProps" hidden><label>Text<input id="edText"></label><div class="ed-two"><label>Size<input id="edSize" type="range" min="8" max="160"></label><output id="edSizeOut">32</output></div><label>Font<select id="edFont"><option>DM Sans</option><option>Playfair Display</option><option>Georgia</option><option>Arial</option></select></label><div class="ed-two"><label>Color<input id="edColor" type="color"></label><label>Opacity<input id="edOpacity" type="range" min="0" max="1" step="0.05"></label></div><label>Letter spacing<input id="edSpacing" type="range" min="-5" max="20" step="0.5"></label><label>Rotation<input id="edRotation" type="range" min="-180" max="180"></label><label>Animation<select id="edAnim"><option value="">None</option><option value="float">Float</option><option value="pulse">Pulse</option><option value="bounce">Bounce</option></select></label><div class="ed-checks"><label><input id="edVisible" type="checkbox" checked> Visible</label><label><input id="edRounded" type="checkbox"> Rounded</label><label><input id="edCircle" type="checkbox"> Circle</label><label><input id="edFrame" type="checkbox"> Soft Frame</label><label><input id="edShadow" type="checkbox"> Shadow</label></div><div class="ed-two"><button type="button" id="edLock">🔒 Lock</button><button type="button" id="edHide">Hide</button></div></div><hr><b>AI DESIGN ASSISTANT</b><button type="button" id="edAiText">✨ Generate Text</button><button type="button" id="edAiDesign">✨ Suggest Design</button><p id="edAiResult" class="ed-help"></p></aside></div>`;
+section.parentNode.insertBefore(root,section);const canvas=root.querySelector('#edCanvas');canvas.append(section);
+const $=id=>root.querySelector('#'+id), state={selected:null,history:[],future:[],clipboard:null,zoom:1,pages:[null],page:0,restoring:false};
+const templates={romantic:['linear-gradient(135deg,#5b0b45,#1b102b)','#fce7f3'],luxury:['linear-gradient(135deg,#111827,#312e81)','#fef3c7'],pastel:['linear-gradient(135deg,#fce7f3,#ddd6fe)','#4c1d95'],galaxy:['radial-gradient(circle at 20% 10%,#312e81,#020617 70%)','#c4b5fd']};
+function items(){return [...preview.querySelectorAll('.editem')]}function snap(){return items().map(e=>e.outerHTML)}
+function commit(){if(state.restoring)return;const s=snap(),last=state.history.at(-1);if(JSON.stringify(s)===JSON.stringify(last))return;state.history.push(s);if(state.history.length>50)state.history.shift();state.future=[];changed()}
+function changed(){document.dispatchEvent(new CustomEvent('cv:changed'));if($('edStatus'))$('edStatus').textContent='● Unsaved changes';}
+function bind(el){if(el.dataset.bound==='1')return;el.dataset.bound='1';el.addEventListener('click',e=>{e.stopPropagation();select(el,e.shiftKey)});el.addEventListener('pointerdown',e=>{if(el.dataset.lock==='1'||e.target.closest('.ed-handle'))return;select(el,e.shiftKey);const r=preview.getBoundingClientRect(),sx=e.clientX,sy=e.clientY,l=parseFloat(el.style.left)||40,t=parseFloat(el.style.top)||40;const move=v=>{let x=l+(v.clientX-sx)/r.width*100,y=t+(v.clientY-sy)/r.height*100;const snapX=Math.abs(x-50)<2?50:x,snapY=Math.abs(y-50)<2?50:y;el.style.left=Math.max(0,Math.min(96,snapX))+'%';el.style.top=Math.max(0,Math.min(96,snapY))+'%';guides(Math.abs(snapX-50)<2,Math.abs(snapY-50)<2)};const up=()=>{document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);guides(false,false);commit();layers()};document.addEventListener('pointermove',move);document.addEventListener('pointerup',up)});}
+function select(el,multi=false){if(!multi)items().forEach(x=>x.classList.remove('active'));state.selected=el||state.selected;if(el)el.classList.toggle('active',multi&&el.classList.contains('active')?false:true);const s=state.selected;if(!s){$('edEmpty').hidden=false;$('edProps').hidden=true;return}$('edEmpty').hidden=true;$('edProps').hidden=false;$('edText').value=s.dataset.text||'';$('edSize').value=parseInt(s.style.fontSize)||32;$('edSizeOut').value=$('edSize').value;$('edFont').value=s.dataset.font||'DM Sans';$('edColor').value=s.dataset.color||'#ffffff';$('edOpacity').value=s.style.opacity||1;$('edSpacing').value=parseFloat(s.style.letterSpacing)||0;$('edRotation').value=parseFloat(s.dataset.rotation)||0;$('edAnim').value=s.dataset.anim||'';$('edVisible').checked=s.dataset.hidden!=='1';$('edRounded').checked=s.dataset.rounded==='1';$('edCircle').checked=s.dataset.circle==='1';$('edFrame').checked=s.dataset.frame==='1';$('edShadow').checked=s.dataset.shadow==='1';$('edLock').textContent=s.dataset.lock==='1'?'🔓 Unlock':'🔒 Lock';layers()}
+function layers(){const box=$('edLayers');box.innerHTML='';items().reverse().forEach((el,i)=>{const b=document.createElement('button');b.type='button';b.className=el.classList.contains('active')?'layer-active':'';b.textContent=(el.dataset.text||'Element').slice(0,24);b.onclick=()=>select(el);box.append(b)})}
+function guides(x,y){let g=root.querySelector('.ed-guides');if(!g){g=document.createElement('div');g.className='ed-guides';g.innerHTML='<i class="v"></i><i class="h"></i>';root.querySelector('#edCanvasWrap').append(g)}g.classList.toggle('show-v',x);g.classList.toggle('show-h',y)}
+function add(text){const el=document.createElement('div');el.className='editem';el.dataset.text=text;el.style.left='42%';el.style.top='42%';el.style.fontSize=text==='Your text'?'32px':'42px';el.textContent=text;preview.append(el);bind(el);select(el);commit();layers()}
+function render(arr){state.restoring=true;items().forEach(e=>e.remove());(arr||[]).forEach(html=>{const h=document.createElement('div');h.innerHTML=html;const e=h.firstElementChild;if(e){e.dataset.bound='0';preview.append(e);bind(e)}});state.restoring=false;select(null);layers()}
+function transform(){const s=state.selected;if(!s)return;s.style.transform=`rotate(${s.dataset.rotation||0}deg)`;s.style.opacity=$('edOpacity').value;s.style.letterSpacing=$('edSpacing').value+'px';s.style.fontSize=$('edSize').value+'px';$('edSizeOut').value=$('edSize').value;s.style.fontFamily=$('edFont').value;s.style.color=$('edColor').value;s.dataset.color=$('edColor').value;s.dataset.font=$('edFont').value;s.dataset.rounded=$('edRounded').checked?'1':'0';s.dataset.circle=$('edCircle').checked?'1':'0';s.dataset.frame=$('edFrame').checked?'1':'0';s.dataset.shadow=$('edShadow').checked?'1':'0';s.style.borderRadius=$('edCircle').checked?'50%':$('edRounded').checked?'18px':'';s.style.boxShadow=$('edFrame').checked||$('edShadow').checked?'0 12px 35px rgba(0,0,0,.28)':'';s.dataset.anim=$('edAnim').value;s.style.display=$('edVisible').checked?'':'none';changed()}
+root.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>add(b.dataset.add));root.querySelectorAll('[data-template]').forEach(b=>b.onclick=()=>{const [bg,accent]=templates[b.dataset.template];preview.style.background=bg;root.style.setProperty('--ed-accent',accent);changed()});
+$('edPhoto').onclick=()=>$('edFile').click();$('edFile').onchange=e=>{const f=e.target.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{const el=document.createElement('div');el.className='editem photo';el.dataset.text='Photo';el.style.left='35%';el.style.top='25%';el.style.width='180px';el.style.height='180px';const img=document.createElement('img');img.src=r.result;img.alt='Celebration photo';el.append(img);preview.append(el);bind(el);select(el);commit();layers()};r.readAsDataURL(f);e.target.value=''};
+$('edMusicUpload').onclick=()=>$('edMusicFile').click();const audio=new Audio();$('edMusicFile').onchange=e=>{const f=e.target.files?.[0];if(f){audio.src=URL.createObjectURL(f);audio.loop=$('edLoop').checked;document.dispatchEvent(new CustomEvent('cv:changed'))}};$('edPlay').onclick=()=>audio.play();$('edPause').onclick=()=>audio.pause();$('edLoop').onchange=()=>audio.loop=$('edLoop').checked;
+$('edText').oninput=e=>{if(state.selected&&!state.selected.querySelector('img')){state.selected.dataset.text=e.target.value;state.selected.textContent=e.target.value;layers();changed()}};['edSize','edOpacity','edSpacing','edRotation','edColor','edFont','edAnim','edRounded','edCircle','edFrame','edShadow','edVisible'].forEach(id=>$(id).addEventListener(['edFont','edAnim'].includes(id)?'change':'input',transform));
+$('edDelete').onclick=()=>{if(state.selected){state.selected.remove();state.selected=null;select(null);commit();layers()}};$('edDuplicate').onclick=()=>{if(!state.selected)return;const n=state.selected.cloneNode(true);n.dataset.bound='0';n.style.left=(parseFloat(n.style.left)+5)+'%';n.style.top=(parseFloat(n.style.top)+5)+'%';preview.append(n);bind(n);select(n);commit();layers()};$('edLock').onclick=()=>{if(state.selected){state.selected.dataset.lock=state.selected.dataset.lock==='1'?'0':'1';select(state.selected);commit()}};$('edHide').onclick=()=>{if(state.selected){state.selected.dataset.hidden=state.selected.dataset.hidden==='1'?'0':'1';$('edVisible').checked=state.selected.dataset.hidden!=='1';state.selected.style.display=$('edVisible').checked?'':'none';commit()}};
+$('edCopy').onclick=()=>{if(state.selected)state.clipboard=state.selected.outerHTML};$('edPaste').onclick=()=>{if(!state.clipboard)return;const h=document.createElement('div');h.innerHTML=state.clipboard;const n=h.firstElementChild;n.dataset.bound='0';n.style.left=(parseFloat(n.style.left||40)+6)+'%';n.style.top=(parseFloat(n.style.top||40)+6)+'%';preview.append(n);bind(n);select(n);commit();layers()};
+root.querySelectorAll('[data-align]').forEach(b=>b.onclick=()=>{if(!state.selected)return;const a=b.dataset.align;if(a==='left')state.selected.style.left='2%';if(a==='center')state.selected.style.left='50%';if(a==='right')state.selected.style.left='92%';if(a==='top')state.selected.style.top='2%';if(a==='bottom')state.selected.style.top='92%';commit()});$('edForward').onclick=()=>{if(state.selected){state.selected.style.zIndex=(parseInt(state.selected.style.zIndex)||1)+1;commit();layers()}};$('edBackward').onclick=()=>{if(state.selected){state.selected.style.zIndex=Math.max(0,(parseInt(state.selected.style.zIndex)||1)-1);commit();layers()}};
+$('edDesk').onclick=()=>canvas.classList.remove('mobile');$('edMob').onclick=()=>canvas.classList.add('mobile');function zoom(v){state.zoom=Math.max(.5,Math.min(2,v));canvas.style.transform=`scale(${state.zoom})`;canvas.style.transformOrigin='top center';$('edZoom').textContent=Math.round(state.zoom*100)+'%'}$('edZoomIn').onclick=()=>zoom(state.zoom+.1);$('edZoomOut').onclick=()=>zoom(state.zoom-.1);$('edFit').onclick=()=>zoom(1);
+function effect(icon){root.querySelector('.edfx')?.remove();const f=document.createElement('div');f.className='edfx';for(let i=0;i<30;i++){const s=document.createElement('span');s.textContent=icon;s.style.left=Math.random()*100+'%';s.style.animationDelay=Math.random()*2+'s';f.append(s)}preview.append(f);changed()}$('edConf').onclick=()=>effect('🎉');$('edHearts').onclick=()=>effect('❤️');
+$('edUndo').onclick=()=>{if(state.history.length<=1)return;state.future.push(state.history.pop());render(state.history.at(-1));changed()};$('edRedo').onclick=()=>{const n=state.future.pop();if(n){state.history.push(n);render(n);changed()}};
+document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,select'))return;if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();$('edUndo').click()}else if((e.ctrlKey||e.metaKey)&&e.key==='y'){e.preventDefault();$('edRedo').click()}else if((e.ctrlKey||e.metaKey)&&e.key==='c'){$('edCopy').click()}else if((e.ctrlKey||e.metaKey)&&e.key==='v'){$('edPaste').click()}else if(e.key==='Delete')$('edDelete').click();else if(state.selected&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();const x=parseFloat(state.selected.style.left)||40,y=parseFloat(state.selected.style.top)||40;state.selected.style.left=(x+(e.key==='ArrowLeft'?-1:e.key==='ArrowRight'?1:0))+'%';state.selected.style.top=(y+(e.key==='ArrowUp'?-1:e.key==='ArrowDown'?1:0))+'%';commit()}});
+root.querySelectorAll('.ed-tab').forEach(t=>t.onclick=()=>{root.querySelectorAll('.ed-tab').forEach(x=>x.classList.toggle('active',x===t));root.querySelectorAll('.ed-panel').forEach(p=>p.hidden=p.dataset.panel!==t.dataset.tab)});
+function pagesRender(){const box=$('edPages');box.innerHTML='';state.pages.forEach((_,i)=>{const b=document.createElement('button');b.textContent='Page '+(i+1);b.className=i===state.page?'layer-active':'';b.onclick=()=>{state.pages[state.page]=snap();state.page=i;render(state.pages[i]||[]);pagesRender()};box.append(b)})}function savePage(){state.pages[state.page]=snap()}$('edAddPage').onclick=()=>{savePage();state.pages.push([]);state.page=state.pages.length-1;render([]);pagesRender();commit()};$('edDuplicatePage').onclick=()=>{savePage();state.pages.push([...state.pages[state.page]]);state.page=state.pages.length-1;render(state.pages[state.page]);pagesRender();commit()};
+root.querySelectorAll('[data-block]').forEach(b=>b.onclick=()=>{const text={countdown:'⏳ Countdown\nYour special day is coming!',letter:'💌 Love Letter\nWrite your heartfelt message here.',timeline:'🗓 Our Timeline\nFirst memory → Best memory → Forever',music:'🎵 Music Player\nYour celebration soundtrack'}[b.dataset.block];add(text)});
+$('edAiText').onclick=()=>{const name=document.getElementById('personName')?.value||'someone special',occ=document.getElementById('occasion')?.value||'celebration';if(state.selected&&!state.selected.querySelector('img')){$('edText').value=`Happy ${occ}, ${name}! Wishing you a day filled with love, laughter and beautiful memories.`;$('edText').dispatchEvent(new Event('input'));}$('edAiResult').textContent='Generated a personalized local suggestion.'};$('edAiDesign').onclick=()=>{const t=['romantic','luxury','pastel','galaxy'][Math.floor(Math.random()*4)];root.querySelector(`[data-template="${t}"]`).click();$('edAiResult').textContent=`Suggested ${t} styling based on your celebration.`};
+preview.addEventListener('click',e=>{if(e.target===preview)select(null)});items().forEach(bind);state.history=[snap()];pagesRender();layers();
 });
