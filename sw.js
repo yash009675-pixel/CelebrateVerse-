@@ -1,4 +1,4 @@
-const CACHE_NAME="celebrateverse-v17";
+const CACHE_NAME="celebrateverse-v18";
 const APP_SHELL=["./","./index.html","./login.html","./signup.html","./dashboard.html","./customize.html","./payment.html","./success.html","./offline.html","./celebration.html","./style.css","./mobile-fix.css","./canva-editor.css","./stable-editor.css","./main.js","./auth.js","./dashboard.js","./customize.js","./stable-editor.js","./projects-publish.js","./editor-enhancements.js","./celebration.js","./payment.js","./payment-config.js","./supabase.js","./manifest.json"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(APP_SHELL)));self.skipWaiting()});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)))));self.clients.claim()});
