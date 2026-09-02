@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="canva-editor.css?v=18">
   <link rel="stylesheet" href="stable-editor.css?v=18">
+  <link rel="stylesheet" href="phase9-editor-tools.css?v=1">
 </head>
 <body>
   <header class="navbar"><div class="nav-container"><a href="index.html" class="logo">Celebrate<span>Verse</span></a><div class="nav-buttons"><a href="index.html" class="back-home"><i class="fa-solid fa-arrow-left"></i> Home</a></div></div></header>
@@ -28,16 +29,6 @@
     </form>
   </div></main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase.js?v=18"></script><script src="main.js?v=18"></script><script src="customize.js?v=18"></script><script src="stable-editor.js?v=18"></script><script src="projects-publish.js?v=18"></script>
-  <script>
-  document.addEventListener('DOMContentLoaded',()=>{
-    const params=new URLSearchParams(location.search);
-    const occasion=params.get('occasion'); const pkg=params.get('package');
-    const set=(sel,id,val)=>{if(!val)return;const card=document.querySelector(sel+'[data-value="'+CSS.escape(val)+'"]'),input=document.getElementById(id);if(card&&input){document.querySelectorAll(sel).forEach(x=>x.classList.remove('selected'));card.classList.add('selected');input.value=val;card.dispatchEvent(new Event('click',{bubbles:true}));}}
-    if(occasion)set('.occasion-selection .selection-card','occasion',occasion);
-    if(pkg)set('.package-option','package',pkg);
-    if(occasion||pkg){document.querySelectorAll('.form-step').forEach(s=>s.classList.remove('active'));const first=document.querySelector('.form-step[data-step="1"]');if(first)first.classList.add('active');}
-  });
-  </script>
+  <script src="supabase.js?v=18"></script><script src="main.js?v=18"></script><script src="customize.js?v=18"></script><script src="stable-editor.js?v=18"></script><script src="projects-publish.js?v=18"></script><script src="phase9-editor-tools.js?v=1"></script>
 </body>
 </html>
