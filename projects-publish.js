@@ -1,78 +1,17 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const preview = document.getElementById('cvPreviewContent');
-  const top = document.querySelector('.edbar');
-  if (!preview || !top || document.getElementById('cvSaveProject')) return;
-
-  const KEY = 'celebrateVerseProjects';
-  const IDKEY = 'celebrateVerseActiveProject';
-  let id = localStorage.getItem(IDKEY) || `cv-${Date.now()}`;
-  localStorage.setItem(IDKEY, id);
-
-  const getProjects = () => {
-    try {
-      const value = JSON.parse(localStorage.getItem(KEY) || '[]');
-      return Array.isArray(value) ? value : [];
-    } catch (_) {
-      return [];
-    }
-  };
-
-  const save = () => {
-    const projects = getProjects();
-    const name = document.getElementById('personName')?.value?.trim() || 'Untitled Celebration';
-    const data = {
-      id,
-      name,
-      updatedAt: new Date().toISOString(),
-      preview: preview.innerHTML,
-      form: {
-        personName: document.getElementById('personName')?.value || '',
-        customerName: document.getElementById('customerName')?.value || '',
-        specialDate: document.getElementById('specialDate')?.value || '',
-        email: document.getElementById('email')?.value || '',
-        message: document.getElementById('message')?.value || ''
-      }
-    };
-    const index = projects.findIndex(item => item.id === id);
-    if (index >= 0) projects[index] = data;
-    else projects.unshift(data);
-    localStorage.setItem(KEY, JSON.stringify(projects.slice(0, 50)));
-    const status = document.getElementById('cvSaveStatus');
-    if (status) {
-      status.textContent = '✓ Saved';
-      clearTimeout(status._timer);
-      status._timer = setTimeout(() => { status.textContent = ''; }, 1800);
-    }
-  };
-
-  top.insertAdjacentHTML(
-    'beforeend',
-    '<button id="cvSaveProject" type="button">💾 Save</button>' +
-    '<button id="cvProjects" type="button">📁 Projects</button>' +
-    '<button id="cvPublish" type="button">🚀 Publish</button>' +
-    '<span id="cvSaveStatus" role="status" aria-live="polite"></span>'
-  );
-
-  document.getElementById('cvSaveProject').addEventListener('click', save);
-  document.getElementById('cvProjects').addEventListener('click', () => {
-    const projects = getProjects();
-    const text = projects.length
-      ? projects.map((item, index) => `${index + 1}. ${item.name}`).join('\n')
-      : 'No saved projects yet.';
-    alert(`My Projects\n\n${text}`);
-  });
-  document.getElementById('cvPublish').addEventListener('click', () => {
-    save();
-    alert('Your design is saved. Permanent public publishing requires backend/cloud storage.');
-  });
-
-  let timer;
-  const scheduleSave = () => {
-    clearTimeout(timer);
-    timer = setTimeout(save, 700);
-  };
-  document.getElementById('celebrationForm')?.addEventListener('input', scheduleSave);
-  document.addEventListener('cv:changed', scheduleSave);
-  window.addEventListener('beforeunload', save);
-  save();
+document.addEventListener('DOMContentLoaded',()=>{
+const preview=document.getElementById('cvPreviewContent'),top=document.querySelector('.edbar');if(!preview||!top||document.getElementById('cvSaveProject'))return;
+const KEY='celebrateVerseProjects',IDKEY='celebrateVerseActiveProject';let id=localStorage.getItem(IDKEY)||`cv-${Date.now()}`;localStorage.setItem(IDKEY,id);
+const projects=()=>{try{const x=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(x)?x:[]}catch(_){return[]}};
+const formData=()=>Object.fromEntries([...document.querySelectorAll('#celebrationForm input,#celebrationForm textarea')].filter(x=>x.id).map(x=>[x.id,x.value]));
+const save=()=>{const list=projects(),data={id,name:document.getElementById('personName')?.value?.trim()||'Untitled Celebration',updatedAt:new Date().toISOString(),html:preview.innerHTML,background:preview.style.background||'',form:formData()};const i=list.findIndex(x=>x.id===id);if(i>=0)list[i]=data;else list.unshift(data);try{localStorage.setItem(KEY,JSON.stringify(list.slice(0,50)))}catch(e){console.warn('Project storage full',e)}const s=document.getElementById('cvSaveStatus');if(s){s.textContent='✓ All changes saved';clearTimeout(s._t);s._t=setTimeout(()=>s.textContent='',1800)}};
+const enc=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+const publish=()=>{save();const p=projects().find(x=>x.id===id);const payload=enc({name:p.name,html:p.html,background:p.background,form:p.form});const url=new URL('celebration.html',location.href);url.searchParams.set('data',payload);navigator.clipboard?.writeText(url.href);prompt('Shareable celebration link (copy if needed):',url.href)};
+const loadLib=(src)=>new Promise((ok,bad)=>{if(document.querySelector(`script[src="${src}"]`))return ok();const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=bad;document.head.append(s)});
+const exportImage=async(type)=>{try{await loadLib('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js');const c=await html2canvas(preview,{backgroundColor:null,scale:2});const a=document.createElement('a');a.download=`celebrateverse-${type}.${type}`;a.href=c.toDataURL(type==='jpg'?'image/jpeg':'image/png',.92);a.click()}catch(e){alert('Image export needs an internet connection for the export helper.')}};
+const exportPdf=async()=>{try{await loadLib('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js');await loadLib('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js');const c=await html2canvas(preview,{scale:2});const pdf=new jspdf.jsPDF({orientation:c.width>c.height?'landscape':'portrait',unit:'px',format:[c.width,c.height]});pdf.addImage(c.toDataURL('image/png'),'PNG',0,0,c.width,c.height);pdf.save('celebrateverse-celebration.pdf')}catch(e){window.print()}};
+const exportZip=async()=>{try{await loadLib('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js');const zip=new JSZip();zip.file('index.html',`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>CelebrateVerse</title><style>body{margin:0;font-family:Arial;background:#111;color:white}.celebration{max-width:900px;margin:40px auto;padding:30px;border-radius:24px;min-height:70vh}</style></head><body><main class="celebration" style="background:${pbg()}">${preview.innerHTML}</main></body></html>`);const blob=await zip.generateAsync({type:'blob'});const a=document.createElement('a');a.download='celebrateverse-website.zip';a.href=URL.createObjectURL(blob);a.click()}catch(e){alert('ZIP export could not start.')}};
+const pbg=()=>preview.style.background||'linear-gradient(135deg,#3b0764,#831843)';
+top.insertAdjacentHTML('beforeend','<button id="cvSaveProject" type="button">💾 Save</button><button id="cvProjects" type="button">📁 Projects</button><button id="cvPublish" type="button">🚀 Publish</button><button id="cvPNG" type="button">PNG</button><button id="cvJPG" type="button">JPG</button><button id="cvPDF" type="button">PDF</button><button id="cvZIP" type="button">ZIP</button><span id="cvSaveStatus" role="status"></span>');
+$('cvSaveProject').onclick=save;$('cvProjects').onclick=()=>{const list=projects();if(!list.length)return alert('My Projects\n\nNo saved projects yet.');const choice=prompt('My Projects\n\n'+list.map((x,i)=>`${i+1}. ${x.name}`).join('\n')+'\n\nEnter project number to open:');const n=Number(choice)-1;if(list[n]){id=list[n].id;localStorage.setItem(IDKEY,id);preview.innerHTML=list[n].html||'';preview.style.background=list[n].background||'';preview.querySelectorAll('.editem').forEach(e=>e.dataset.bound='0');document.dispatchEvent(new CustomEvent('cv:projectLoaded'))}};$('cvPublish').onclick=publish;$('cvPNG').onclick=()=>exportImage('png');$('cvJPG').onclick=()=>exportImage('jpg');$('cvPDF').onclick=exportPdf;$('cvZIP').onclick=exportZip;
+let timer;const schedule=()=>{clearTimeout(timer);timer=setTimeout(save,700)};document.getElementById('celebrationForm')?.addEventListener('input',schedule);document.addEventListener('cv:changed',schedule);window.addEventListener('beforeunload',save);save();
 });
