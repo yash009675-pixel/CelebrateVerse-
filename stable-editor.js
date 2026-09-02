@@ -1,1 +1,267 @@
-document.addEventListener('DOMContentLoaded',()=>{const p=document.querySelector('.cv-live-preview-section'),c=document.getElementById('cvPreviewContent');if(!p||!c)return;document.getElementById('stableEditor')?.remove();const root=document.createElement('section');root.id='stableEditor';root.innerHTML='<h2 class="ed-title">Design Editor</h2><div class="ed"><aside><b>ADD</b><button data-add="Your text">＋ Text</button><button data-add="❤️">❤️ Heart</button><button data-add="✨">✨ Star</button><button data-add="🎈">🎈 Balloon</button><button data-add="🌹">🌹 Rose</button><button data-add="🎁">🎁 Gift</button><button id="edPhoto">🖼 Upload photo</button><input id="edFile" type="file" accept="image/*" hidden><hr><b>TEMPLATES</b><button data-bg="linear-gradient(135deg,#3b0764,#831843)">❤️ Romantic</button><button data-bg="linear-gradient(135deg,#111827,#4c1d95)">✨ Luxury</button><button data-bg="linear-gradient(135deg,#fce7f3,#ddd6fe)">🌸 Pastel</button><button data-bg="radial-gradient(circle at top,#312e81,#020617 70%)">🌌 Galaxy</button></aside><main><div class="edbar"><button id="edUndo">↶ Undo</button><button id="edRedo">↷ Redo</button><button id="edDesk">💻 Desktop</button><button id="edMob">📱 Mobile</button><button id="edConf">🎉 Confetti</button><button id="edHearts">❤️ Hearts</button></div><div id="edCanvas"></div></main><aside><b>PROPERTIES</b><p id="edEmpty">Select an element.</p><div id="edProps" hidden><label>Text<input id="edText"></label><label>Size<input id="edSize" type="range" min="14" max="100"></label><label>Color<input id="edColor" type="color"></label><label>Font<select id="edFont"><option>DM Sans</option><option>Playfair Display</option><option>Georgia</option><option>Arial</option></select></label><label>Animation<select id="edAnim"><option value="">None</option><option value="float">Float</option><option value="pulse">Pulse</option><option value="bounce">Bounce</option></select></label><button id="edDuplicate">⧉ Duplicate</button><button id="edDelete">🗑 Delete</button><button id="edLock">🔒 Lock</button></div><hr><b>LAYERS</b><div id="edLayers"></div></aside></div>';p.parentNode.insertBefore(root,p);const canvas=root.querySelector('#edCanvas');canvas.append(p);const st={sel:null,h:[],f:[]};const q=s=>root.querySelector(s);const hist=()=>{st.h.push([...c.querySelectorAll('.editem')].map(x=>x.outerHTML));if(st.h.length>25)st.h.shift();st.f=[]};const layers=()=>{q('#edLayers').innerHTML='';[...c.querySelectorAll('.editem')].reverse().forEach(x=>{let b=document.createElement('button');b.textContent=x.dataset.text||'Photo';b.onclick=()=>sel(x);q('#edLayers').append(b)})};function sel(x){c.querySelectorAll('.editem').forEach(e=>e.classList.remove('active'));st.sel=x;if(!x){q('#edEmpty').hidden=false;q('#edProps').hidden=true;return}x.classList.add('active');q('#edEmpty').hidden=true;q('#edProps').hidden=false;q('#edText').value=x.dataset.text||'';q('#edSize').value=parseInt(x.style.fontSize)||32;q('#edColor').value=x.dataset.color||'#ffffff';q('#edFont').value=x.dataset.font||'DM Sans'}function bind(x){x.onpointerdown=e=>{if(x.dataset.lock==='1')return;sel(x);const r=c.getBoundingClientRect(),sx=e.clientX,sy=e.clientY,l=parseFloat(x.style.left)||40,t=parseFloat(x.style.top)||40,m=v=>{x.style.left=Math.max(0,Math.min(92,l+(v.clientX-sx)/r.width*100))+'%';x.style.top=Math.max(0,Math.min(92,t+(v.clientY-sy)/r.height*100))+'%'},u=()=>{document.removeEventListener('pointermove',m);document.removeEventListener('pointerup',u);hist();layers()};document.addEventListener('pointermove',m);document.addEventListener('pointerup',u)}}function add(t){let x=document.createElement('div');x.className='editem';x.dataset.text=t;x.textContent=t;x.style.left='42%';x.style.top='42%';x.style.fontSize=t==='Your text'?'32px':'36px';c.append(x);bind(x);sel(x);hist();layers()}root.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>add(b.dataset.add));root.querySelectorAll('[data-bg]').forEach(b=>b.onclick=()=>{c.style.background=b.dataset.bg});q('#edPhoto').onclick=()=>q('#edFile').click();q('#edFile').onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{let x=document.createElement('div');x.className='editem';x.dataset.text='Photo';x.style.left='35%';x.style.top='25%';x.innerHTML='<img src="'+r.result+'">';c.append(x);bind(x);sel(x);hist();layers()};r.readAsDataURL(f)};q('#edText').oninput=e=>{if(st.sel&&!st.sel.querySelector('img')){st.sel.dataset.text=e.target.value;st.sel.textContent=e.target.value;bind(st.sel);layers()}};q('#edSize').oninput=e=>st.sel&&(st.sel.style.fontSize=e.target.value+'px');q('#edColor').oninput=e=>st.sel&&(st.sel.style.color=e.target.value,st.sel.dataset.color=e.target.value);q('#edFont').onchange=e=>st.sel&&(st.sel.style.fontFamily=e.target.value,st.sel.dataset.font=e.target.value);q('#edAnim').onchange=e=>{if(st.sel)st.sel.dataset.anim=e.target.value};q('#edDelete').onclick=()=>{if(st.sel){st.sel.remove();sel(null);hist();layers()}};q('#edDuplicate').onclick=()=>{if(st.sel){let n=st.sel.cloneNode(true);n.style.left=(parseFloat(n.style.left)+5)+'%';n.style.top=(parseFloat(n.style.top)+5)+'%';c.append(n);bind(n);sel(n);hist();layers()}};q('#edLock').onclick=()=>st.sel&&(st.sel.dataset.lock=st.sel.dataset.lock==='1'?'0':'1');q('#edDesk').onclick=()=>canvas.classList.remove('mobile');q('#edMob').onclick=()=>canvas.classList.add('mobile');const fx=icon=>{let l=document.createElement('div');l.className='edfx';for(let i=0;i<20;i++){let s=document.createElement('span');s.textContent=icon;s.style.left=(i*17%100)+'%';s.style.animationDelay=i*.12+'s';l.append(s)}c.querySelector('.edfx')?.remove();c.append(l)};q('#edConf').onclick=()=>fx('🎉');q('#edHearts').onclick=()=>fx('❤️');q('#edUndo').onclick=()=>{let a=st.h.pop();if(a){st.f.push([...c.querySelectorAll('.editem')].map(x=>x.outerHTML));c.querySelectorAll('.editem').forEach(x=>x.remove());a.forEach(h=>{let d=document.createElement('div');d.innerHTML=h;let x=d.firstElementChild;c.append(x);bind(x)});layers()}};q('#edRedo').onclick=()=>{let a=st.f.pop();if(a){st.h.push([...c.querySelectorAll('.editem')].map(x=>x.outerHTML));c.querySelectorAll('.editem').forEach(x=>x.remove());a.forEach(h=>{let d=document.createElement('div');d.innerHTML=h;let x=d.firstElementChild;c.append(x);bind(x)});layers()}};hist();layers();});
+document.addEventListener('DOMContentLoaded', () => {
+  const previewSection = document.querySelector('.cv-live-preview-section');
+  const preview = document.getElementById('cvPreviewContent');
+  if (!previewSection || !preview || document.getElementById('stableEditor')) return;
+
+  const root = document.createElement('section');
+  root.id = 'stableEditor';
+  root.innerHTML = `
+    <h2 class="ed-title">Design Editor</h2>
+    <div class="ed">
+      <aside>
+        <b>ADD</b>
+        <button type="button" data-add="Your text">＋ Text</button>
+        <button type="button" data-add="❤️">❤️ Heart</button>
+        <button type="button" data-add="✨">✨ Star</button>
+        <button type="button" data-add="🎈">🎈 Balloon</button>
+        <button type="button" data-add="🌹">🌹 Rose</button>
+        <button type="button" data-add="🎁">🎁 Gift</button>
+        <button type="button" id="edPhoto">🖼 Upload photo</button>
+        <input id="edFile" type="file" accept="image/*" hidden>
+        <hr>
+        <b>TEMPLATES</b>
+        <button type="button" data-bg="linear-gradient(135deg,#3b0764,#831843)">❤️ Romantic</button>
+        <button type="button" data-bg="linear-gradient(135deg,#111827,#4c1d95)">✨ Luxury</button>
+        <button type="button" data-bg="linear-gradient(135deg,#fce7f3,#ddd6fe)">🌸 Pastel</button>
+        <button type="button" data-bg="radial-gradient(circle at top,#312e81,#020617 70%)">🌌 Galaxy</button>
+      </aside>
+      <main>
+        <div class="edbar">
+          <button type="button" id="edUndo">↶ Undo</button>
+          <button type="button" id="edRedo">↷ Redo</button>
+          <button type="button" id="edDesk">💻 Desktop</button>
+          <button type="button" id="edMob">📱 Mobile</button>
+          <button type="button" id="edConf">🎉 Confetti</button>
+          <button type="button" id="edHearts">❤️ Hearts</button>
+        </div>
+        <div id="edCanvas"></div>
+      </main>
+      <aside>
+        <b>PROPERTIES</b>
+        <p id="edEmpty">Select an element.</p>
+        <div id="edProps" hidden>
+          <label>Text<input id="edText"></label>
+          <label>Size<input id="edSize" type="range" min="14" max="120"></label>
+          <label>Color<input id="edColor" type="color"></label>
+          <label>Font<select id="edFont"><option>DM Sans</option><option>Playfair Display</option><option>Georgia</option><option>Arial</option></select></label>
+          <label>Animation<select id="edAnim"><option value="">None</option><option value="float">Float</option><option value="pulse">Pulse</option><option value="bounce">Bounce</option></select></label>
+          <button type="button" id="edDuplicate">⧉ Duplicate</button>
+          <button type="button" id="edDelete">🗑 Delete</button>
+          <button type="button" id="edLock">🔒 Lock</button>
+        </div>
+        <hr>
+        <b>LAYERS</b>
+        <div id="edLayers"></div>
+      </aside>
+    </div>`;
+
+  previewSection.parentNode.insertBefore(root, previewSection);
+  const canvas = root.querySelector('#edCanvas');
+  canvas.append(previewSection);
+
+  const state = { selected: null, history: [], future: [], restoring: false };
+  const $ = id => root.querySelector('#' + id);
+  const snapshot = () => [...preview.querySelectorAll('.editem')].map(el => el.outerHTML);
+
+  function renderSnapshot(items) {
+    state.restoring = true;
+    preview.querySelectorAll('.editem').forEach(el => el.remove());
+    items.forEach(html => {
+      const holder = document.createElement('div');
+      holder.innerHTML = html;
+      const el = holder.firstElementChild;
+      if (el) { preview.append(el); bind(el); }
+    });
+    state.restoring = false;
+    select(null);
+    layers();
+  }
+
+  function commit() {
+    if (state.restoring) return;
+    const current = snapshot();
+    const previous = state.history[state.history.length - 1];
+    if (JSON.stringify(current) === JSON.stringify(previous)) return;
+    state.history.push(current);
+    if (state.history.length > 40) state.history.shift();
+    state.future = [];
+    document.dispatchEvent(new CustomEvent('cv:changed'));
+  }
+
+  function layers() {
+    const box = $('edLayers');
+    if (!box) return;
+    box.innerHTML = '';
+    [...preview.querySelectorAll('.editem')].reverse().forEach(el => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = el.dataset.text || (el.querySelector('img') ? 'Photo' : 'Element');
+      button.onclick = () => select(el);
+      box.append(button);
+    });
+  }
+
+  function select(el) {
+    preview.querySelectorAll('.editem').forEach(item => item.classList.remove('active'));
+    state.selected = el || null;
+    if (!el) {
+      $('edEmpty').hidden = false;
+      $('edProps').hidden = true;
+      layers();
+      return;
+    }
+    el.classList.add('active');
+    $('edEmpty').hidden = true;
+    $('edProps').hidden = false;
+    $('edText').value = el.dataset.text || '';
+    $('edSize').value = parseInt(el.style.fontSize, 10) || 32;
+    $('edColor').value = el.dataset.color || '#ffffff';
+    $('edFont').value = el.dataset.font || 'DM Sans';
+    $('edAnim').value = el.dataset.anim || '';
+    $('edLock').textContent = el.dataset.lock === '1' ? '🔓 Unlock' : '🔒 Lock';
+  }
+
+  function bind(el) {
+    if (el.dataset.bound === '1') return;
+    el.dataset.bound = '1';
+    el.addEventListener('click', event => { event.stopPropagation(); select(el); });
+    el.addEventListener('pointerdown', event => {
+      if (event.target.closest('.ed-handle') || event.target.closest('.ed-rotate') || el.dataset.lock === '1') return;
+      select(el);
+      const rect = preview.getBoundingClientRect();
+      const sx = event.clientX, sy = event.clientY;
+      const startLeft = parseFloat(el.style.left) || 40;
+      const startTop = parseFloat(el.style.top) || 40;
+      const move = e => {
+        const nx = startLeft + ((e.clientX - sx) / rect.width) * 100;
+        const ny = startTop + ((e.clientY - sy) / rect.height) * 100;
+        el.style.left = Math.max(0, Math.min(95, nx)) + '%';
+        el.style.top = Math.max(0, Math.min(95, ny)) + '%';
+      };
+      const up = () => {
+        document.removeEventListener('pointermove', move);
+        document.removeEventListener('pointerup', up);
+        commit();
+        layers();
+      };
+      document.addEventListener('pointermove', move);
+      document.addEventListener('pointerup', up);
+    });
+  }
+
+  function add(text) {
+    const el = document.createElement('div');
+    el.className = 'editem';
+    el.dataset.text = text;
+    el.style.left = '42%';
+    el.style.top = '42%';
+    el.style.fontSize = text === 'Your text' ? '32px' : '36px';
+    el.textContent = text;
+    preview.append(el);
+    bind(el);
+    select(el);
+    commit();
+    layers();
+  }
+
+  root.querySelectorAll('[data-add]').forEach(button => button.onclick = () => add(button.dataset.add));
+  root.querySelectorAll('[data-bg]').forEach(button => button.onclick = () => { preview.style.background = button.dataset.bg; document.dispatchEvent(new CustomEvent('cv:changed')); });
+  $('edPhoto').onclick = () => $('edFile').click();
+  $('edFile').onchange = event => {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const el = document.createElement('div');
+      el.className = 'editem';
+      el.dataset.text = 'Photo';
+      el.style.left = '35%';
+      el.style.top = '25%';
+      const img = document.createElement('img');
+      img.src = reader.result;
+      img.alt = 'Uploaded celebration photo';
+      el.append(img);
+      preview.append(el);
+      bind(el);
+      select(el);
+      commit();
+      layers();
+    };
+    reader.readAsDataURL(file);
+    event.target.value = '';
+  };
+
+  $('edText').oninput = event => {
+    const el = state.selected;
+    if (!el || el.querySelector('img')) return;
+    el.dataset.text = event.target.value;
+    el.textContent = event.target.value;
+    layers();
+    document.dispatchEvent(new CustomEvent('cv:changed'));
+  };
+  $('edSize').onchange = event => { if (state.selected) { state.selected.style.fontSize = event.target.value + 'px'; commit(); } };
+  $('edColor').oninput = event => { if (state.selected) { state.selected.style.color = event.target.value; state.selected.dataset.color = event.target.value; document.dispatchEvent(new CustomEvent('cv:changed')); } };
+  $('edFont').onchange = event => { if (state.selected) { state.selected.style.fontFamily = event.target.value; state.selected.dataset.font = event.target.value; commit(); } };
+  $('edAnim').onchange = event => { if (state.selected) { state.selected.dataset.anim = event.target.value; commit(); } };
+
+  $('edDelete').onclick = () => { if (state.selected) { state.selected.remove(); select(null); commit(); } };
+  $('edDuplicate').onclick = () => {
+    if (!state.selected) return;
+    const copy = state.selected.cloneNode(true);
+    copy.dataset.bound = '0';
+    copy.style.left = (parseFloat(copy.style.left) + 5) + '%';
+    copy.style.top = (parseFloat(copy.style.top) + 5) + '%';
+    preview.append(copy);
+    bind(copy);
+    select(copy);
+    commit();
+    layers();
+  };
+  $('edLock').onclick = () => {
+    if (!state.selected) return;
+    state.selected.dataset.lock = state.selected.dataset.lock === '1' ? '0' : '1';
+    select(state.selected);
+    commit();
+  };
+
+  $('edDesk').onclick = () => canvas.classList.remove('mobile');
+  $('edMob').onclick = () => canvas.classList.add('mobile');
+  const effect = icon => {
+    canvas.querySelector('.edfx')?.remove();
+    const layer = document.createElement('div');
+    layer.className = 'edfx';
+    for (let i = 0; i < 20; i++) {
+      const span = document.createElement('span');
+      span.textContent = icon;
+      span.style.left = (i * 17 % 100) + '%';
+      span.style.animationDelay = (i * 0.12) + 's';
+      layer.append(span);
+    }
+    preview.append(layer);
+    document.dispatchEvent(new CustomEvent('cv:changed'));
+  };
+  $('edConf').onclick = () => effect('🎉');
+  $('edHearts').onclick = () => effect('❤️');
+
+  $('edUndo').onclick = () => {
+    if (state.history.length <= 1) return;
+    const current = state.history.pop();
+    state.future.push(current);
+    renderSnapshot(state.history[state.history.length - 1]);
+    document.dispatchEvent(new CustomEvent('cv:changed'));
+  };
+  $('edRedo').onclick = () => {
+    const next = state.future.pop();
+    if (!next) return;
+    state.history.push(next);
+    renderSnapshot(next);
+    document.dispatchEvent(new CustomEvent('cv:changed'));
+  };
+
+  document.addEventListener('click', event => {
+    if (event.target === preview) select(null);
+  });
+  preview.querySelectorAll('.editem').forEach(bind);
+  state.history = [snapshot()];
+  layers();
+});
