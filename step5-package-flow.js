@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   const submit=document.getElementById('submitBtn');
   if(!form) return;
 
-  const prices={basic:499,premium:999,ultimate:1999};
+  const prices={basic:199,premium:399,ultimate:699};
   const read=()=>Object.fromEntries(new FormData(form).entries());
   const save=()=>{
     const data=read();
