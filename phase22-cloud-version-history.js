@@ -71,6 +71,10 @@
     el._p22Timer = setTimeout(() => { if (el.textContent === text) el.textContent = ''; }, 2600);
   }
 
+  function collaborationCanEdit() {
+    return window.CelebrateVerseCollaboration?.canEdit?.() !== false;
+  }
+
   async function ensureUser() {
     if (!window.supabaseClient) return null;
     try {
@@ -90,15 +94,27 @@
     if (!user) return false;
     cloudBusy = true;
     try {
-      const payload = {
-        id: data.id,
-        user_id: user.id,
-        name: data.name,
-        project_data: data,
-        updated_at: data.updatedAt
-      };
-      const { error } = await window.supabaseClient.from(CLOUD_TABLE).upsert(payload, { onConflict: 'id' });
+      // Phase 23 uses an RPC so Editors can save without ever being able to
+      // reassign the project owner. Older Phase 22-only deployments retain the
+      // original owner-only upsert as a compatibility fallback.
+      let { data: saved, error } = await window.supabaseClient.rpc('cv_save_project', {
+        p_project_id: data.id,
+        p_name: data.name,
+        p_project_data: data
+      });
+      const rpcUnavailable = error && (error.code === 'PGRST202' || /cv_save_project|function/i.test(error.message || ''));
+      if (rpcUnavailable) {
+        const payload = {
+          id: data.id,
+          user_id: user.id,
+          name: data.name,
+          project_data: data,
+          updated_at: data.updatedAt
+        };
+        ({ error } = await window.supabaseClient.from(CLOUD_TABLE).upsert(payload, { onConflict: 'id' }));
+      }
       if (error) throw error;
+      if (saved?.[0]?.updated_at) data.updatedAt = saved[0].updated_at;
       if (makeVersion) {
         const { error: versionError } = await window.supabaseClient.from(VERSION_TABLE).insert({
           project_id: data.id,
@@ -118,6 +134,10 @@
   async function saveNow(options = {}) {
     const data = snapshot();
     localSave(data, true);
+    if (!collaborationCanEdit()) {
+      setStatus('👁 View-only project');
+      return data;
+    }
     const cloudOK = await cloudSave(data, options.version !== false);
     setStatus(cloudOK ? '☁️ Saved to cloud' : '✓ Backup saved locally', !cloudOK);
     return data;
@@ -202,11 +222,12 @@
       const data = snapshot();
       localSave(data, true);
     });
-    setTimeout(() => saveNow({ version: false }), 900);
-    setInterval(() => { if (!cloudBusy) saveNow({ version: false }); }, 60000);
+    const acceptingShare = new URLSearchParams(window.location.search).has('cvShare');
+    if (!acceptingShare) setTimeout(() => saveNow({ version: false }), 900);
+    setInterval(() => { if (!cloudBusy && collaborationCanEdit()) saveNow({ version: false }); }, 60000);
   }
 
-  window.CelebrateVersePhase22 = { saveNow, openProjects, versions, applySnapshot };
+  window.CelebrateVersePhase22 = { saveNow, openProjects, versions, applySnapshot, getSnapshot: snapshot, getActiveId: () => activeId };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
   else init();
 })();
