@@ -1302,7 +1302,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (error) throw error;
             celebration = data;
             currentDraftId = celebration.id;
-            try { localStorage.setItem("celebrateVerseProjectId", celebration.id); localStorage.setItem("celebrateVerseDraftId", celebration.id); } catch(e) {}
         }
 
         const photoPaths = await uploadPhotos(user.id, celebration.id);
