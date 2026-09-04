@@ -52,10 +52,10 @@
       if(key==='templates'||key==='elements'){root.querySelector('[data-ui02-panel="'+key+'"]')?.classList.add('active');}
       else if(key==='text'){root.querySelector('.cv-ui03-left[data-ui03-left="text"]')?.classList.add('active');}
       else if(key==='photos'){root.querySelector('.cv-ui03-left[data-ui03-left="photos"]')?.classList.add('active');}
-      else if(key==='uploads'){panels[1]?.removeAttribute('hidden');}
+      else if(key==='uploads'){panels.find(p=>p.dataset.panel==='assets')?.removeAttribute('hidden');}
       else if(key==='audio'){root.querySelector('#ui06AudioPanel')?.classList.add('active');}
       else if(key==='ai'){root.querySelector('#ui06AiPanel')?.classList.add('active');}
-      else if(key==='pages'){if(ui05){ui05.style.display='block';ui05.scrollIntoView({block:'nearest'});}else panels[2]?.removeAttribute('hidden');}
+      else if(key==='pages'){if(ui05){ui05.style.display='block';ui05.scrollIntoView({block:'nearest'});}else panels.find(p=>p.dataset.panel==='pages')?.removeAttribute('hidden');}
     };
     nav.querySelectorAll('button').forEach(b=>b.onclick=()=>showPanel(b.dataset.ui01cat));showPanel('templates');
     const bottom=document.createElement('div');bottom.className='cv-ui01-bottom';bottom.innerHTML='<span class="cv-ui01-page-label">Pages</span><button type="button" data-ui01bottom="add">＋</button><button type="button" data-ui01bottom="pages">☷ Manage</button><span class="cv-ui01-zoom"><button type="button" data-ui01bottom="minus">−</button><span id="cvUi01Zoom">100%</span><button type="button" data-ui01bottom="plus">＋</button><button type="button" data-ui01bottom="fit">Fit</button></span>';main.appendChild(bottom);
