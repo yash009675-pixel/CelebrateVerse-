@@ -42,8 +42,22 @@
     const oldTabs=left.querySelector('.ed-tabs');const panels=[...left.querySelectorAll('.ed-panel')];const nav=document.createElement('nav');nav.className='cv-ui01-nav';
     const cats=[['templates','▦','Templates'],['elements','◇','Elements'],['text','T','Text'],['uploads','↑','Uploads'],['photos','▣','Photos'],['audio','♪','Audio'],['ai','✦','AI'],['pages','▤','Pages']];
     cats.forEach(([key,icon,label],i)=>{const b=document.createElement('button');b.type='button';b.dataset.ui01cat=key;b.innerHTML='<span>'+icon+'</span>'+label+(key==='ai'||key==='audio'?'<sup class="cv-ui01-pro">PRO</sup>':'');if(i===0)b.classList.add('active');nav.appendChild(b)});left.insertBefore(nav,oldTabs||left.firstChild);oldTabs?.remove();
-    const showPanel=key=>{nav.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.ui01cat===key));panels.forEach(p=>p.classList.remove('active'));if(key==='templates'||key==='elements'||key==='text')panels[0]?.classList.add('active');if(key==='uploads'||key==='photos'||key==='audio')panels[1]?.classList.add('active');if(key==='pages')panels[2]?.classList.add('active');if(key==='ai')right.querySelector('#edAiText')?.scrollIntoView({block:'center'});};nav.querySelectorAll('button').forEach(b=>b.onclick=()=>showPanel(b.dataset.ui01cat));showPanel('templates');
-
+    const showPanel=key=>{
+      nav.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.ui01cat===key));
+      panels.forEach(p=>p.hidden=true);
+      root.querySelectorAll('[data-ui02-panel]').forEach(p=>p.classList.remove('active'));
+      root.querySelectorAll('.cv-ui03-left').forEach(p=>p.classList.remove('active'));
+      root.querySelectorAll('.ui06-panel').forEach(p=>p.classList.remove('active'));
+      const ui05=root.querySelector('#ui05PagesPanel'); if(ui05) ui05.style.display='none';
+      if(key==='templates'||key==='elements'){root.querySelector('[data-ui02-panel="'+key+'"]')?.classList.add('active');}
+      else if(key==='text'){root.querySelector('.cv-ui03-left[data-ui03-left="text"]')?.classList.add('active');}
+      else if(key==='photos'){root.querySelector('.cv-ui03-left[data-ui03-left="photos"]')?.classList.add('active');}
+      else if(key==='uploads'){panels[1]?.removeAttribute('hidden');}
+      else if(key==='audio'){root.querySelector('#ui06AudioPanel')?.classList.add('active');}
+      else if(key==='ai'){root.querySelector('#ui06AiPanel')?.classList.add('active');}
+      else if(key==='pages'){if(ui05){ui05.style.display='block';ui05.scrollIntoView({block:'nearest'});}else panels[2]?.removeAttribute('hidden');}
+    };
+    nav.querySelectorAll('button').forEach(b=>b.onclick=()=>showPanel(b.dataset.ui01cat));showPanel('templates');
     const bottom=document.createElement('div');bottom.className='cv-ui01-bottom';bottom.innerHTML='<span class="cv-ui01-page-label">Pages</span><button type="button" data-ui01bottom="add">＋</button><button type="button" data-ui01bottom="pages">☷ Manage</button><span class="cv-ui01-zoom"><button type="button" data-ui01bottom="minus">−</button><span id="cvUi01Zoom">100%</span><button type="button" data-ui01bottom="plus">＋</button><button type="button" data-ui01bottom="fit">Fit</button></span>';main.appendChild(bottom);
     bottom.querySelector('[data-ui01bottom=minus]').onclick=()=>existingButton('#edZoomOut')?.click();bottom.querySelector('[data-ui01bottom=plus]').onclick=()=>existingButton('#edZoomIn')?.click();bottom.querySelector('[data-ui01bottom=fit]').onclick=()=>existingButton('#edFit')?.click();bottom.querySelector('[data-ui01bottom=add]').onclick=()=>existingButton('#edAddPage')?.click();bottom.querySelector('[data-ui01bottom=pages]').onclick=()=>showPanel('pages');
     const observer=new MutationObserver(()=>{const z=root.querySelector('#edZoom'),out=root.querySelector('#cvUi01Zoom');if(z&&out)out.textContent=z.textContent});observer.observe(root,{subtree:true,childList:true,characterData:true});
