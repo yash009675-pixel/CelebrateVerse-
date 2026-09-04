@@ -1,7 +1,5 @@
 (()=>{
   const KEY='celebrateVerseUI05Pages';
-  const projectKey=()=>{try{return localStorage.getItem('celebrateVerseProjectId')||localStorage.getItem('celebrateVerseDraftId')||'default'}catch(e){return 'default'}};
-  const scopedKey=()=>KEY+'::'+projectKey();
   const uid=()=>globalThis.crypto?.randomUUID?.()||('p_'+Date.now()+'_'+Math.random().toString(36).slice(2));
   const ready=fn=>document.readyState==='loading'?document.addEventListener('DOMContentLoaded',fn,{once:true}):fn();
   ready(()=>{
@@ -13,7 +11,7 @@
     if(!nav)return setTimeout(()=>init(root,preview),150);
     const old=document.getElementById('p14Manager'); if(old)old.hidden=true;
     let pages=load(preview), active=0, selected=null, drag=null;
-    const pageStore=()=>localStorage.setItem(scopedKey(),JSON.stringify(pages));
+    const pageStore=()=>localStorage.setItem(KEY,JSON.stringify(pages));
     const snapshot=()=>pages[active]&&(pages[active].html=preview.innerHTML,pageStore());
     const emit=()=>document.dispatchEvent(new CustomEvent('cv:changed'));
     const panel=document.createElement('div'); panel.id='ui05PagesPanel'; panel.className='ui05-panel';
@@ -39,7 +37,7 @@
     render(); readAnim();
     document.addEventListener('cv:changed',()=>{if(!pages[active])return;selected=preview.querySelector('.editem.active')||null;readAnim()});
   }
-  function load(preview){try{const x=JSON.parse(localStorage.getItem(scopedKey())||localStorage.getItem(KEY)||'null');if(Array.isArray(x)&&x.length)return x}catch(e){}return[{id:uid(),name:'Welcome Page ❤️',html:preview.innerHTML}]}
+  function load(preview){try{const x=JSON.parse(localStorage.getItem(KEY)||'null');if(Array.isArray(x)&&x.length)return x}catch(e){}return[{id:uid(),name:'Welcome Page ❤️',html:preview.innerHTML}]}
   function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
   function injectStyle(){if(document.getElementById('ui05Style'))return;const s=document.createElement('style');s.id='ui05Style';s.textContent=`.ui05-panel{font:inherit}.ui05-head{display:flex;justify-content:space-between;align-items:center;margin:10px 0 7px}.ui05-count,.ui05-target{font-size:11px;opacity:.6}.ui05-list{display:flex;flex-direction:column;gap:6px}.ui05-page{display:grid;grid-template-columns:34px 1fr 28px;gap:6px;align-items:center;padding:5px;border:1px solid rgba(127,127,127,.18);border-radius:10px}.ui05-page.active{border-color:#7c5cff;background:rgba(124,92,255,.09)}.ui05-page input{min-width:0;border:0;background:transparent;color:inherit;font:inherit}.ui05-thumb,.ui05-page-del,.ui05-actions button,.ui05-template-grid button,.ui05-seq button{border:1px solid rgba(127,127,127,.22);border-radius:8px;background:rgba(127,127,127,.08);color:inherit;padding:6px;cursor:pointer}.ui05-page-del{font-size:16px}.ui05-actions{display:flex;gap:6px;margin:8px 0}.ui05-actions button{flex:1}.ui05-templates{border-top:1px solid rgba(127,127,127,.18);padding-top:9px;margin-top:8px}.ui05-template-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:7px}.ui05-template-grid button{font-size:11px}.ui05-timeline{border-top:1px solid rgba(127,127,127,.18);margin-top:12px;padding-top:9px}.ui05-row{display:grid;gap:7px}.ui05-row label{font-size:11px;display:grid;gap:4px}.ui05-row select,.ui05-row input{width:100%;box-sizing:border-box;border:1px solid rgba(127,127,127,.25);border-radius:7px;padding:6px;background:transparent;color:inherit}.ui05-seq{display:flex;gap:6px;margin-top:8px}.ui05-seq button{flex:1;font-size:11px}.ui05-hint{font-size:10px;opacity:.55;margin-top:7px}@keyframes ui05-fade{from{opacity:0}to{opacity:1}}@keyframes ui05-slide{from{opacity:0;transform:translateX(-35px)}to{opacity:1;transform:translateX(0)}}@keyframes ui05-zoom{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}@keyframes ui05-flip{from{opacity:0;transform:rotateY(90deg)}to{opacity:1;transform:rotateY(0)}}@keyframes ui05-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}@keyframes ui05-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@keyframes ui05-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}@media(max-width:700px){.ui05-template-grid{grid-template-columns:1fr}.ui05-row{grid-template-columns:1fr 1fr}}`;document.head.appendChild(s)}
 })();
