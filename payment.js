@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const prices = { basic: 499, premium: 999, ultimate: 1999 };
+  const prices = { basic: 199, premium: 399, ultimate: 699 };
   const params = new URLSearchParams(window.location.search);
 
   let saved = {};
