@@ -7,11 +7,15 @@
     stickers:[['Love','💕','free'],['Birthday','🎂','free'],['Party','🎉','free'],['Anniversary','💍','free'],['Wedding','💒','pro'],['Flowers','🌸','free'],['Couple','💑','pro'],['Gift','🎁','free']],
     icons:[['Heart','♡','free'],['Camera','📷','free'],['Music','♫','pro'],['Gift','🎁','free'],['Cake','🎂','free'],['Crown','♛','pro'],['Flowers','✿','free'],['Stars','✦','free'],['Sparkles','✨','free'],['Balloon','🎈','free'],['Ring','💍','pro'],['Smile','☺','free']]
   };
-  const TEMPLATES=[['Welcome','❤️','welcome'],['Our Story','📖','story'],['Gallery','📸','gallery'],['Love Letter','💌','letter'],['Surprise','🎁','surprise'],['Countdown','⏳','countdown']];
+  const TEMPLATES=[
+    ['Welcome','❤️','welcome'],['Our Story','📖','story'],['Gallery','📸','gallery'],['Love Letter','💌','letter'],['Surprise','🎁','surprise'],['Countdown','⏳','countdown']
+  ];
   function mount(){
     const root=document.getElementById('stableEditor');
     if(!root||root.dataset.ui02==='1')return;
-    const nav=root.querySelector('.cv-ui01-nav'),left=root.querySelector('.ed-left'),preview=document.getElementById('cvPreviewContent');
+    const nav=root.querySelector('.cv-ui01-nav');
+    const left=root.querySelector('.ed-left');
+    const preview=document.getElementById('cvPreviewContent');
     if(!nav||!left||!preview)return;
     root.dataset.ui02='1';
     const style=document.createElement('style');style.id='cv-ui02-style';style.textContent=`
@@ -33,7 +37,7 @@
     function add(name,char,type){const el=document.createElement('div');el.className='editem ui02-element';el.dataset.ui02Type=type;el.dataset.ui02Name=name;Object.assign(el.style,{position:'absolute',left:'50%',top:'50%',transform:'translate(-50%,-50%)',minWidth:'44px',minHeight:'44px',display:'grid',placeItems:'center',fontSize:type==='shapes'?'64px':'54px',cursor:'move',userSelect:'none'});el.textContent=char;if(type==='shapes'&&name==='Line'){el.style.fontSize='44px';el.style.width='150px'}preview.appendChild(el);document.dispatchEvent(new CustomEvent('cv:changed'));el.click()}
     function render(){const q=search.value.trim().toLowerCase();grid.innerHTML='';DATA[tab].filter(x=>x[0].toLowerCase().includes(q)).forEach(([name,char,tier])=>{const b=document.createElement('button');b.type='button';b.className='cv-ui02-item';b.innerHTML=`${tier==='pro'?'<span class="cv-ui02-badge">PRO 🔒</span>':''}<span class="icon">${char}</span><small>${name}</small>`;b.onclick=()=>add(name,char,tab);grid.appendChild(b)})}
     panels.elements.querySelectorAll('[data-ui02tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.ui02tab;panels.elements.querySelectorAll('[data-ui02tab]').forEach(x=>x.classList.toggle('active',x===b));render()});search.addEventListener('input',render);render();
-    function show(key){Object.values(panels).forEach(p=>p.classList.toggle('active',p.dataset.ui02Panel===key))}
+    function show(key){Object.values(panels).forEach(p=>p.classList.toggle('active',p.dataset.ui02Panel===key));}
     nav.querySelectorAll('[data-ui01cat]').forEach(b=>b.addEventListener('click',()=>{const key=b.dataset.ui01cat;if(key==='templates')show('templates');else if(key==='elements')show('elements');else Object.values(panels).forEach(p=>p.classList.remove('active'))}));
     show('templates');
   }
