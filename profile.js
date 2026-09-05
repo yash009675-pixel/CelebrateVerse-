@@ -27,15 +27,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   const favs=profile.favorite_occasions||[];
   document.querySelectorAll("#occasionPicks input").forEach(x=>x.checked=favs.includes(x.value));
 
-  let celebrations=[];
-  try {
-    const res=await supabaseClient.from("celebrations").select("id,status").eq("user_id",user.id);
-    celebrations=res.data||[];
-  } catch(e) {}
-  $("statCelebrations").textContent=celebrations.filter(x=>x.status!=="draft").length;
+  // The current backend has no dedicated celebrations/cards/memories tables yet.
+  // Use authenticated orders as the existing source of created celebration records.
+  const { data: orders } = await supabaseClient.from("orders").select("id,occasion,person_name,special_date,created_at,order_status").eq("email",user.email).order("created_at",{ascending:false});
+  const celebrations=orders||[];
+  $("statCelebrations").textContent=celebrations.length;
   $("statCards").textContent=celebrations.length;
   $("statMemories").textContent=0;
   $("statShared").textContent=0;
+
+  const renderCelebrations=()=>{
+    if(!celebrations.length) return '<div class="cv-empty-profile"><div>✨</div><h2>Your Celebrations</h2><p>Your created celebrations will appear here.</p><a href="customize.html" class="primary-btn">Create Celebration</a></div>';
+    return '<div class="cv-celebration-grid">'+celebrations.map(o=>'<article class="cv-celebration-item"><div class="cv-celebration-icon">🎉</div><div><h3>'+escapeHtml(o.person_name||o.occasion||"Celebration")+'</h3><p>'+escapeHtml(o.occasion||"Special occasion")+'</p><small>'+escapeHtml(o.special_date||"")+'</small></div></article>').join("")+'</div>';
+  };
+  $("profileTabContent").innerHTML=renderCelebrations();
 
   $("editProfileBtn").onclick=()=>{$("profileForm").hidden=false;$("editProfileBtn").hidden=true;$("profileMessage").textContent=""};
   $("cancelEditBtn").onclick=()=>{$("profileForm").hidden=true;$("editProfileBtn").hidden=false};
