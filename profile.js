@@ -40,12 +40,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   $("editProfileBtn").onclick=()=>{$("profileForm").hidden=false;$("editProfileBtn").hidden=true;$("profileMessage").textContent=""};
   $("cancelEditBtn").onclick=()=>{$("profileForm").hidden=true;$("editProfileBtn").hidden=false};
 
+  const uploadAvatar = async (userId) => {
+    const input=$("avatarFile"), status=$("avatarUploadStatus");
+    if(!input?.files?.length) return $("avatarUrl").value.trim() || null;
+    const file=input.files[0];
+    if(file.size>5*1024*1024) throw new Error("Profile photo must be 5 MB or smaller.");
+    if(!["image/jpeg","image/png","image/webp"].includes(file.type)) throw new Error("Please choose a JPG, PNG or WebP image.");
+    status.textContent="Uploading photo…";
+    const ext=(file.name.split(".").pop()||"jpg").toLowerCase();
+    const path=userId+"/"+crypto.randomUUID()+"."+ext;
+    const {error:uploadError}=await supabaseClient.storage.from("avatars").upload(path,file,{upsert:false,contentType:file.type});
+    if(uploadError) throw uploadError;
+    const {data}=supabaseClient.storage.from("avatars").getPublicUrl(path);
+    status.textContent="Photo uploaded successfully. ✨";
+    return data.publicUrl;
+  };
+
   $("profileForm").addEventListener("submit",async e=>{
     e.preventDefault();
     const username=$("username").value.trim().toLowerCase();
     if(username && !/^[a-z0-9_]{3,30}$/.test(username)) return setMessage("Username must be 3–30 characters using letters, numbers or underscores.");
     const favorite_occasions=[...document.querySelectorAll("#occasionPicks input:checked")].map(x=>x.value);
-    const payload={full_name:$("fullName").value.trim(),username:username||null,bio:$("bio").value.trim(),avatar_url:$("avatarUrl").value.trim()||null,language:$("language").value,favorite_occasions,updated_at:new Date().toISOString()};
+    let avatar_url; try { avatar_url=await uploadAvatar(user.id); } catch(err) { return setMessage(err.message||"Could not upload profile photo."); }\n    const payload={full_name:$("fullName").value.trim(),username:username||null,bio:$("bio").value.trim(),avatar_url,language:$("language").value,favorite_occasions,updated_at:new Date().toISOString()};
     const {data,error}=await supabaseClient.from("profiles").update(payload).eq("id",user.id).select("*").single();
     if(error) return setMessage(error.code==="23505"?"That username is already taken. Choose another one.":"Could not save profile: "+error.message);
     profile=data;
