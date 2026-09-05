@@ -1,3 +1,6 @@
+
+// PWA foundation: register the existing service worker so installed iPhone/Android sessions can use the app shell.
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js",{scope:"./"}).catch(()=>{}));}
 /* ==========================================
    CELEBRATEVERSE - MAIN JAVASCRIPT
    CLEAN WEB APP / PWA VERSION
