@@ -56,18 +56,35 @@
     cats.forEach(([key,icon,label],i)=>{const btn=document.createElement('button');btn.type='button';btn.dataset.ui01cat=key;btn.innerHTML='<span>'+icon+'</span>'+label+(key==='ai'||key==='audio'?'<sup class="cv-ui01-pro">PRO</sup>':'');if(i===0)btn.classList.add('active');nav.appendChild(btn)});left.insertBefore(nav,left.firstChild);
     const panelTitle=document.createElement('div');panelTitle.className='cv-ui01-panel-title';left.insertBefore(panelTitle,panels[0]||null);
     const filterPanel=(panel,predicate)=>{if(!panel)return;[...panel.children].forEach(ch=>{ch.style.display=predicate(ch)?'':'none'})};
-    const showPanel=key=>{nav.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x.dataset.ui01cat===key));panels.forEach(p=>{p.hidden=false;p.style.display='none'});panelTitle.textContent=({templates:'Templates',elements:'Elements & Blocks',text:'Text',uploads:'Uploads & Photos',audio:'Audio',ai:'AI Assistant',pages:'Pages'})[key]||'Design';
+    const showPanel=key=>{
+      nav.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x.dataset.ui01cat===key));
+      const modern={
+        templates:root.querySelector('.cv-ui02-panel[data-ui02-panel="templates"]'),
+        elements:root.querySelector('.cv-ui02-panel[data-ui02-panel="elements"]'),
+        text:root.querySelector('.cv-ui03-left[data-ui03-left="text"]'),
+        uploads:root.querySelector('.cv-ui03-left[data-ui03-left="photos"]'),
+        audio:root.querySelector('#ui06AudioPanel'),
+        ai:root.querySelector('#ui06AiPanel'),
+        pages:root.querySelector('#ui05PagesPanel')
+      };
+      const modernTarget=modern[key];
+      if(modernTarget){
+        [...root.querySelectorAll('.cv-ui02-panel,.cv-ui03-left,.ui06-panel,#ui05PagesPanel')].forEach(p=>{
+          p.hidden=p!==modernTarget;
+          p.classList.toggle('active',p===modernTarget);
+          p.style.setProperty('display',p===modernTarget?'block':'none','important');
+        });
+        panels.forEach(p=>{p.hidden=true;p.style.setProperty('display','none','important')});
+        panelTitle.textContent=({templates:'Templates',elements:'Elements & Blocks',text:'Text',uploads:'Uploads & Photos',audio:'Audio',ai:'AI Assistant',pages:'Pages'})[key]||'Design';
+        return;
+      }
+      panels.forEach(p=>{p.hidden=false;p.style.display='none'});
+      panelTitle.textContent=({templates:'Templates',elements:'Elements & Blocks',text:'Text',uploads:'Uploads & Photos',audio:'Audio',ai:'AI Assistant',pages:'Pages'})[key]||'Design';
       const p=panelMap[key];if(!p)return;
       p.style.display='block';filterPanel(p,()=>true);
-      if(key==='templates')filterPanel(p,ch=>ch.matches('[data-template],.ed-panel>b'));
-      else if(key==='elements')filterPanel(p,ch=>ch.matches('.ed-grid,[data-block],.ed-panel>b,.ed-panel hr'));
-      else if(key==='text')filterPanel(p,ch=>ch.matches('[data-add],.ed-help,.ed-panel>b'));
-      else if(key==='uploads')filterPanel(p,ch=>ch.matches('#edPhoto,#edFile,.ed-help,.ed-panel>b'));
-      else if(key==='audio')filterPanel(p,ch=>ch.matches('#edMusicUpload,#edMusicFile,.ed-audio,.ed-panel>b'));
-      else if(key==='ai')filterPanel(p,()=>true);
-      else if(key==='pages')filterPanel(p,()=>true);
     };
-    nav.querySelectorAll('button').forEach(x=>x.onclick=()=>showPanel(x.dataset.ui01cat));showPanel('templates');
+    nav.querySelectorAll('button').forEach(x=>x.onclick=()=>showPanel(x.dataset.ui01cat));
+    setTimeout(()=>showPanel('templates'),50);
 
     const bottom=document.createElement('div');bottom.className='cv-ui01-bottom';bottom.innerHTML='<span class="cv-ui01-page-label">Pages</span><button type="button" data-ui01bottom="add">＋</button><button type="button" data-ui01bottom="pages">☷ Manage</button><span class="cv-ui01-zoom"><button type="button" data-ui01bottom="minus">−</button><span id="cvUi01Zoom">100%</span><button type="button" data-ui01bottom="plus">＋</button><button type="button" data-ui01bottom="fit">Fit</button></span>';main.appendChild(bottom);
     bottom.querySelector('[data-ui01bottom=minus]').onclick=()=>existingButton('#edZoomOut')?.click();bottom.querySelector('[data-ui01bottom=plus]').onclick=()=>existingButton('#edZoomIn')?.click();bottom.querySelector('[data-ui01bottom=fit]').onclick=()=>existingButton('#edFit')?.click();bottom.querySelector('[data-ui01bottom=add]').onclick=()=>existingButton('#edAddPage')?.click();bottom.querySelector('[data-ui01bottom=pages]').onclick=()=>showPanel('pages');
