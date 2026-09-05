@@ -1,97 +1,103 @@
-/* CelebrateVerse UI bridge v2 — deterministic navigation for the seven editor categories. */
+/* CelebrateVerse editor navigation recovery v3
+   Keeps the enhanced feature panels reachable without allowing legacy editor
+   handlers to overlap them. */
 (function(){
   'use strict';
+
   function mount(){
     const root=document.getElementById('stableEditor');
     const nav=root?.querySelector('.cv-ui01-nav');
-    const left=root?.querySelector('.ed-left');
-    if(!root||!nav||!left||root.dataset.cvNavBridge==='2')return !!root;
-    root.dataset.cvNavBridge='2';
+    if(!root||!nav||root.dataset.cvNavBridge==='3') return false;
+    root.dataset.cvNavBridge='3';
 
-    const allPanels=()=>[...left.children].filter(el=>{
-      if(el===nav)return false;
-      return el.matches('.ed-panel,.cv-ui02-panel,.cv-ui03-left,.ui06-panel,.ui05-panel,[id^="phase"],[id^="p14"],[id^="p15"],[id^="p16"]');
-    });
+    const q=(s)=>root.querySelector(s);
+
+    function panels(){
+      return [
+        ...root.querySelectorAll(
+          '.ed-left > .ed-panel,'+
+          '.cv-ui02-panel,'+
+          '.cv-ui03-left,'+
+          '.ui06-panel,'+
+          '#ui05PagesPanel'
+        )
+      ];
+    }
+
+    function setVisible(el,on){
+      if(!el)return;
+      el.hidden=!on;
+      el.classList.toggle('active',on);
+      el.style.display=on?'':'none';
+    }
 
     function show(key){
-      // Hide every feature panel first. This prevents old/new UI layers from
-      // overlapping and guarantees one visible panel for each category.
-      allPanels().forEach(p=>{
-        p.hidden=true;
-        p.classList.remove('active');
-        p.style.display='none';
-      });
+      panels().forEach(p=>setVisible(p,false));
 
-      const pick=sel=>left.querySelector(sel);
-      let targets=[];
-      if(key==='templates') targets=[
-        pick('.cv-ui02-panel[data-ui02-panel="templates"]'),
-        pick('.ed-panel[data-panel="templates"]')
-      ];
-      if(key==='elements') targets=[
-        pick('.cv-ui02-panel[data-ui02-panel="elements"]'),
-        pick('.ed-panel[data-panel="elements"]')
-      ];
-      if(key==='text') targets=[
-        pick('.cv-ui03-left[data-mode="text"]'),
-        pick('.cv-ui03-left'),
-        pick('.ed-panel[data-panel="text"]')
-      ];
-      if(key==='uploads') targets=[
-        pick('.cv-ui03-left[data-mode="photo"]'),
-        pick('.cv-ui03-left'),
-        pick('.ed-panel[data-panel="uploads"]')
-      ];
-      if(key==='audio') targets=[
-        pick('#ui06AudioPanel'),
-        pick('.ed-panel[data-panel="audio"]')
-      ];
-      if(key==='ai') targets=[
-        pick('#ui06AiPanel'),
-        pick('.ed-panel[data-panel="ai"]')
-      ];
-      if(key==='pages') targets=[
-        pick('.ui05-panel'),
-        pick('.ed-panel[data-panel="pages"]')
-      ];
+      let target=null;
 
-      // Prefer the newest enhanced panel. If it does not exist, fall back to
-      // the stable legacy panel so no feature becomes inaccessible.
-      const target=targets.find(Boolean);
-      if(target){
-        target.hidden=false;
-        target.classList.add('active');
-        target.style.display='';
-        target.scrollTop=0;
+      if(key==='templates'){
+        target=q('.cv-ui02-panel[data-ui02-panel="templates"]')
+          ||q('.ed-panel[data-panel="templates"]');
+      }else if(key==='elements'){
+        target=q('.cv-ui02-panel[data-ui02-panel="elements"]')
+          ||q('.ed-panel[data-panel="elements"]');
+      }else if(key==='text'){
+        target=q('.cv-ui03-left[data-ui03-left="text"]')
+          ||q('.ed-panel[data-panel="text"]');
+      }else if(key==='uploads'){
+        target=q('.cv-ui03-left[data-ui03-left="photos"]')
+          ||q('.ed-panel[data-panel="uploads"]');
+      }else if(key==='audio'){
+        target=q('#ui06AudioPanel')
+          ||q('.ed-panel[data-panel="audio"]');
+      }else if(key==='ai'){
+        target=q('#ui06AiPanel')
+          ||q('.ed-panel[data-panel="ai"]');
+      }else if(key==='pages'){
+        target=q('#ui05PagesPanel')
+          ||q('.ed-panel[data-panel="pages"]');
       }
-      nav.querySelectorAll('[data-ui01cat]').forEach(b=>{
-        b.classList.toggle('active',b.dataset.ui01cat===key);
-        b.setAttribute('aria-selected',b.dataset.ui01cat===key?'true':'false');
+
+      if(target)setVisible(target,true);
+
+      nav.querySelectorAll('[data-ui01cat]').forEach(btn=>{
+        const active=btn.dataset.ui01cat===key;
+        btn.classList.toggle('active',active);
+        btn.setAttribute('aria-selected',active?'true':'false');
       });
+
       root.dataset.activeTool=key;
     }
 
-    // Capture phase runs before the individual enhancement listeners, so this
-    // bridge remains authoritative even when an older layer has a stale handler.
-    nav.addEventListener('click',e=>{
-      const b=e.target.closest('[data-ui01cat]');
-      if(!b)return;
+    /* Capture-phase handler deliberately owns navigation. Older modules
+       attach their own click listeners to the same buttons; stopping them
+       prevents the legacy panel and enhanced panel from fighting each other. */
+    nav.addEventListener('click',function(e){
+      const btn=e.target.closest('[data-ui01cat]');
+      if(!btn)return;
       e.preventDefault();
       e.stopImmediatePropagation();
-      show(b.dataset.ui01cat);
+      show(btn.dataset.ui01cat);
     },true);
 
-    // Also expose a small API for other editor modules.
     window.CelebrateVerseNav={show};
     show('templates');
     return true;
   }
+
   function boot(){
-    const r=mount();
-    if(r){
+    if(mount()){
       const root=document.getElementById('stableEditor');
-      if(root?.querySelector('.cv-ui01-nav')) return;
+      if(root?.dataset.cvNavBridge==='3') return true;
     }
+    return false;
   }
-  document.addEventListener('DOMContentLoaded',()=>{let n=0;const t=setInterval(()=>{boot();if(document.querySelector('#stableEditor .cv-ui01-nav')||++n>100)clearInterval(t)},100)});
+
+  document.addEventListener('DOMContentLoaded',function(){
+    let tries=0;
+    const timer=setInterval(function(){
+      if(boot()||++tries>120) clearInterval(timer);
+    },100);
+  });
 })();
