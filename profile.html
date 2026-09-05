@@ -25,7 +25,7 @@
         <p id="profileUsername">@username</p>
         <p id="profileBio">Create memories. Celebrate every moment. ✨</p>
       </div>
-      <button id="editProfileBtn" class="primary-btn" type="button"><i class="fa-solid fa-pen"></i> Edit Profile</button>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><button id="sharePublicProfileBtn" class="secondary-btn" type="button"><i class="fa-solid fa-share-nodes"></i> Share Public Profile</button><button id="editProfileBtn" class="primary-btn" type="button"><i class="fa-solid fa-pen"></i> Edit Profile</button></div>
     </div>
 
     <div class="cv-profile-stats">
@@ -42,6 +42,7 @@
       <div class="input-group"><label>Username</label><input id="username" type="text" maxlength="30" placeholder="your_username" autocomplete="off"><small>3–30 characters: letters, numbers, underscores.</small></div>
       <div class="input-group full-width"><label>Bio</label><textarea id="bio" rows="3" maxlength="160" placeholder="Tell people a little about you..."></textarea></div>
       <div class="input-group"><label>Profile Photo</label><input id="avatarFile" type="file" accept="image/jpeg,image/png,image/webp"><small>JPG, PNG or WebP · max 5 MB</small><div id="avatarUploadStatus" class="cv-upload-status" aria-live="polite"></div></div><div class="input-group"><label>Profile Photo URL (optional)</label><input id="avatarUrl" type="url" placeholder="https://..."><small>Use a URL only if you do not want to upload a file.</small></div>
+      <div class="input-group"><label>Profile Visibility</label><select id="profileVisibility"><option value="public">🌐 Public — anyone with your profile link can view</option><option value="private">🔒 Private — only you can view</option></select><small>Your public page never exposes your email or password.</small></div>
       <div class="input-group"><label>Language</label><select id="language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="gu">ગુજરાતી</option></select></div>
       <div class="input-group full-width"><label>Favorite Occasions</label><div class="cv-occasion-picks" id="occasionPicks">
         <label><input type="checkbox" value="birthday"> 🎂 Birthday</label>
