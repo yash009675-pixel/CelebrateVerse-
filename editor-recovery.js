@@ -1,7 +1,7 @@
-/* CelebrateVerse editor navigation — v5 single-controller fix */
+/* CelebrateVerse editor recovery v6 — one sidebar controller */
 (function(){
   'use strict';
-  const PANEL={
+  const MODERN={
     templates:()=>document.querySelector('#stableEditor .cv-ui02-panel[data-ui02-panel="templates"]'),
     elements:()=>document.querySelector('#stableEditor .cv-ui02-panel[data-ui02-panel="elements"]'),
     text:()=>document.querySelector('#stableEditor .cv-ui03-left[data-ui03-left="text"]'),
@@ -11,75 +11,88 @@
     pages:()=>document.querySelector('#stableEditor #ui05PagesPanel')
   };
 
-  function boot(){
-    const root=document.getElementById('stableEditor');
-    if(!root)return false;
+  function allModern(root){
+    return [
+      ...root.querySelectorAll('.cv-ui02-panel'),
+      ...root.querySelectorAll('.cv-ui03-left'),
+      ...root.querySelectorAll('.ui06-panel'),
+      ...root.querySelectorAll('#ui05PagesPanel')
+    ];
+  }
+  function allLegacy(root){
+    return [
+      ...root.querySelectorAll('.ed-panel'),
+      ...root.querySelectorAll('#p14Manager'),
+      ...root.querySelectorAll('#p15AiPanel'),
+      ...root.querySelectorAll('#phase10Tools,#phase11Tools,#phase12Library')
+    ];
+  }
+  function setDisplay(el,show){
+    if(!el)return;
+    if(show){
+      el.hidden=false;
+      el.style.removeProperty('display');
+      el.classList.add('active');
+    }else{
+      el.hidden=true;
+      el.classList.remove('active');
+      el.style.setProperty('display','none','important');
+    }
+  }
+  function activate(root,key){
+    const target=(MODERN[key]||(()=>null))();
+    allLegacy(root).forEach(x=>setDisplay(x,false));
+    allModern(root).forEach(x=>setDisplay(x,x===target));
+    root.querySelectorAll('.cv-ui01-nav [data-ui01cat]').forEach(b=>{
+      const on=b.dataset.ui01cat===key;
+      b.classList.toggle('active',on);
+      b.setAttribute('aria-selected',on?'true':'false');
+    });
+    root.dataset.cvActiveCategory=key;
+    // UI-03/06/05 scripts may toggle their own panels after the click.
+    // Re-assert the selected panel on the next frame.
+    requestAnimationFrame(()=>{
+      allLegacy(root).forEach(x=>setDisplay(x,false));
+      allModern(root).forEach(x=>setDisplay(x,x===target));
+    });
+  }
+
+  function install(root){
     const nav=root.querySelector('.cv-ui01-nav');
-    if(!nav)return false;
+    if(!nav || nav.dataset.cvRecoveryV6==='1')return;
+    nav.dataset.cvRecoveryV6='1';
 
-    function activate(key){
-      const target=(PANEL[key]||(()=>null))();
-      const panels=[
-        ...root.querySelectorAll('.cv-ui02-panel'),
-        ...root.querySelectorAll('.cv-ui03-left'),
-        ...root.querySelectorAll('.ui06-panel'),
-        ...root.querySelectorAll('#ui05PagesPanel')
-      ];
+    const handle=e=>{
+      const b=e.target.closest('[data-ui01cat]');
+      if(!b || !nav.contains(b))return;
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      activate(root,b.dataset.ui01cat);
+    };
+    nav.addEventListener('pointerdown',handle,true);
+    nav.addEventListener('pointerup',handle,true);
+    nav.addEventListener('click',handle,true);
 
-      // Also hide the original legacy editor panels so two implementations
-      // can never render underneath one another.
-      const legacy=[...root.querySelectorAll('.ed-left > .ed-panel')];
-      [...panels,...legacy].forEach(p=>{
-        p.classList.remove('active');
-        p.hidden=true;
-        p.style.setProperty('display','none','important');
-      });
-
+    const observer=new MutationObserver(()=>{
+      const key=root.dataset.cvActiveCategory||'templates';
+      const target=(MODERN[key]||(()=>null))();
       if(target){
-        target.hidden=false;
-        target.classList.add('active');
-        target.style.setProperty('display','block','important');
+        allLegacy(root).forEach(x=>setDisplay(x,false));
+        allModern(root).forEach(x=>setDisplay(x,x===target));
       }
+    });
+    observer.observe(root,{subtree:true,childList:true,attributes:true,attributeFilter:['class','style','hidden']});
 
-      nav.querySelectorAll('[data-ui01cat]').forEach(b=>{
-        const active=b.dataset.ui01cat===key;
-        b.classList.toggle('active',active);
-        b.setAttribute('aria-selected',active?'true':'false');
-      });
-      root.dataset.cvActiveCategory=key;
-    }
-
-    if(nav.dataset.cvSingleController!=='5'){
-      nav.dataset.cvSingleController='5';
-      nav.addEventListener('click',function(e){
-        const btn=e.target.closest('[data-ui01cat]');
-        if(!btn||!nav.contains(btn))return;
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        activate(btn.dataset.ui01cat);
-      },true);
-
-      nav.addEventListener('pointerup',function(e){
-        const btn=e.target.closest('[data-ui01cat]');
-        if(!btn||!nav.contains(btn))return;
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        activate(btn.dataset.ui01cat);
-      },true);
-    }
-
-    const wanted=root.dataset.cvActiveCategory||'templates';
-    activate(wanted);
-    return true;
+    activate(root,root.dataset.cvActiveCategory||'templates');
   }
 
   function start(){
-    let n=0;
     const timer=setInterval(()=>{
-      if(boot()||++n>200)clearInterval(timer);
+      const root=document.getElementById('stableEditor');
+      if(root && root.querySelector('.cv-ui01-nav'))install(root);
     },100);
+    setTimeout(()=>clearInterval(timer),20000);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
   else start();
