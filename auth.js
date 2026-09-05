@@ -1,3 +1,8 @@
+// CelebrateVerse authentication helpers
+// Keep all email links on the live GitHub Pages site. Using window.location here
+// can accidentally generate localhost links when the app is tested locally.
+const CELEBRATEVERSE_BASE_URL = "https://yash009675-pixel.github.io/CelebrateVerse-/";
+
 document.addEventListener("DOMContentLoaded", () => {
   const signupForm = document.getElementById("signupForm");
   const loginForm = document.getElementById("loginForm");
@@ -32,8 +37,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }, { onConflict: "id" });
   }
 
-  const loginUrl = new URL("login.html", window.location.href).href;
-  const resetUrl = new URL("reset-password.html", window.location.href).href;
+  // Always use the production URL for Supabase auth email redirects.
+  const loginUrl = CELEBRATEVERSE_BASE_URL + "login.html";
+  const resetUrl = CELEBRATEVERSE_BASE_URL + "reset-password.html";
 
   // After a user clicks the Supabase confirmation link, Supabase can return
   // a valid session to login.html. Detect that session and finish the flow.
@@ -49,7 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-
   if (signupForm) {
     signupForm.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -59,8 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!supabaseClient) return showMessage("Authentication service is not available.");
 
-      // Use JS validation so mobile Safari does not block submit with a
-      // generic "fill out this field" message when autofill is involved.
       if (!name) {
         showMessage("Please enter your name.");
         document.getElementById("signupName")?.focus();
@@ -111,9 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
         showMessage("Account created successfully! Redirecting...", true);
         setTimeout(() => window.location.href = "dashboard.html", 700);
       } else {
-        // Supabase intentionally avoids exposing whether an email already exists.
-        // Keep the UI honest: a confirmation message does not guarantee a new account
-        // was created, so direct the user to check the inbox or use Login.
         showMessage("If this email is new, check your inbox for the confirmation link. If you already have a CelebrateVerse account, use Login instead.", true);
         addActionLink("Continue to Login →", "login.html");
       }
@@ -174,7 +174,8 @@ document.addEventListener("DOMContentLoaded", () => {
               resend.textContent = "Sending...";
               const result = await supabaseClient.auth.resend({
                 type: "signup",
-                email
+                email,
+                options: { emailRedirectTo: loginUrl }
               });
               if (result.error) {
                 resend.textContent = "Resend Confirmation Email";
