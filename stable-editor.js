@@ -26,6 +26,11 @@ root.innerHTML=`<div class="ed-head"><div><span class="ed-kicker">CELEBRATEVERSE
 section.parentNode.insertBefore(root,section);const canvas=root.querySelector('#edCanvas');
 
 canvas.append(section);
+const showcase=document.createElement('div');
+showcase.className='ed-showcase';
+showcase.hidden=true;
+showcase.innerHTML=`<div class="ed-showcase-glow"></div><div class="ed-showcase-card"><div class="ed-showcase-dots"><i></i><i></i><i></i></div><div class="ed-showcase-heart">❤️</div><h2>Made Just For You</h2><p>Preview your celebration exactly as your guest will experience it, using the current page as the background.</p><div class="ed-showcase-photos"><span></span><span></span><span></span></div><button type="button" id="edExplore">Back to Editor <span>→</span></button></div>`;
+root.querySelector('#edCanvasWrap').append(showcase);
 const $=id=>root.querySelector('#'+id), state={selected:null,history:[],future:[],clipboard:null,zoom:1,pages:[null],page:0,restoring:false,showcase:false};let transformTimer;
 const templates={romantic:['linear-gradient(135deg,#5b0b45,#1b102b)','#fce7f3'],luxury:['linear-gradient(135deg,#111827,#312e81)','#fef3c7'],pastel:['linear-gradient(135deg,#fce7f3,#ddd6fe)','#4c1d95'],galaxy:['radial-gradient(circle at 20% 10%,#312e81,#020617 70%)','#c4b5fd']};
 function items(){return [...preview.querySelectorAll('.editem')]}function snap(){return items().map(e=>e.outerHTML)}
