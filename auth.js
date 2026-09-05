@@ -9,6 +9,20 @@ document.addEventListener("DOMContentLoaded", () => {
     authMessage.className = success ? "auth-message success" : "auth-message error";
   }
 
+  function addActionLink(text, href, className = "auth-submit") {
+    if (!authMessage) return;
+    const old = document.getElementById("cvAuthAction");
+    if (old) old.remove();
+    const link = document.createElement("a");
+    link.id = "cvAuthAction";
+    link.href = href;
+    link.className = className;
+    link.style.cssText = "display:flex;justify-content:center;align-items:center;text-decoration:none;margin-top:14px;";
+    link.textContent = text;
+    authMessage.insertAdjacentElement("afterend", link);
+    return link;
+  }
+
   async function ensureProfile(user, name = "") {
     if (!supabaseClient || !user) return;
     await supabaseClient.from("profiles").upsert({
@@ -17,6 +31,9 @@ document.addEventListener("DOMContentLoaded", () => {
       updated_at: new Date().toISOString()
     }, { onConflict: "id" });
   }
+
+  const loginUrl = new URL("login.html", window.location.href).href;
+  const resetUrl = new URL("reset-password.html", window.location.href).href;
 
   if (signupForm) {
     signupForm.addEventListener("submit", async (event) => {
@@ -35,7 +52,12 @@ document.addEventListener("DOMContentLoaded", () => {
       button.textContent = "Creating account...";
 
       const { data, error } = await supabaseClient.auth.signUp({
-        email, password, options: { data: { full_name: name } }
+        email,
+        password,
+        options: {
+          data: { full_name: name },
+          emailRedirectTo: loginUrl
+        }
       });
 
       button.disabled = false;
@@ -48,7 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
         showMessage("Account created successfully! Redirecting...", true);
         setTimeout(() => window.location.href = "dashboard.html", 700);
       } else {
-        showMessage("Account created successfully! Please confirm your email first.", true);\n        const loginLink = document.createElement("a");\n        loginLink.href = "login.html";\n        loginLink.className = "auth-submit";\n        loginLink.style.cssText = "display:flex;justify-content:center;align-items:center;text-decoration:none;margin-top:14px;";\n        loginLink.innerHTML = "Continue to Login <i class=\"fa-solid fa-arrow-right\"></i>";\n        authMessage.insertAdjacentElement("afterend", loginLink);
+        showMessage("Account created. Check your email and tap the confirmation link before logging in.", true);
+        addActionLink("Continue to Login →", "login.html");
       }
     });
   }
@@ -62,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!supabaseClient) return showMessage("Authentication service is not available.");
       forgotPassword.textContent = "Sending...";
       const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-        redirectTo: new URL("reset-password.html", window.location.href).href
+        redirectTo: resetUrl
       });
       forgotPassword.textContent = "Forgot password?";
       if (error) return showMessage("Could not send reset email: " + error.message);
@@ -99,7 +122,25 @@ document.addEventListener("DOMContentLoaded", () => {
           message.includes("email not confirmed") ||
           message.includes("email confirmation")
         ) {
-          return showMessage("Your email is not confirmed yet. Please check your inbox and confirm your email before logging in.");
+          showMessage("Your email is not confirmed yet. Check your inbox, then try again.");
+          const resend = addActionLink("Resend Confirmation Email", "#");
+          if (resend) {
+            resend.addEventListener("click", async (e) => {
+              e.preventDefault();
+              resend.textContent = "Sending...";
+              const result = await supabaseClient.auth.resend({
+                type: "signup",
+                email
+              });
+              if (result.error) {
+                resend.textContent = "Resend Confirmation Email";
+                return showMessage("Could not resend confirmation email: " + result.error.message);
+              }
+              resend.textContent = "Confirmation Email Sent ✓";
+              showMessage("Confirmation email sent. Check your inbox and Spam folder.", true);
+            });
+          }
+          return;
         }
 
         if (
