@@ -1,52 +1,97 @@
-/* CelebrateVerse editor recovery — keeps the original feature panels usable even if an enhancement layer fails to mount. */
+/* CelebrateVerse UI bridge v2 — deterministic navigation for the seven editor categories. */
 (function(){
   'use strict';
-  function boot(){
+  function mount(){
     const root=document.getElementById('stableEditor');
-    if(!root||root.dataset.cvRecovery==='1')return !!root;
-    const tabs=[...root.querySelectorAll('.ed-tab')];
-    const panels=[...root.querySelectorAll('.ed-panel')];
-    if(!tabs.length||!panels.length)return false;
-    root.dataset.cvRecovery='1';
+    const nav=root?.querySelector('.cv-ui01-nav');
+    const left=root?.querySelector('.ed-left');
+    if(!root||!nav||!left||root.dataset.cvNavBridge==='2')return !!root;
+    root.dataset.cvNavBridge='2';
 
-    const map=new Map(panels.map(p=>[p.dataset.panel,p]));
-    function activate(key){
-      tabs.forEach(t=>t.classList.toggle('active',t.dataset.tab===key));
-      panels.forEach(p=>{
-        const on=p.dataset.panel===key;
-        p.hidden=!on;
-        p.style.display=on?'':'none';
+    const allPanels=()=>[...left.children].filter(el=>{
+      if(el===nav)return false;
+      return el.matches('.ed-panel,.cv-ui02-panel,.cv-ui03-left,.ui06-panel,.ui05-panel,[id^="phase"],[id^="p14"],[id^="p15"],[id^="p16"]');
+    });
+
+    function show(key){
+      // Hide every feature panel first. This prevents old/new UI layers from
+      // overlapping and guarantees one visible panel for each category.
+      allPanels().forEach(p=>{
+        p.hidden=true;
+        p.classList.remove('active');
+        p.style.display='none';
       });
-      root.querySelectorAll('[data-ui02-panel],[data-ui03-left],[.ui05-panel],[.ui06-panel]').forEach(p=>{
-        if(p.dataset.ui02Panel===key||p.dataset.ui03Left===key||p.dataset.ui05Panel===key){
-          p.style.display='';
-        }
+
+      const pick=sel=>left.querySelector(sel);
+      let targets=[];
+      if(key==='templates') targets=[
+        pick('.cv-ui02-panel[data-ui02-panel="templates"]'),
+        pick('.ed-panel[data-panel="templates"]')
+      ];
+      if(key==='elements') targets=[
+        pick('.cv-ui02-panel[data-ui02-panel="elements"]'),
+        pick('.ed-panel[data-panel="elements"]')
+      ];
+      if(key==='text') targets=[
+        pick('.cv-ui03-left[data-mode="text"]'),
+        pick('.cv-ui03-left'),
+        pick('.ed-panel[data-panel="text"]')
+      ];
+      if(key==='uploads') targets=[
+        pick('.cv-ui03-left[data-mode="photo"]'),
+        pick('.cv-ui03-left'),
+        pick('.ed-panel[data-panel="uploads"]')
+      ];
+      if(key==='audio') targets=[
+        pick('#ui06AudioPanel'),
+        pick('.ed-panel[data-panel="audio"]')
+      ];
+      if(key==='ai') targets=[
+        pick('#ui06AiPanel'),
+        pick('.ed-panel[data-panel="ai"]')
+      ];
+      if(key==='pages') targets=[
+        pick('.ui05-panel'),
+        pick('.ed-panel[data-panel="pages"]')
+      ];
+
+      // Prefer the newest enhanced panel. If it does not exist, fall back to
+      // the stable legacy panel so no feature becomes inaccessible.
+      const target=targets.find(Boolean);
+      if(target){
+        target.hidden=false;
+        target.classList.add('active');
+        target.style.display='';
+        target.scrollTop=0;
+      }
+      nav.querySelectorAll('[data-ui01cat]').forEach(b=>{
+        b.classList.toggle('active',b.dataset.ui01cat===key);
+        b.setAttribute('aria-selected',b.dataset.ui01cat===key?'true':'false');
       });
       root.dataset.activeTool=key;
     }
-    tabs.forEach(t=>{
-      t.type='button';
-      t.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();activate(t.dataset.tab)},true);
-    });
-    const style=document.createElement('style');
-    style.textContent=`
-      #stableEditor .ed-tabs{position:relative;z-index:100;pointer-events:auto}
-      #stableEditor .ed-tabs .ed-tab{pointer-events:auto;position:relative;z-index:101}
-      #stableEditor .ed-panel[hidden]{display:none!important}
-      #stableEditor .ed-panel{position:relative;z-index:5}
-    `;
-    document.head.appendChild(style);
-    activate(tabs.find(t=>t.classList.contains('active'))?.dataset.tab||'templates');
 
-    // If the compact UI layer is available, make its category navigation drive
-    // the same underlying panels instead of creating a second competing editor.
-    root.querySelectorAll('.cv-ui01-nav button').forEach(b=>{
-      b.addEventListener('click',()=>activate(b.dataset.ui01cat),true);
-    });
+    // Capture phase runs before the individual enhancement listeners, so this
+    // bridge remains authoritative even when an older layer has a stale handler.
+    nav.addEventListener('click',e=>{
+      const b=e.target.closest('[data-ui01cat]');
+      if(!b)return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      show(b.dataset.ui01cat);
+    },true);
+
+    // Also expose a small API for other editor modules.
+    window.CelebrateVerseNav={show};
+    show('templates');
     return true;
   }
-  document.addEventListener('DOMContentLoaded',()=>{
-    let n=0;
-    const timer=setInterval(()=>{if(boot()||++n>80)clearInterval(timer)},150);
-  });
+  function boot(){
+    const r=mount();
+    if(r){
+      const root=document.getElementById('stableEditor');
+      if(root?.querySelector('.cv-ui01-nav')) return;
+    }
+  }
+  document.addEventListener('DOMContentLoaded',()=>{let n=0;const t=setInterval(()=>{boot();if(document.querySelector('#stableEditor .cv-ui01-nav')||++n>100)clearInterval(t)},100)});
 })();
