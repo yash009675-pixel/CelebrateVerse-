@@ -1948,3 +1948,23 @@ document.addEventListener("DOMContentLoaded",()=>{const form=document.getElement
 
 /* Phase 2 — Gift Ideas interaction */
 document.addEventListener("DOMContentLoaded",()=>{const buttons=document.querySelectorAll(".cv-gift-card"),out=document.getElementById("cvGiftResult");if(!buttons.length||!out)return;const ideas={500:"Handwritten note, photo print, chocolates, small plant, custom keychain or a simple keepsake.",1000:"Personalized mug, photo frame, wallet, small perfume, desk accessory or a themed gift box.",2000:"Personalized hamper, headphones, watch, experience voucher, premium stationery or a curated memory box.",5000:"Premium headphones, smartwatch, personalized jewelry, special experience, luxury hamper or a memorable weekend plan."};buttons.forEach(b=>b.addEventListener("click",()=>{const budget=b.dataset.budget;out.classList.add("show");out.innerHTML="<strong>Gift inspiration for this budget:</strong><br>"+ideas[budget]+"<br><small>Choose based on the recipient's interests and preferences.</small>";out.scrollIntoView({behavior:"smooth",block:"nearest"})}))});
+
+/* Phase 2 — local Celebration Reminders */
+document.addEventListener("DOMContentLoaded",()=>{
+ const form=document.getElementById("cvReminderForm"),list=document.getElementById("cvReminderList");
+ if(!form||!list)return;
+ const key="cv_reminders";
+ const read=()=>{try{return JSON.parse(localStorage.getItem(key)||"[]")}catch{return[]}};
+ const esc=v=>String(v||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+ const render=()=>{
+   const a=read().sort((x,y)=>x.date.localeCompare(y.date));
+   list.innerHTML=a.length?a.map(x=>'<article class="cv-reminder-item"><h4>🔔 '+esc(x.name)+'</h4><small>📅 Event: '+esc(x.date)+' · Reminder: '+esc(x.when)+'</small></article>').join(""):'<div class="cv-reminder-empty">No reminders saved yet. 🔔</div>';
+ };
+ form.addEventListener("submit",e=>{
+   e.preventDefault();
+   const name=document.getElementById("cvReminderName").value.trim(),date=document.getElementById("cvReminderDate").value,when=document.getElementById("cvReminderWhen").value;
+   if(!name||!date||!when)return;
+   const a=read();a.push({name,date,when});localStorage.setItem(key,JSON.stringify(a.slice(-50)));form.reset();render();
+ });
+ render();
+});
