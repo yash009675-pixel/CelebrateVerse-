@@ -6214,3 +6214,11 @@ body.light-mode .nav-links a.active {
   }
   .cv-login-btn,.cv-signup-btn{flex:1}
 }
+
+
+/* CelebrateVerse hero preview stability fix */
+.hero-visual{position:relative;min-height:550px;display:flex;align-items:center;justify-content:center;overflow:visible}
+.hero-visual .celebration-preview{position:relative;z-index:2;width:min(390px,100%);box-sizing:border-box}
+.hero-visual .preview-button{display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:inherit;cursor:pointer;transition:transform .2s ease,background .2s ease}
+.hero-visual .preview-button:hover{transform:translateY(-2px);background:rgba(255,255,255,.12)}
+@media(max-width:900px){.hero-container{grid-template-columns:1fr}.hero-visual{min-height:auto;margin-top:30px}.hero-visual .celebration-preview{width:min(390px,92vw)}}
