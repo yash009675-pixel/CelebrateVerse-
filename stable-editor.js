@@ -3,15 +3,7 @@ const section=document.querySelector('.cv-live-preview-section'),preview=documen
 if(!section||!preview||document.getElementById('stableEditor'))return;
 const root=document.createElement('section');root.id='stableEditor';
 root.innerHTML=`<div class="ed-head"><div><span class="ed-kicker">CELEBRATEVERSE STUDIO</span><h2>Design your celebration</h2><p class="ed-flow">Setup 1–5 → Editor → Design → Preview → Save → Share → Publish</p></div><div class="ed-status" id="edStatus">✓ Ready</div></div>
-<div class="ed"><aside class="ed-left"><nav class="ed-nav" aria-label="Editor tools">
-<button class="ed-tab active" data-tab="templates">▦<span>Templates</span></button>
-<button class="ed-tab" data-tab="elements">◇<span>Elements</span></button>
-<button class="ed-tab" data-tab="text">T<span>Text</span></button>
-<button class="ed-tab" data-tab="uploads">↑<span>Uploads</span></button>
-<button class="ed-tab" data-tab="audio">♫<span>Audio</span></button>
-<button class="ed-tab" data-tab="ai">✦<span>AI</span><em>PRO</em></button>
-<button class="ed-tab" data-tab="pages">▤<span>Pages</span></button>
-</nav>
+<div class="ed"><aside class="ed-left">
 <div class="ed-panel" data-panel="templates"><b>TEMPLATES</b><button type="button" data-template="romantic">❤️ Romantic</button><button type="button" data-template="luxury">✨ Luxury</button><button type="button" data-template="pastel">🌸 Pastel</button><button type="button" data-template="galaxy">🌌 Galaxy</button></div>
 <div class="ed-panel" data-panel="elements" hidden><b>ELEMENTS</b><div class="ed-grid"><button type="button" data-add="❤️">❤️ Heart</button><button type="button" data-add="✨">✨ Star</button><button type="button" data-add="🎈">🎈 Balloon</button><button type="button" data-add="🌹">🌹 Rose</button><button type="button" data-add="🎁">🎁 Gift</button><button type="button" data-add="🎂">🎂 Cake</button><button type="button" data-add="🎉">🎉 Confetti</button><button type="button" data-add="✨">✦ Sparkle</button></div><hr><b>BLOCKS</b><button type="button" data-block="countdown">⏳ Countdown</button><button type="button" data-block="letter">💌 Love Letter</button><button type="button" data-block="timeline">🗓 Timeline</button><button type="button" data-block="music">🎵 Music Player</button></div>
 <div class="ed-panel" data-panel="text" hidden><b>TEXT</b><button type="button" data-add="Your heading">T Heading</button><button type="button" data-add="Your subheading">T Subheading</button><button type="button" data-add="Write your message here...">T Paragraph</button><p class="ed-help">Select text on the canvas to edit font, size, color and spacing.</p></div>
