@@ -4,6 +4,15 @@ if(!section||!preview||document.getElementById('stableEditor'))return;
 const root=document.createElement('section');root.id='stableEditor';
 root.innerHTML=`<div class="ed-head"><div><span class="ed-kicker">CELEBRATEVERSE STUDIO</span><h2>Design your celebration</h2><p class="ed-flow">Setup 1–5 → Editor → Design → Preview → Save → Share → Publish</p></div><div class="ed-status" id="edStatus">✓ Ready</div></div>
 <div class="ed"><aside class="ed-left">
+<div class="ed-tabs" role="tablist" aria-label="Editor tools">
+<button type="button" class="ed-tab active" data-tab="templates">Templates</button>
+<button type="button" class="ed-tab" data-tab="elements">Elements</button>
+<button type="button" class="ed-tab" data-tab="text">Text</button>
+<button type="button" class="ed-tab" data-tab="uploads">Uploads</button>
+<button type="button" class="ed-tab" data-tab="audio">Audio</button>
+<button type="button" class="ed-tab" data-tab="ai">AI</button>
+<button type="button" class="ed-tab" data-tab="pages">Pages</button>
+</div>
 <div class="ed-panel" data-panel="templates"><b>TEMPLATES</b><button type="button" data-template="romantic">❤️ Romantic</button><button type="button" data-template="luxury">✨ Luxury</button><button type="button" data-template="pastel">🌸 Pastel</button><button type="button" data-template="galaxy">🌌 Galaxy</button></div>
 <div class="ed-panel" data-panel="elements" hidden><b>ELEMENTS</b><div class="ed-grid"><button type="button" data-add="❤️">❤️ Heart</button><button type="button" data-add="✨">✨ Star</button><button type="button" data-add="🎈">🎈 Balloon</button><button type="button" data-add="🌹">🌹 Rose</button><button type="button" data-add="🎁">🎁 Gift</button><button type="button" data-add="🎂">🎂 Cake</button><button type="button" data-add="🎉">🎉 Confetti</button><button type="button" data-add="✨">✦ Sparkle</button></div><hr><b>BLOCKS</b><button type="button" data-block="countdown">⏳ Countdown</button><button type="button" data-block="letter">💌 Love Letter</button><button type="button" data-block="timeline">🗓 Timeline</button><button type="button" data-block="music">🎵 Music Player</button></div>
 <div class="ed-panel" data-panel="text" hidden><b>TEXT</b><button type="button" data-add="Your heading">T Heading</button><button type="button" data-add="Your subheading">T Subheading</button><button type="button" data-add="Write your message here...">T Paragraph</button><p class="ed-help">Select text on the canvas to edit font, size, color and spacing.</p></div>
@@ -14,8 +23,14 @@ root.innerHTML=`<div class="ed-head"><div><span class="ed-kicker">CELEBRATEVERSE
 <div class="ed-layers"><b>LAYERS</b><div id="edLayers"></div></div></aside>
 <main class="ed-main"><div class="edbar"><button type="button" id="edUndo">↶</button><button type="button" id="edRedo">↷</button><span class="ed-sep"></span><button type="button" id="edCopy">Copy</button><button type="button" id="edPaste">Paste</button><button type="button" id="edDuplicate">Duplicate</button><button type="button" id="edDelete">Delete</button><span class="ed-sep"></span><button type="button" id="edDesk">Desktop</button><button type="button" id="edMob">Mobile</button><button type="button" id="edZoomOut">−</button><span id="edZoom">100%</span><button type="button" id="edZoomIn">＋</button><button type="button" id="edFit">Fit</button></div><div class="ed-align"><button type="button" data-align="left">←</button><button type="button" data-align="center">↔</button><button type="button" data-align="right">→</button><button type="button" data-align="top">↑</button><button type="button" data-align="bottom">↓</button><button type="button" id="edForward">Bring Forward</button><button type="button" id="edBackward">Send Back</button></div><div id="edCanvasWrap"><div id="edCanvas"></div></div><div class="ed-bottom-flow"><span>Canvas / Design</span><i>→</i><span>Preview</span><i>→</i><span>Save</span><i>→</i><span>Share</span><i>→</i><span>Publish</span></div></main>
 <aside class="ed-right"><b>PROPERTIES</b><p id="edEmpty">Select an element.</p><div id="edProps" hidden><label>Text<input id="edText"></label><div class="ed-two"><label>Size<input id="edSize" type="range" min="8" max="160"></label><output id="edSizeOut">32</output></div><label>Font<select id="edFont"><option>DM Sans</option><option>Playfair Display</option><option>Georgia</option><option>Arial</option></select></label><div class="ed-two"><label>Color<input id="edColor" type="color"></label><label>Opacity<input id="edOpacity" type="range" min="0" max="1" step="0.05"></label></div><label>Letter spacing<input id="edSpacing" type="range" min="-5" max="20" step="0.5"></label><label>Rotation<input id="edRotation" type="range" min="-180" max="180"></label><label>Animation<select id="edAnim"><option value="">None</option><option value="float">Float</option><option value="pulse">Pulse</option><option value="bounce">Bounce</option></select></label><div class="ed-checks"><label><input id="edVisible" type="checkbox" checked> Visible</label><label><input id="edRounded" type="checkbox"> Rounded</label><label><input id="edCircle" type="checkbox"> Circle</label><label><input id="edFrame" type="checkbox"> Soft Frame</label><label><input id="edShadow" type="checkbox"> Shadow</label></div><div class="ed-two"><button type="button" id="edLock">🔒 Lock</button><button type="button" id="edHide">Hide</button></div></div></aside></div>`;
-section.parentNode.insertBefore(root,section);const canvas=root.querySelector('#edCanvas');canvas.append(section);
-const $=id=>root.querySelector('#'+id), state={selected:null,history:[],future:[],clipboard:null,zoom:1,pages:[null],page:0,restoring:false};let transformTimer;
+section.parentNode.insertBefore(root,section);const canvas=root.querySelector('#edCanvas');
+const showcase=document.createElement('div');
+showcase.className='ed-showcase';
+showcase.hidden=true;
+showcase.innerHTML=`<div class="ed-showcase-glow"></div><div class="ed-showcase-card"><div class="ed-showcase-dots"><i></i><i></i><i></i></div><div class="ed-showcase-heart">❤️</div><h2>Made Just For You</h2><p>Every memory deserves something extraordinary.</p><div class="ed-showcase-photos"><span></span><span></span><span></span></div><button type="button" id="edExplore">Explore Memories <span>→</span></button></div><div class="ed-showcase-side ed-showcase-side-left"><b>🎂 Birthday</b><small>Make it unforgettable</small></div><div class="ed-showcase-side ed-showcase-side-mid"><b>❤️ Love Story</b><small>Your memories together</small></div><div class="ed-showcase-side ed-showcase-side-right">Scroll to explore</div>`;
+preview.append(showcase);
+canvas.append(section);
+const $=id=>root.querySelector('#'+id), state={selected:null,history:[],future:[],clipboard:null,zoom:1,pages:[null],page:0,restoring:false,showcase:false};let transformTimer;
 const templates={romantic:['linear-gradient(135deg,#5b0b45,#1b102b)','#fce7f3'],luxury:['linear-gradient(135deg,#111827,#312e81)','#fef3c7'],pastel:['linear-gradient(135deg,#fce7f3,#ddd6fe)','#4c1d95'],galaxy:['radial-gradient(circle at 20% 10%,#312e81,#020617 70%)','#c4b5fd']};
 function items(){return [...preview.querySelectorAll('.editem')]}function snap(){return items().map(e=>e.outerHTML)}
 function commit(){if(state.restoring)return;const s=snap(),last=state.history.at(-1);if(JSON.stringify(s)===JSON.stringify(last))return;state.history.push(s);if(state.history.length>50)state.history.shift();state.future=[];changed()}
@@ -38,11 +53,35 @@ $('edDesk').onclick=()=>canvas.classList.remove('mobile');$('edMob').onclick=()=
 function effect(icon){root.querySelector('.edfx')?.remove();const f=document.createElement('div');f.className='edfx';for(let i=0;i<30;i++){const s=document.createElement('span');s.textContent=icon;s.style.left=Math.random()*100+'%';s.style.animationDelay=Math.random()*2+'s';f.append(s)}preview.append(f);changed();commit()}$('edConf').onclick=()=>effect('🎉');$('edHearts').onclick=()=>effect('❤️');
 $('edUndo').onclick=()=>{if(state.history.length<=1)return;state.future.push(state.history.pop());render(state.history.at(-1));changed()};$('edRedo').onclick=()=>{const n=state.future.pop();if(n){state.history.push(n);render(n);changed()}};
 document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea,select'))return;if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();$('edUndo').click()}else if((e.ctrlKey||e.metaKey)&&e.key==='y'){e.preventDefault();$('edRedo').click()}else if((e.ctrlKey||e.metaKey)&&e.key==='c'){$('edCopy').click()}else if((e.ctrlKey||e.metaKey)&&e.key==='v'){$('edPaste').click()}else if(e.key==='Delete')$('edDelete').click();else if(state.selected&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();const x=parseFloat(state.selected.style.left)||40,y=parseFloat(state.selected.style.top)||40;state.selected.style.left=(x+(e.key==='ArrowLeft'?-1:e.key==='ArrowRight'?1:0))+'%';state.selected.style.top=(y+(e.key==='ArrowUp'?-1:e.key==='ArrowDown'?1:0))+'%';commit()}});
-root.querySelectorAll('.ed-tab').forEach(t=>t.onclick=()=>{root.querySelectorAll('.ed-tab').forEach(x=>x.classList.toggle('active',x===t));root.querySelectorAll('.ed-panel').forEach(p=>p.hidden=p.dataset.panel!==t.dataset.tab)});
-function pagesRender(){const box=$('edPages');box.innerHTML='';state.pages.forEach((_,i)=>{const b=document.createElement('button');b.textContent='Page '+(i+1);b.className=i===state.page?'layer-active':'';b.onclick=()=>{state.pages[state.page]=snap();state.page=i;render(state.pages[i]||[]);pagesRender()};box.append(b)})}function savePage(){state.pages[state.page]=snap()}$('edAddPage').onclick=()=>{savePage();state.pages.push([]);state.page=state.pages.length-1;render([]);pagesRender();commit()};$('edDuplicatePage').onclick=()=>{savePage();state.pages.push([...state.pages[state.page]]);state.page=state.pages.length-1;render(state.pages[state.page]);pagesRender();commit()};
+root.querySelectorAll('.ed-tab').forEach(t=>t.onclick=()=>{
+root.querySelectorAll('.ed-tab').forEach(x=>x.classList.toggle('active',x===t));
+root.querySelectorAll('.ed-panel').forEach(p=>p.hidden=p.dataset.panel!==t.dataset.tab);
+});
+function setShowcase(on){
+state.showcase=!!on;
+showcase.hidden=!state.showcase;
+preview.classList.toggle('ed-showcase-active',state.showcase);
+if(state.showcase){
+  showcase.querySelector('#edExplore')?.focus();
+  if($('edStatus'))$('edStatus').textContent='✓ Showcase preview';
+}else if($('edStatus'))$('edStatus').textContent='● Unsaved changes';
+}
+showcase.querySelector('#edExplore')?.addEventListener('click',()=>setShowcase(false));
+function pagesRender(){
+const box=$('edPages');box.innerHTML='';
+state.pages.forEach((_,i)=>{
+ const b=document.createElement('button');b.type='button';b.textContent='Page '+(i+1);b.className=i===state.page?'layer-active':'';
+ b.onclick=()=>{if(state.showcase)setShowcase(false);state.pages[state.page]=snap();state.page=i;render(state.pages[i]||[]);pagesRender()};
+ box.append(b);
+});
+const showcaseBtn=document.createElement('button');showcaseBtn.type='button';showcaseBtn.textContent='✨ Made Just For You';showcaseBtn.className=state.showcase?'layer-active':'';
+showcaseBtn.onclick=()=>{savePage();setShowcase(true);pagesRender()};box.append(showcaseBtn);
+}
+function savePage(){if(!state.showcase)state.pages[state.page]=snap()}
+$('edAddPage').onclick=()=>{if(state.showcase)setShowcase(false);savePage();state.pages.push([]);state.page=state.pages.length-1;render([]);pagesRender();commit()};$('edDuplicatePage').onclick=()=>{savePage();state.pages.push([...state.pages[state.page]]);state.page=state.pages.length-1;render(state.pages[state.page]);pagesRender();commit()};
 root.querySelectorAll('[data-block]').forEach(b=>b.onclick=()=>{const text={countdown:'⏳ Countdown\nYour special day is coming!',letter:'💌 Love Letter\nWrite your heartfelt message here.',timeline:'🗓 Our Timeline\nFirst memory → Best memory → Forever',music:'🎵 Music Player\nYour celebration soundtrack'}[b.dataset.block];add(text)});
 $('edAiText').onclick=()=>{const name=document.getElementById('personName')?.value||'someone special',occ=document.getElementById('occasion')?.value||'celebration';if(state.selected&&!state.selected.querySelector('img')){$('edText').value=`Happy ${occ}, ${name}! Wishing you a day filled with love, laughter and beautiful memories.`;$('edText').dispatchEvent(new Event('input'));}$('edAiResult').textContent='Generated a personalized local suggestion.'};$('edAiDesign').onclick=()=>{const t=['romantic','luxury','pastel','galaxy'][Math.floor(Math.random()*4)];root.querySelector(`[data-template="${t}"]`).click();$('edAiResult').textContent=`Suggested ${t} styling based on your celebration.`};
 document.addEventListener('cv:projectLoaded',()=>{items().forEach(e=>{e.dataset.bound='0';bind(e)});state.selected=null;state.future=[];state.history=[snap()];layers();pagesRender();if($('edStatus'))$('edStatus').textContent='✓ Project loaded'});
-window.CelebrateVerseEditor={getSnapshot:snap,getPages:()=>{savePage();return state.pages.map(p=>p?[...p]:[])},loadSnapshot:arr=>{render(arr||[]);state.history=[snap()];state.future=[];layers()},loadPages:pages=>{state.pages=(Array.isArray(pages)&&pages.length?pages:[[]]);state.page=0;render(state.pages[0]);pagesRender();state.history=[snap()];state.future=[];layers()}};
+window.CelebrateVerseEditor={getSnapshot:snap,getPages:()=>{savePage();return state.pages.map(p=>p?[...p]:[])},loadSnapshot:arr=>{setShowcase(false);render(arr||[]);state.history=[snap()];state.future=[];layers()},loadPages:pages=>{setShowcase(false);state.pages=(Array.isArray(pages)&&pages.length?pages:[[]]);state.page=0;render(state.pages[0]);pagesRender();state.history=[snap()];state.future=[];layers()}};
 preview.addEventListener('click',e=>{if(e.target===preview)select(null)});items().forEach(bind);state.history=[snap()];pagesRender();layers();
 });
