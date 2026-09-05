@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentStep = 1;
 
     const totalSteps = 5;
+    const PACKAGE_PRICES = { free: 0, basic: 199, premium: 399, ultimate: 699 };
 
 
     /* ==========================================
@@ -1337,6 +1338,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             try {
                 const celebration = await saveDraftToCloud("draft");
+                const selectedPackage = packageInput?.value || "";
+                const selectedPrice = PACKAGE_PRICES[selectedPackage] ?? 0;
                 localStorage.setItem("celebrateVerseOrder", JSON.stringify({
                     celebrationId: celebration.id,
                     occasion: celebration.occasion,
@@ -1347,9 +1350,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     specialDate: celebration.special_date,
                     email: celebration.customer_email,
                     message: celebration.message,
-                    package: celebration.package
+                    package: celebration.package,
+                    price: selectedPrice
                 }));
                 localStorage.removeItem(AUTO_SAVE_KEY);
+                if (selectedPackage === "free") {
+                    const setup = document.querySelector(".cv-ui01-setup-backdrop");
+                    if (setup) setup.hidden = true;
+                    window.dispatchEvent(new CustomEvent("cv:free-selected"));
+                    return;
+                }
                 window.location.href = "payment.html?package=" + encodeURIComponent(celebration.package) + "&celebration=" + encodeURIComponent(celebration.id);
             } catch (error) {
                 console.error(error);
