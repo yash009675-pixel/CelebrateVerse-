@@ -58,8 +58,34 @@ document.addEventListener("DOMContentLoaded", () => {
       const password = document.getElementById("signupPassword").value;
 
       if (!supabaseClient) return showMessage("Authentication service is not available.");
-      if (!name || !email || !password) return showMessage("Please fill all fields.");
-      if (password.length < 6) return showMessage("Password must be at least 6 characters.");
+
+      // Use JS validation so mobile Safari does not block submit with a
+      // generic "fill out this field" message when autofill is involved.
+      if (!name) {
+        showMessage("Please enter your name.");
+        document.getElementById("signupName")?.focus();
+        return;
+      }
+      if (!email) {
+        showMessage("Please enter your email address.");
+        document.getElementById("signupEmail")?.focus();
+        return;
+      }
+      if (!/^\\S+@\\S+\\.\\S+$/.test(email)) {
+        showMessage("Please enter a valid email address.");
+        document.getElementById("signupEmail")?.focus();
+        return;
+      }
+      if (!password) {
+        showMessage("Please create a password.");
+        document.getElementById("signupPassword")?.focus();
+        return;
+      }
+      if (password.length < 6) {
+        showMessage("Password must be at least 6 characters.");
+        document.getElementById("signupPassword")?.focus();
+        return;
+      }
 
       const button = signupForm.querySelector('button[type="submit"]');
       button.disabled = true;
