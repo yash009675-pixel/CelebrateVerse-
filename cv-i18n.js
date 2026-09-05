@@ -9,6 +9,9 @@
     }
   };
   const original=new Map();
+  const current=new Map();
+  function restoreOriginal(){ current.forEach((value,node)=>{ if(node && node.nodeType===3) node.nodeValue=value; }); current.clear(); }
+
   function walk(root){
     const nodes=[];
     const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
@@ -19,12 +22,14 @@
     const L=dict[lang];
     if(!L) return;
     walk(document.body);
+    restoreOriginal();
     original.forEach((value,node)=>{
       const key=value.trim();
       if(!key || node.parentElement?.closest("script,style")) return;
       if(lang==="en"){node.nodeValue=value;return;}
       if(L[key]) node.nodeValue=value.replace(key,L[key]);
     });
+    original.forEach((value,node)=>current.set(node,node.nodeValue));
     document.documentElement.lang=lang==="hi"?"hi":lang==="gu"?"gu":"en";
     document.querySelectorAll(".cv-language-card").forEach(b=>b.classList.toggle("active",b.dataset.lang===lang));
     localStorage.setItem("cv-language",lang);
