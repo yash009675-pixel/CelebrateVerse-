@@ -1,4 +1,4 @@
-const CACHE_NAME="celebrateverse-v32";
+const CACHE_NAME="celebrateverse-v33";
 const APP_SHELL=["./","./index.html","./login.html","./signup.html","./dashboard.html","./customize.html","./payment.html","./success.html","./offline.html","./celebration.html","./style.css","./mobile-fix.css","./canva-editor.css","./stable-editor.css","./phase23-collaboration.css","./phase24-premium.css","./main.js","./auth.js","./dashboard.js","./customize.js","./stable-editor.js","./projects-publish.js","./editor-enhancements.js","./phase23-collaboration.js","./phase24-premium.js","./ui02-templates-elements.js","./celebration.js","./payment.js","./payment-config.js","./supabase.js","./ui01-editor-shell.js","./ui03-text-photo.js","./ui04-contextual-properties.js","./ui05-pages-timeline.js","./ui06-ai-audio.js","./ui07-11-workspace.js","./manifest.json"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(APP_SHELL)));self.skipWaiting()});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)))));self.clients.claim()});
