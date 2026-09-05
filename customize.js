@@ -1163,6 +1163,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    /* Public wizard navigation for the Canva-style editor */
+    window.cvGoToStep = function(step) {
+        const target = Math.max(1, Math.min(totalSteps, Number(step) || 1));
+        currentStep = target;
+        showStep(currentStep);
+        updateLivePreview();
+    };
+
+    document.addEventListener("cv:go-to-step", event => {
+        window.cvGoToStep(event.detail?.step);
+    });
+
     /* ==========================================
        NEXT BUTTON
     ========================================== */
