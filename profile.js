@@ -1,7 +1,16 @@
 document.addEventListener("DOMContentLoaded", async () => {
   if (!window.supabaseClient) { location.href="login.html"; return; }
   const { data:{ user } } = await supabaseClient.auth.getUser();
-  if (!user) { location.href="login.html"; return; }
+  const publicMode = new URLSearchParams(location.search).get("public") === "1";
+  if (!user && !publicMode) { location.href="login.html"; return; }
+  if (publicMode && !user) {
+    document.querySelector("#editProfileBtn")?.remove();
+    document.querySelector("#profileForm")?.remove();
+    document.querySelector(".cv-profile-topbar .back-home")?.setAttribute("href","index.html");
+    document.querySelectorAll(".cv-profile-tabs button").forEach(b=>b.remove());
+    document.querySelector("#profileTabContent").innerHTML='<div class="cv-empty-profile"><div>🌐</div><h2>Public Profile Preview</h2><p>Log in to manage your private profile, cards, memories and countdowns.</p><a href="login.html" class="primary-btn">Login</a></div>';
+    return;
+  }
 
   const $ = id => document.getElementById(id);
   const escapeHtml = v => String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
