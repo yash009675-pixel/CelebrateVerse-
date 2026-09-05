@@ -53,19 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  const resetLink = document.getElementById("forgotPassword");
-  if (resetLink) {
-    resetLink.addEventListener("click", async (event) => {
-      event.preventDefault();
-      const email = document.getElementById("loginEmail")?.value.trim().toLowerCase();
-      if (!supabaseClient) return showMessage("Authentication service is not available.");
-      if (!email) return showMessage("Enter your email first, then click Forgot password.");
-      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: new URL("login.html", window.location.href).href });
-      if (error) return showMessage("Password reset failed: " + error.message);
-      showMessage("Password reset email sent. Check your inbox.", true);
-    });
-  }
-
   if (loginForm) {
     loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();

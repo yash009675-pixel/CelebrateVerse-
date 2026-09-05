@@ -36,10 +36,3 @@
  #stableEditor .ed-showcase-card{width:min(310px,82%);min-height:450px;padding:22px}
  #stableEditor .ed-showcase-side-left,#stableEditor .ed-showcase-side-mid,#stableEditor .ed-showcase-side-right{display:none}
 }
-
-#stableEditor #cvShowcase[hidden]{display:none!important}
-#stableEditor #cvShowcase{position:fixed;inset:0;z-index:9999}
-#stableEditor .ed-showcase-backdrop{position:absolute;inset:0;background:rgba(4,6,12,.94);display:flex;align-items:center;justify-content:center;padding:24px}
-#stableEditor .ed-showcase-card{width:min(900px,96vw);max-height:92vh;overflow:auto;background:#0b0d14;border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:18px;box-shadow:0 30px 100px rgba(0,0,0,.6)}
-#stableEditor .ed-showcase-content{min-height:520px;border-radius:14px;position:relative;overflow:hidden}
-#stableEditor #edExplore{margin-top:14px;border:0;border-radius:9px;padding:9px 14px;cursor:pointer;background:#8b5cf6;color:#fff;font-weight:700}
