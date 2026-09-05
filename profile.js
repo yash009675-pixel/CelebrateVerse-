@@ -38,9 +38,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const renderCelebrations=()=>{
     if(!celebrations.length) return '<div class="cv-empty-profile"><div>✨</div><h2>Your Celebrations</h2><p>Your created celebrations will appear here.</p><a href="customize.html" class="primary-btn">Create Celebration</a></div>';
-    return '<div class="cv-celebration-grid">'+celebrations.map(o=>'<article class="cv-celebration-item"><div class="cv-celebration-icon">🎉</div><div><h3>'+escapeHtml(o.person_name||o.occasion||"Celebration")+'</h3><p>'+escapeHtml(o.occasion||"Special occasion")+'</p><small>'+escapeHtml(o.special_date||"")+'</small></div></article>').join("")+'</div>';
+    return '<div class="cv-celebration-grid">'+celebrations.map(o=>'<article class="cv-celebration-item"><div class="cv-celebration-icon">🎉</div><div class="cv-celebration-main"><h3>'+escapeHtml(o.person_name||o.occasion||"Celebration")+'</h3><p>'+escapeHtml(o.occasion||"Special occasion")+'</p><small>'+escapeHtml(o.special_date||"")+'</small><span class="cv-order-status">'+escapeHtml(o.order_status||"Created")+'</span></div><div class="cv-celebration-actions"><button type="button" data-share-order="'+o.id+'">↗ Share</button></div></article>').join("")+'</div>';
   };
   $("profileTabContent").innerHTML=renderCelebrations();
+  const bindCelebrationActions=()=>document.querySelectorAll("[data-share-order]").forEach(btn=>btn.onclick=async()=>{
+    const url=window.location.origin+window.location.pathname.replace(/profile\.html$/,"")+"?celebration="+encodeURIComponent(btn.dataset.shareOrder);
+    try{if(navigator.share) await navigator.share({title:"CelebrateVerse Celebration",url});else await navigator.clipboard.writeText(url);setMessage(navigator.share?"":"Celebration link copied. 🔗",true)}catch(err){if(err.name!=="AbortError")setMessage("Could not share this celebration.")}});
+  bindCelebrationActions();
 
   $("editProfileBtn").onclick=()=>{$("profileForm").hidden=false;$("editProfileBtn").hidden=true;$("profileMessage").textContent=""};
   $("cancelEditBtn").onclick=()=>{$("profileForm").hidden=true;$("editProfileBtn").hidden=false};
