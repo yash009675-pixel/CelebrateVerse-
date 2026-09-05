@@ -1996,3 +1996,6 @@ document.addEventListener("DOMContentLoaded",()=>{
  };
  check();setInterval(check,60000);
 });
+
+/* Phase 2 — local Celebration Profile */
+document.addEventListener("DOMContentLoaded",()=>{const form=document.getElementById("cvProfileForm"),out=document.getElementById("cvProfileSummary");if(!form||!out)return;const key="cv_profile";const esc=v=>String(v||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));const render=()=>{let x={};try{x=JSON.parse(localStorage.getItem(key)||"{}")}catch{};out.classList.toggle("empty",!x.name);out.innerHTML=x.name?'<h3>👋 Welcome, '+esc(x.name)+'!</h3><p>❤️ Favorite occasion: <strong>'+esc(x.occasion)+'</strong></p><p>Your celebration details stay on this device.</p>':'<div>Save your profile to personalize your CelebrateVerse experience. ✨</div>'};form.addEventListener("submit",e=>{e.preventDefault();const name=document.getElementById("cvProfileName").value.trim(),occasion=document.getElementById("cvProfileOccasion").value;if(!name)return;localStorage.setItem(key,JSON.stringify({name,occasion}));render()});render()});
