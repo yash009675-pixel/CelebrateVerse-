@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Explore Celebrations — CelebrateVerse</title>
+<meta name="theme-color" content="#7c3aed">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="mobile-fix.css">
+<style>
+.cv-explore-page{min-height:100vh;padding:120px 24px 70px}.cv-explore-wrap{max-width:1120px;margin:auto}.cv-explore-hero{text-align:center;max-width:760px;margin:0 auto 48px}.cv-explore-hero .section-tag{display:inline-block}.cv-explore-hero h1{font-family:"Playfair Display",serif;font-size:clamp(40px,6vw,68px);margin:14px 0 12px}.cv-explore-hero h1 span{background:linear-gradient(90deg,#7c3aed,#ec4899);-webkit-background-clip:text;background-clip:text;color:transparent}.cv-explore-hero p{opacity:.7;line-height:1.7;font-size:17px}.cv-explore-tabs{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:30px}.cv-explore-tab{border:1px solid rgba(124,58,237,.18);background:rgba(255,255,255,.7);border-radius:999px;padding:10px 17px;font:inherit;cursor:pointer}.cv-explore-tab.active{background:#7c3aed;color:#fff;border-color:#7c3aed}.cv-explore-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.cv-explore-card{padding:25px;border:1px solid rgba(124,58,237,.14);border-radius:24px;background:rgba(255,255,255,.72);box-shadow:0 16px 42px rgba(30,20,60,.07);min-height:205px;display:flex;flex-direction:column}.cv-explore-icon{font-size:34px;margin-bottom:14px}.cv-explore-card h3{margin:0 0 7px;font-size:21px}.cv-explore-card p{margin:0 0 18px;opacity:.65;line-height:1.55}.cv-explore-card .primary-btn{margin-top:auto;align-self:flex-start}body:not(.light-mode) .cv-explore-tab,body:not(.light-mode) .cv-explore-card{background:rgba(20,18,35,.7);border-color:rgba(255,255,255,.1)}@media(max-width:800px){.cv-explore-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.cv-explore-page{padding:105px 18px 50px}.cv-explore-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="navbar"><div class="nav-container"><a href="index.html" class="logo">Celebrate<span>Verse</span></a><nav class="nav-links"><a href="index.html#home">Home</a><a href="explore.html">Explore</a><a href="index.html#celebrations">Celebrations</a><a href="index.html#pricing">Pricing</a></nav><div class="nav-buttons"><a href="customize.html" class="nav-cta">Create Surprise</a></div><button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fa-solid fa-bars"></i></button></div><div class="mobile-menu" id="mobileMenu"><a href="index.html">Home</a><a href="explore.html">Explore</a><a href="index.html#celebrations">Celebrations</a><a href="index.html#pricing">Pricing</a><a href="customize.html" class="mobile-cta">Create Your Celebration</a></div></header>
+<main class="cv-explore-page"><div class="cv-explore-wrap">
+<section class="cv-explore-hero"><span class="section-tag">EXPLORE CELEBRATIONS</span><h1>Find Your Next <span>Reason to Celebrate.</span></h1><p>Discover celebrations happening today, coming soon, and moments worth planning ahead for.</p></section>
+<div class="cv-explore-tabs" role="tablist"><button class="cv-explore-tab active" data-filter="all">All</button><button class="cv-explore-tab" data-filter="today">🎉 Today</button><button class="cv-explore-tab" data-filter="upcoming">📅 Upcoming</button><button class="cv-explore-tab" data-filter="week">📆 This Week</button><button class="cv-explore-tab" data-filter="month">🗓️ This Month</button></div>
+<section class="cv-explore-grid" id="exploreGrid">
+<article class="cv-explore-card" data-category="today"><div class="cv-explore-icon">🎉</div><h3>Today's Celebrations</h3><p>Find a reason to make today special.</p><a class="primary-btn" href="customize.html">Create Celebration <i class="fa-solid fa-arrow-right"></i></a></article>
+<article class="cv-explore-card" data-category="upcoming"><div class="cv-explore-icon">🎂</div><h3>Upcoming Birthdays</h3><p>Start creating a memorable birthday before the big day arrives.</p><a class="primary-btn" href="customize.html?occasion=birthday">Create Birthday <i class="fa-solid fa-arrow-right"></i></a></article>
+<article class="cv-explore-card" data-category="upcoming"><div class="cv-explore-icon">❤️</div><h3>Upcoming Anniversaries</h3><p>Celebrate the journey with a personalized experience.</p><a class="primary-btn" href="customize.html?occasion=anniversary">Create Anniversary <i class="fa-solid fa-arrow-right"></i></a></article>
+<article class="cv-explore-card" data-category="week"><div class="cv-explore-icon">🎊</div><h3>This Week</h3><p>Explore moments and occasions worth celebrating this week.</p><a class="primary-btn" href="customize.html">Start Creating <i class="fa-solid fa-arrow-right"></i></a></article>
+<article class="cv-explore-card" data-category="month"><div class="cv-explore-icon">✨</div><h3>This Month</h3><p>Plan ahead for the celebrations coming this month.</p><a class="primary-btn" href="customize.html">Plan a Celebration <i class="fa-solid fa-arrow-right"></i></a></article>
+<article class="cv-explore-card" data-category="month"><div class="cv-explore-icon">🏆</div><h3>Milestones & Achievements</h3><p>Turn a graduation, promotion, award, or big win into a memory.</p><a class="primary-btn" href="customize.html?occasion=achievement">Celebrate a Win <i class="fa-solid fa-arrow-right"></i></a></article>
+</section></div></main>
+<script src="main.js"></script>
+<script>
+document.querySelectorAll(".cv-explore-tab").forEach(tab=>tab.addEventListener("click",()=>{document.querySelectorAll(".cv-explore-tab").forEach(t=>t.classList.remove("active"));tab.classList.add("active");const f=tab.dataset.filter;document.querySelectorAll(".cv-explore-card").forEach(card=>{card.style.display=f==="all"||card.dataset.category===f?"flex":"none"})}));
+</script>
+</body></html>
