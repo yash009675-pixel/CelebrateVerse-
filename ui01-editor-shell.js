@@ -40,6 +40,10 @@
     actions.querySelector('[data-ui01=setup]').onclick=()=>{const o=document.querySelector('.cv-ui01-setup-backdrop');if(o){o.hidden=false;window.cvGoToStep?.(1)}};actions.querySelector('[data-ui01=preview]').onclick=()=>document.querySelector('#celebrationLivePreview')?.scrollIntoView({behavior:'smooth',block:'center'});
     const setupBackdrop=document.createElement('div');setupBackdrop.className='cv-ui01-setup-backdrop';setupBackdrop.hidden=true;setupBackdrop.innerHTML='<div class="cv-ui01-setup-card"><div class="cv-setup-title"><strong>Celebration Setup</strong><span class="cv-setup-sub">Edit your Step 1–5 details anytime</span><button type="button" class="cv-ui01-setup-close" aria-label="Close setup">✕</button></div><div class="cv-setup-body"></div></div>';document.body.append(setupBackdrop);
     const setupBody=setupBackdrop.querySelector('.cv-setup-body');const progressWrapper=document.querySelector('.customizer-page .progress-wrapper');const celebrationForm=document.getElementById('celebrationForm');
+    // The stable editor is created inside the form by stable-editor.js. Move only the editor shell
+    // out of the form before opening Setup, otherwise hiding the Setup backdrop would hide the editor too.
+    const editorRoot=document.getElementById('stableEditor');const editorHost=document.querySelector('.customizer-container');
+    if(editorRoot&&celebrationForm&&editorRoot.parentElement===celebrationForm&&editorHost){editorHost.insertBefore(editorRoot,celebrationForm);}
     if(progressWrapper)setupBody.appendChild(progressWrapper);if(celebrationForm)setupBody.appendChild(celebrationForm);
     const openSetup=step=>{setupBackdrop.hidden=false;window.cvGoToStep?.(step||1);requestAnimationFrame(()=>setupBackdrop.querySelector('.form-step.active')?.scrollIntoView({block:'start'}))};
     actions.querySelector('[data-ui01=setup]').onclick=()=>openSetup(1);
