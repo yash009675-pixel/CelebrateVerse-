@@ -31,7 +31,7 @@
     root.classList.add('cv-ui01');document.querySelector('.customizer-page')?.classList.add('cv-ui01-page');document.getElementById('celebrationForm')?.classList.add('cv-ui01-form');
 
     const head=root.querySelector('.ed-head'),status=head.querySelector('.ed-status');
-    const actions=document.createElement('div');actions.className='cv-ui01-top-actions';actions.innerHTML='<button type="button" data-ui01="setup" class="cv-ui01-setup">⚙ Setup</button><button type="button" data-ui01="undo">↶ Undo</button><button type="button" data-ui01="redo">↷ Redo</button><button type="button" data-ui01="preview">▶ Preview</button><span class="cv-ui01-spacer"></span><button type="button" data-ui01="save">Save</button><button type="button" data-ui01="share" class="cv-ui01-top-primary">Share</button>';head.insertBefore(actions,status);
+    const actions=document.createElement('div');actions.className='cv-ui01-top-actions';actions.innerHTML='<button type="button" data-ui01="setup" class="cv-ui01-setup">⚙ Step 1–5 Setup</button><button type="button" data-ui01="undo">↶ Undo</button><button type="button" data-ui01="redo">↷ Redo</button><button type="button" data-ui01="preview">▶ Preview</button><span class="cv-ui01-spacer"></span><button type="button" data-ui01="save">Save</button><button type="button" data-ui01="share" class="cv-ui01-top-primary">Share</button>';head.insertBefore(actions,status);
     const existingButton=selector=>root.querySelector(selector);
     actions.querySelector('[data-ui01=undo]').onclick=()=>existingButton('#edUndo')?.click();
     actions.querySelector('[data-ui01=redo]').onclick=()=>existingButton('#edRedo')?.click();
@@ -49,7 +49,7 @@
     actions.querySelector('[data-ui01=setup]').onclick=()=>openSetup(1);
     setupBackdrop.querySelector('.cv-ui01-setup-close').onclick=()=>setupBackdrop.hidden=true;setupBackdrop.addEventListener('click',e=>{if(e.target===setupBackdrop)setupBackdrop.hidden=true});
     setupBody.addEventListener('click',e=>{const step=e.target.closest('.progress-step');if(step){e.preventDefault();openSetup(Number(step.dataset.step))}});
-    document.addEventListener('cv:open-setup',e=>openSetup(Number(e.detail?.step)||1));
+    document.addEventListener('cv:open-setup',e=>openSetup(Number(e.detail?.step)||1)); openSetup(1);
 
     const panels=[...left.querySelectorAll('.ed-panel')];const panelMap=Object.fromEntries(panels.map(p=>[p.dataset.panel,p]));const nav=document.createElement('nav');nav.className='cv-ui01-nav';
     const cats=[['templates','▦','Templates'],['elements','◇','Elements'],['text','T','Text'],['uploads','↑','Uploads'],['audio','♪','Audio'],['ai','✦','AI'],['pages','▤','Pages']];
