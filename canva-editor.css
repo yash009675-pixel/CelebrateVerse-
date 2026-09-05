@@ -75,3 +75,19 @@
   .cv-preview-content { min-height:320px; padding:34px 18px; }
   .cv-preview-content h1 { font-size:36px; }
 }
+
+/* UI-01 setup cleanup: one clear wizard, no editor showing through it */
+.cv-ui01-setup-backdrop{background:#080a11!important;backdrop-filter:none!important;}
+.cv-ui01-setup-card{width:min(1100px,100%)!important;min-height:0!important;padding:24px!important;}
+.cv-ui01-setup-backdrop .step-title{text-align:left;margin-bottom:18px;}
+.cv-ui01-setup-backdrop .step-title h2{font-size:30px;margin-bottom:6px;}
+.cv-ui01-setup-backdrop .selection-grid,.cv-ui01-setup-backdrop .theme-grid,.cv-ui01-setup-backdrop .package-selection-grid{max-height:none!important;overflow:visible!important;}
+.cv-ui01-setup-backdrop .package-selection-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
+.cv-ui01-setup-backdrop .package-option{min-height:0!important;padding:20px!important;}
+.cv-ui01-setup-backdrop .package-option h3{font-size:22px;margin-bottom:4px;}
+.cv-ui01-setup-backdrop .package-price{font-size:30px;margin:8px 0;}
+.cv-ui01-setup-backdrop .package-option p{font-size:12px;min-height:36px;margin-bottom:8px;}
+.cv-ui01-setup-backdrop .package-option ul{margin:8px 0 0;padding:0;display:grid;gap:6px;}
+.cv-ui01-setup-backdrop .package-option li{font-size:12px;margin:0;line-height:1.35;}
+@media(max-width:900px){.cv-ui01-setup-backdrop .package-selection-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:560px){.cv-ui01-setup-card{padding:16px!important}.cv-ui01-setup-backdrop .package-selection-grid{grid-template-columns:1fr}.cv-ui01-setup-backdrop .package-option p{min-height:0}.cv-ui01-setup-backdrop .progress-steps{min-width:0!important;width:100%;}}
