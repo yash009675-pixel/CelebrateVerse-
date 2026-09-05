@@ -1968,3 +1968,28 @@ document.addEventListener("DOMContentLoaded",()=>{
  });
  render();
 });
+
+/* Phase 2 — browser reminder notifications */
+document.addEventListener("DOMContentLoaded",()=>{
+ const btn=document.getElementById("cvEnableNotifications"),status=document.getElementById("cvNotifyStatus");
+ if(!btn||!status)return;
+ const supported="Notification" in window;
+ if(!supported){status.textContent="Notifications are not supported in this browser.";btn.disabled=true;return;}
+ const update=()=>{status.textContent=Notification.permission==="granted"?"Notifications enabled on this device.":"Enable notifications to receive reminder alerts when this page is open.";};
+ update();
+ btn.addEventListener("click",async()=>{
+   try{const p=await Notification.requestPermission();update();if(p==="granted")new Notification("CelebrateVerse 🔔",{body:"Reminder notifications are now enabled."});}
+   catch(e){status.textContent="Please allow notifications in your browser settings.";}
+ });
+ const key="cv_reminders";
+ const firedKey="cv_fired_reminders";
+ const check=()=>{
+   if(Notification.permission!=="granted")return;
+   let items=[];try{items=JSON.parse(localStorage.getItem(key)||"[]")}catch{return}
+   let fired=[];try{fired=JSON.parse(localStorage.getItem(firedKey)||"[]")}catch{}
+   const today=new Date().toISOString().slice(0,10);
+   items.forEach((x,i)=>{if(x.when===today){const id=i+"|"+x.name+"|"+x.date;if(!fired.includes(id)){new Notification("CelebrateVerse 🔔",{body:"Today: "+x.name});fired.push(id);}}});
+   localStorage.setItem(firedKey,JSON.stringify(fired.slice(-200)));
+ };
+ check();setInterval(check,60000);
+});
