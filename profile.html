@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile | CelebrateVerse</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="cv-profile-page">
+  <div class="cv-profile-topbar">
+    <a href="dashboard.html" class="back-home"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
+    <a href="index.html" class="logo">Celebrate<span>Verse</span></a>
+  </div>
+
+  <section class="cv-profile-card">
+    <div class="cv-profile-hero">
+      <div class="cv-avatar" id="avatarPreview"><span>CV</span></div>
+      <div class="cv-profile-identity">
+        <span class="section-tag">MY CELEBRATEVERSE</span>
+        <h1 id="profileName">Your Profile</h1>
+        <p id="profileUsername">@username</p>
+        <p id="profileBio">Create memories. Celebrate every moment. ✨</p>
+      </div>
+      <button id="editProfileBtn" class="primary-btn" type="button"><i class="fa-solid fa-pen"></i> Edit Profile</button>
+    </div>
+
+    <div class="cv-profile-stats">
+      <div><strong id="statCelebrations">0</strong><span>Celebrations</span></div>
+      <div><strong id="statCards">0</strong><span>Cards</span></div>
+      <div><strong id="statMemories">0</strong><span>Memories</span></div>
+      <div><strong id="statShared">0</strong><span>Shared</span></div>
+    </div>
+
+    <div id="profileMessage" class="cv-profile-message" aria-live="polite"></div>
+
+    <form id="profileForm" class="cv-profile-form" hidden>
+      <div class="input-group"><label>Display Name</label><input id="fullName" type="text" maxlength="80" placeholder="Your name"></div>
+      <div class="input-group"><label>Username</label><input id="username" type="text" maxlength="30" placeholder="your_username" autocomplete="off"><small>3–30 characters: letters, numbers, underscores.</small></div>
+      <div class="input-group full-width"><label>Bio</label><textarea id="bio" rows="3" maxlength="160" placeholder="Tell people a little about you..."></textarea></div>
+      <div class="input-group"><label>Profile Photo URL</label><input id="avatarUrl" type="url" placeholder="https://..."><small>Image upload/storage will be connected in the profile media step.</small></div>
+      <div class="input-group"><label>Language</label><select id="language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="gu">ગુજરાતી</option></select></div>
+      <div class="input-group full-width"><label>Favorite Occasions</label><div class="cv-occasion-picks" id="occasionPicks">
+        <label><input type="checkbox" value="birthday"> 🎂 Birthday</label>
+        <label><input type="checkbox" value="anniversary"> ❤️ Anniversary</label>
+        <label><input type="checkbox" value="festival"> 🎊 Festivals</label>
+        <label><input type="checkbox" value="achievement"> 🏆 Achievements</label>
+        <label><input type="checkbox" value="friendship"> 👥 Friendship</label>
+        <label><input type="checkbox" value="family"> 👨‍👩‍👧 Family</label>
+      </div></div>
+      <div class="cv-form-actions"><button type="button" id="cancelEditBtn" class="secondary-btn">Cancel</button><button type="submit" class="primary-btn">Save Profile</button></div>
+    </form>
+
+    <div class="cv-profile-tabs">
+      <button class="active" data-tab="celebrations">🎉 Celebrations</button>
+      <button data-tab="cards">💌 Cards</button>
+      <button data-tab="memories">📸 Memories</button>
+      <button data-tab="countdowns">⏳ Countdowns</button>
+      <button data-tab="saved">🔖 Saved</button>
+    </div>
+    <div class="cv-profile-tab-content" id="profileTabContent">
+      <div class="cv-empty-profile"><div>✨</div><h2 id="tabTitle">Your Celebrations</h2><p id="tabText">Your created celebrations will appear here.</p><a href="customize.html" class="primary-btn">Create Celebration</a></div>
+    </div>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script src="auth.js"></script>
+<script src="profile.js"></script>
+</body>
+</html>
