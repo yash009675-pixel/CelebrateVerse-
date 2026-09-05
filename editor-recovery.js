@@ -1,103 +1,125 @@
-/* CelebrateVerse editor navigation recovery v3
-   Keeps the enhanced feature panels reachable without allowing legacy editor
-   handlers to overlap them. */
+/* CelebrateVerse editor navigation recovery v4 */
 (function(){
   'use strict';
 
   function mount(){
     const root=document.getElementById('stableEditor');
     const nav=root?.querySelector('.cv-ui01-nav');
-    if(!root||!nav||root.dataset.cvNavBridge==='3') return false;
-    root.dataset.cvNavBridge='3';
+    if(!root||!nav)return false;
 
-    const q=(s)=>root.querySelector(s);
-
-    function panels(){
-      return [
-        ...root.querySelectorAll(
-          '.ed-left > .ed-panel,'+
-          '.cv-ui02-panel,'+
-          '.cv-ui03-left,'+
-          '.ui06-panel,'+
-          '#ui05PagesPanel'
-        )
-      ];
-    }
-
-    function setVisible(el,on){
-      if(!el)return;
-      el.hidden=!on;
-      el.classList.toggle('active',on);
-      el.style.display=on?'':'none';
-    }
+    const q=s=>root.querySelector(s);
+    const allPanels=()=>[...root.querySelectorAll(
+      '.ed-left > .ed-panel,.cv-ui02-panel,.cv-ui03-left,.ui06-panel,#ui05PagesPanel'
+    )];
 
     function show(key){
-      panels().forEach(p=>setVisible(p,false));
-
-      let target=null;
-
-      if(key==='templates'){
-        target=q('.cv-ui02-panel[data-ui02-panel="templates"]')
-          ||q('.ed-panel[data-panel="templates"]');
-      }else if(key==='elements'){
-        target=q('.cv-ui02-panel[data-ui02-panel="elements"]')
-          ||q('.ed-panel[data-panel="elements"]');
-      }else if(key==='text'){
-        target=q('.cv-ui03-left[data-ui03-left="text"]')
-          ||q('.ed-panel[data-panel="text"]');
-      }else if(key==='uploads'){
-        target=q('.cv-ui03-left[data-ui03-left="photos"]')
-          ||q('.ed-panel[data-panel="uploads"]');
-      }else if(key==='audio'){
-        target=q('#ui06AudioPanel')
-          ||q('.ed-panel[data-panel="audio"]');
-      }else if(key==='ai'){
-        target=q('#ui06AiPanel')
-          ||q('.ed-panel[data-panel="ai"]');
-      }else if(key==='pages'){
-        target=q('#ui05PagesPanel')
-          ||q('.ed-panel[data-panel="pages"]');
-      }
-
-      if(target)setVisible(target,true);
-
-      nav.querySelectorAll('[data-ui01cat]').forEach(btn=>{
-        const active=btn.dataset.ui01cat===key;
-        btn.classList.toggle('active',active);
-        btn.setAttribute('aria-selected',active?'true':'false');
+      /* Important: force the actual rendered panel state. The editor has
+         several legacy modules which otherwise overwrite display/classes. */
+      allPanels().forEach(p=>{
+        p.hidden=true;
+        p.classList.remove('active');
+        p.style.setProperty('display','none','important');
       });
 
+      const selectors={
+        templates:[
+          '.cv-ui02-panel[data-ui02-panel="templates"]',
+          '.ed-panel[data-panel="templates"]'
+        ],
+        elements:[
+          '.cv-ui02-panel[data-ui02-panel="elements"]',
+          '.ed-panel[data-panel="elements"]'
+        ],
+        text:[
+          '.cv-ui03-left[data-ui03-left="text"]',
+          '.ed-panel[data-panel="text"]'
+        ],
+        uploads:[
+          '.cv-ui03-left[data-ui03-left="photos"]',
+          '.ed-panel[data-panel="uploads"]'
+        ],
+        audio:[
+          '#ui06AudioPanel',
+          '.ed-panel[data-panel="audio"]'
+        ],
+        ai:[
+          '#ui06AiPanel',
+          '.ed-panel[data-panel="ai"]'
+        ],
+        pages:[
+          '#ui05PagesPanel',
+          '.ed-panel[data-panel="pages"]'
+        ]
+      };
+
+      const target=(selectors[key]||[]).map(q).find(Boolean);
+      if(target){
+        target.hidden=false;
+        target.classList.add('active');
+        target.style.setProperty('display','block','important');
+      }
+
+      nav.querySelectorAll('[data-ui01cat]').forEach(b=>{
+        const on=b.dataset.ui01cat===key;
+        b.classList.toggle('active',on);
+        b.setAttribute('aria-selected',on?'true':'false');
+      });
       root.dataset.activeTool=key;
+      return !!target;
     }
 
-    /* Capture-phase handler deliberately owns navigation. Older modules
-       attach their own click listeners to the same buttons; stopping them
-       prevents the legacy panel and enhanced panel from fighting each other. */
-    nav.addEventListener('click',function(e){
-      const btn=e.target.closest('[data-ui01cat]');
-      if(!btn)return;
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      show(btn.dataset.ui01cat);
-    },true);
+    function bind(){
+      nav.querySelectorAll('[data-ui01cat]').forEach(btn=>{
+        const key=btn.dataset.ui01cat;
+        if(btn.dataset.cvBound==='4')return;
+        btn.dataset.cvBound='4';
 
+        /* Direct handlers work even if another module registered an older
+           navigation listener. */
+        btn.onclick=e=>{
+          e.preventDefault();
+          e.stopPropagation();
+          show(key);
+        };
+        btn.onpointerup=e=>{
+          if(e.button!==0)return;
+          e.preventDefault();
+          show(key);
+        };
+      });
+    }
+
+    bind();
+
+    if(root.dataset.cvNavBridge==='4')return true;
+    root.dataset.cvNavBridge='4';
     window.CelebrateVerseNav={show};
+
+    /* Other feature modules mount asynchronously. Keep the buttons bound and
+       refresh the currently selected panel whenever one is added. */
+    const observer=new MutationObserver(()=>{
+      bind();
+      const active=root.dataset.activeTool;
+      if(active)show(active);
+    });
+    observer.observe(root,{childList:true,subtree:true});
+
     show('templates');
     return true;
   }
 
   function boot(){
-    if(mount()){
-      const root=document.getElementById('stableEditor');
-      if(root?.dataset.cvNavBridge==='3') return true;
-    }
-    return false;
+    return mount();
   }
 
-  document.addEventListener('DOMContentLoaded',function(){
+  function start(){
     let tries=0;
-    const timer=setInterval(function(){
-      if(boot()||++tries>120) clearInterval(timer);
+    const timer=setInterval(()=>{
+      if(boot()||++tries>150)clearInterval(timer);
     },100);
-  });
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',start,{once:true});
+  }else start();
 })();
