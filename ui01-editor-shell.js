@@ -49,7 +49,7 @@
     actions.querySelector('[data-ui01=setup]').onclick=()=>openSetup(1);
     setupBackdrop.querySelector('.cv-ui01-setup-close').onclick=()=>setupBackdrop.hidden=true;setupBackdrop.addEventListener('click',e=>{if(e.target===setupBackdrop)setupBackdrop.hidden=true});
     setupBody.addEventListener('click',e=>{const step=e.target.closest('.progress-step');if(step){e.preventDefault();openSetup(Number(step.dataset.step))}});
-    document.addEventListener('cv:open-setup',e=>openSetup(Number(e.detail?.step)||1)); openSetup(1);
+    document.addEventListener('cv:open-setup',e=>openSetup(Number(e.detail?.step)||1));
 
     const panels=[...left.querySelectorAll('.ed-panel')];const panelMap=Object.fromEntries(panels.map(p=>[p.dataset.panel,p]));const nav=document.createElement('nav');nav.className='cv-ui01-nav';
     const cats=[['templates','▦','Templates'],['elements','◇','Elements'],['text','T','Text'],['uploads','↑','Uploads'],['audio','♪','Audio'],['ai','✦','AI'],['pages','▤','Pages']];
