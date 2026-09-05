@@ -1933,3 +1933,12 @@ document.addEventListener("click", (event) => {
     menu.classList.remove("active");
   }
 });
+
+/* Phase 2 — Celebration Countdown */
+(function(){
+ const start=document.getElementById('cvCountdownStart'); if(!start)return;
+ const name=document.getElementById('cvCountdownName'), date=document.getElementById('cvCountdownDate');
+ const title=document.getElementById('cvCountdownTitle'), els={d:document.getElementById('cvDays'),h:document.getElementById('cvHours'),m:document.getElementById('cvMinutes'),s:document.getElementById('cvSeconds')}; let timer;
+ function render(){const t=new Date(date.value).getTime()-Date.now(); if(t<=0){Object.values(els).forEach(e=>e.textContent='0');title.textContent=(name.value||'Your Special Moment')+' is here! 🎉';clearInterval(timer);return;} const sec=Math.floor(t/1000); els.d.textContent=Math.floor(sec/86400);els.h.textContent=Math.floor(sec%86400/3600);els.m.textContent=Math.floor(sec%3600/60);els.s.textContent=sec%60;}
+ start.addEventListener('click',()=>{if(!date.value||new Date(date.value)<=new Date()){date.focus();return;} title.textContent=name.value.trim()||'Your Special Moment';clearInterval(timer);render();timer=setInterval(render,1000);});
+})();
