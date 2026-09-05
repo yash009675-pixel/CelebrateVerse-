@@ -78,6 +78,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     $("profileForm").hidden=true;$("editProfileBtn").hidden=false;setMessage("Profile saved successfully. ✨",true);
   });
 
+  const eventForm=$("eventForm"), eventList=$("eventList");
+  const loadEvents=async()=>{
+    if(!eventList)return;
+    const {data,error}=await supabaseClient.from("celebration_events").select("*").eq("user_id",user.id).order("event_date",{ascending:true});
+    if(error){eventList.innerHTML='<p class="cv-profile-message error">Could not load events.</p>';return;}
+    eventList.innerHTML=data?.length?data.map(e=>'<article class="cv-event-item"><div><h3>⏳ '+escapeHtml(e.title)+'</h3><p>'+escapeHtml(e.occasion)+(e.person_name?' · '+escapeHtml(e.person_name):'')+'</p><time datetime="'+escapeHtml(e.event_date)+'">'+new Date(e.event_date).toLocaleString([],{dateStyle:"medium",timeStyle:"short"})+'</time></div><button type="button" data-delete-event="'+e.id+'" aria-label="Delete event">🗑️</button></article>').join(""):'<div class="cv-empty-profile"><div>⏳</div><h2>No upcoming events</h2><p>Add a special date to start a countdown.</p></div>';
+    eventList.querySelectorAll("[data-delete-event]").forEach(b=>b.onclick=async()=>{await supabaseClient.from("celebration_events").delete().eq("id",b.dataset.deleteEvent).eq("user_id",user.id);loadEvents()});
+  };
+  eventForm?.addEventListener("submit",async e=>{e.preventDefault();const payload={user_id:user.id,title:$("eventTitle").value.trim(),occasion:$("eventOccasion").value.trim(),person_name:$("eventPerson").value.trim()||null,event_date:new Date($("eventDate").value).toISOString()};const {error}=await supabaseClient.from("celebration_events").insert(payload);if(error){setMessage("Could not save event: "+error.message);return}eventForm.reset();setMessage("Countdown added. ⏳",true);loadEvents()});
+  loadEvents();
+
   const tabInfo={
     celebrations:["Your Celebrations","Your created celebrations will appear here.","customize.html"],
     cards:["Your Cards","Your greeting cards will appear here.","customize.html"],
