@@ -71,7 +71,39 @@ document.addEventListener("DOMContentLoaded", () => {
       button.disabled = false;
       button.innerHTML = original;
 
-      if (error) return showMessage("Incorrect email or password.");
+      if (error) {
+        console.error("CelebrateVerse login error:", error);
+
+        const code = String(error.code || "").toLowerCase();
+        const message = String(error.message || "").toLowerCase();
+
+        if (
+          code === "email_not_confirmed" ||
+          message.includes("email not confirmed") ||
+          message.includes("email confirmation")
+        ) {
+          return showMessage("Your email is not confirmed yet. Please check your inbox and confirm your email before logging in.");
+        }
+
+        if (
+          code === "invalid_credentials" ||
+          message.includes("invalid login credentials") ||
+          message.includes("invalid credentials")
+        ) {
+          return showMessage("Incorrect email or password. Please check both and try again.");
+        }
+
+        if (message.includes("rate limit") || message.includes("too many requests")) {
+          return showMessage("Too many login attempts. Please wait a little and try again.");
+        }
+
+        return showMessage("Login failed: " + (error.message || "Authentication error."));
+      }
+
+      if (!data?.user) {
+        return showMessage("Login failed: no user session was returned. Please try again.");
+      }
+
       await ensureProfile(data.user);
       showMessage("Login successful! Redirecting...", true);
       setTimeout(() => window.location.href = "dashboard.html", 500);
