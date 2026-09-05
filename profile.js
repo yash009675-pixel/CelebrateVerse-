@@ -1,16 +1,26 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  if (!window.supabaseClient) { location.href="login.html"; return; }
-  const { data:{ user } } = await supabaseClient.auth.getUser();
   const publicMode = new URLSearchParams(location.search).get("public") === "1";
-  if (!user && !publicMode) { location.href="login.html"; return; }
-  if (publicMode && !user) {
+  if (publicMode) {
+    document.title="CelebrateVerse | Public Profile Preview";
     document.querySelector("#editProfileBtn")?.remove();
     document.querySelector("#profileForm")?.remove();
     document.querySelector(".cv-profile-topbar .back-home")?.setAttribute("href","index.html");
-    document.querySelectorAll(".cv-profile-tabs button").forEach(b=>b.remove());
-    document.querySelector("#profileTabContent").innerHTML='<div class="cv-empty-profile"><div>🌐</div><h2>Public Profile Preview</h2><p>Log in to manage your private profile, cards, memories and countdowns.</p><a href="login.html" class="primary-btn">Login</a></div>';
+    document.querySelector(".cv-profile-topbar .back-home").innerHTML='<i class="fa-solid fa-arrow-left"></i> Home';
+    document.querySelector("#profileName").textContent="CelebrateVerse Preview";
+    document.querySelector("#profileUsername").textContent="@celebrateverse";
+    document.querySelector("#profileBio").textContent="Create memories. Celebrate every moment. ✨";
+    document.querySelector("#statCelebrations").textContent="3";
+    document.querySelector("#statCards").textContent="4";
+    document.querySelector("#statMemories").textContent="8";
+    document.querySelector("#statShared").textContent="5";
+    document.querySelectorAll(".cv-profile-tabs button").forEach(b=>b.classList.remove("active"));
+    document.querySelector(".cv-profile-tabs").innerHTML='<button class="active" data-tab="celebrations">🎉 Celebrations</button><button data-tab="cards">💌 Cards</button><button data-tab="memories">📸 Memories</button><button data-tab="countdowns">⏳ Countdowns</button><button data-tab="saved">🔖 Saved</button>';
+    document.querySelector("#profileTabContent").innerHTML='<div class="cv-celebration-grid"><article class="cv-celebration-item"><div class="cv-celebration-icon">🎂</div><div class="cv-celebration-main"><h3>Birthday Celebration</h3><p>Birthday</p><small>Public preview</small></div></article><article class="cv-celebration-item"><div class="cv-celebration-icon">❤️</div><div class="cv-celebration-main"><h3>Anniversary</h3><p>Special Celebration</p><small>Public preview</small></div></article><article class="cv-celebration-item"><div class="cv-celebration-icon">🎉</div><div class="cv-celebration-main"><h3>Special Day</h3><p>Celebration</p><small>Public preview</small></div></article></div>';
     return;
   }
+  if (!window.supabaseClient) { location.href="login.html"; return; }
+  const { data:{ user } } = await supabaseClient.auth.getUser();
+  if (!user) { location.href="login.html"; return; }
 
   const $ = id => document.getElementById(id);
   const escapeHtml = v => String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
