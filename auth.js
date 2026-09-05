@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
     signupForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const name = document.getElementById("signupName").value.trim();
-      const email = document.getElementById("signupEmail").value.trim().toLowerCase();
+      const email = document.getElementById("signupEmail").value.replace(/\\s/g, "").trim().toLowerCase();
       const password = document.getElementById("signupPassword").value;
 
       if (!supabaseClient) return showMessage("Authentication service is not available.");
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("signupEmail")?.focus();
         return;
       }
-      if (!/^\S+@\S+\.\S+$/.test(email)) {
+      if (!email.includes("@") || email.startsWith("@") || email.endsWith("@") || !email.includes(".", email.indexOf("@") + 2)) {
         showMessage("Please enter a valid email address.");
         document.getElementById("signupEmail")?.focus();
         return;
