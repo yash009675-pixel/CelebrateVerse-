@@ -576,39 +576,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (prevBtn) {
 
-            prevBtn.style.display =
+            prevBtn.style.display = "flex";
+
+            prevBtn.textContent =
 
                 step === 1
 
-                    ? "none"
+                    ? "← Home"
 
-                    : "flex";
+                    : "Back";
 
         }
 
 
         if (nextBtn) {
 
-            nextBtn.style.display =
+            nextBtn.style.display = "flex";
+
+            nextBtn.textContent =
 
                 step === totalSteps
 
-                    ? "none"
+                    ? "Continue to Payment"
 
-                    : "flex";
+                    : "Continue";
 
         }
 
 
+        // Keep one clear navigation button visible at all times.
+        // The submit button is triggered programmatically on Step 5.
+
         if (submitBtn) {
 
-            submitBtn.style.display =
-
-                step === totalSteps
-
-                    ? "flex"
-
-                    : "none";
+            submitBtn.style.display = "none";
 
         }
 
@@ -1197,21 +1198,30 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
 
-                if (
-                    currentStep <
-                    totalSteps
-                ) {
+                if (currentStep === totalSteps) {
 
-                    currentStep++;
+                    // Step 5 uses the same visible Continue button,
+                    // then submits the existing payment/free-flow handler.
 
-                    showStep(
-                        currentStep
-                    );
+                    if (submitBtn) {
 
+                        submitBtn.click();
 
-                    updateLivePreview();
+                    }
+
+                    return;
 
                 }
+
+
+                currentStep++;
+
+                showStep(
+                    currentStep
+                );
+
+
+                updateLivePreview();
 
             }
 
@@ -1232,17 +1242,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
             () => {
 
-                if (
-                    currentStep > 1
-                ) {
+                if (currentStep === 1) {
 
-                    currentStep--;
+                    window.location.href = "index.html";
 
-                    showStep(
-                        currentStep
-                    );
+                    return;
 
                 }
+
+
+                currentStep--;
+
+                showStep(
+                    currentStep
+                );
+
+                updateLivePreview();
 
             }
 
