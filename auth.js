@@ -111,7 +111,10 @@ document.addEventListener("DOMContentLoaded", () => {
         showMessage("Account created successfully! Redirecting...", true);
         setTimeout(() => window.location.href = "dashboard.html", 700);
       } else {
-        showMessage("Account created. Check your email and tap the confirmation link before logging in.", true);
+        // Supabase intentionally avoids exposing whether an email already exists.
+        // Keep the UI honest: a confirmation message does not guarantee a new account
+        // was created, so direct the user to check the inbox or use Login.
+        showMessage("If this email is new, check your inbox for the confirmation link. If you already have a CelebrateVerse account, use Login instead.", true);
         addActionLink("Continue to Login →", "login.html");
       }
     });
