@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
         showMessage("Account created successfully! Redirecting...", true);
         setTimeout(() => window.location.href = "dashboard.html", 700);
       } else {
-        showMessage("Account created. Please check your email and confirm your account before logging in.", true);
+        showMessage("Account created successfully! Please confirm your email first.", true);\n        const loginLink = document.createElement("a");\n        loginLink.href = "login.html";\n        loginLink.className = "auth-submit";\n        loginLink.style.cssText = "display:flex;justify-content:center;align-items:center;text-decoration:none;margin-top:14px;";\n        loginLink.innerHTML = "Continue to Login <i class=\"fa-solid fa-arrow-right\"></i>";\n        authMessage.insertAdjacentElement("afterend", loginLink);
       }
     });
   }
