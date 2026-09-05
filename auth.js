@@ -35,6 +35,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginUrl = new URL("login.html", window.location.href).href;
   const resetUrl = new URL("reset-password.html", window.location.href).href;
 
+  // After a user clicks the Supabase confirmation link, Supabase can return
+  // a valid session to login.html. Detect that session and finish the flow.
+  if ((loginForm || signupForm) && supabaseClient) {
+    supabaseClient.auth.getSession().then(async ({ data }) => {
+      const session = data?.session;
+      if (!session?.user) return;
+      if (window.location.pathname.endsWith("/login.html") || window.location.pathname.endsWith("/signup.html")) {
+        await ensureProfile(session.user);
+        showMessage("Email confirmed successfully! Opening your dashboard…", true);
+        setTimeout(() => { window.location.href = "dashboard.html"; }, 500);
+      }
+    });
+  }
+
+
   if (signupForm) {
     signupForm.addEventListener("submit", async (event) => {
       event.preventDefault();
