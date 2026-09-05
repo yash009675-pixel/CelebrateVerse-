@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
     signupForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const name = document.getElementById("signupName").value.trim();
-      const email = document.getElementById("signupEmail").value.replace(/\\s/g, "").trim().toLowerCase();
+      const email = document.getElementById("signupEmail").value.replace(/\s/g, "").trim().toLowerCase();
       const password = document.getElementById("signupPassword").value;
 
       if (!supabaseClient) return showMessage("Authentication service is not available.");
