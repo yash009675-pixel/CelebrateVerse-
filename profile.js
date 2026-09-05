@@ -100,6 +100,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
   document.querySelectorAll(".cv-profile-tabs button").forEach(btn=>btn.onclick=()=>{
     document.querySelectorAll(".cv-profile-tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");
-    const [title,text,href]=tabInfo[btn.dataset.tab];$("profileTabContent").innerHTML='<div class="cv-empty-profile"><div>✨</div><h2>'+escapeHtml(title)+'</h2><p>'+escapeHtml(text)+'</p><a href="'+href+'" class="primary-btn">Create Celebration</a></div>';
+    const [title,text,href]=tabInfo[btn.dataset.tab];
+    if(btn.dataset.tab==="countdowns"){ $("profileTabContent").innerHTML='<div class="cv-event-panel">'+eventForm.outerHTML+'<div id="eventList" class="cv-event-list"></div></div>'; const f=$("profileTabContent").querySelector("#eventForm"); f.addEventListener("submit",async e=>{e.preventDefault();const payload={user_id:user.id,title:$("eventTitle").value.trim(),occasion:$("eventOccasion").value.trim(),person_name:$("eventPerson").value.trim()||null,event_date:new Date($("eventDate").value).toISOString()};const {error}=await supabaseClient.from("celebration_events").insert(payload);if(error)return setMessage("Could not save event: "+error.message);f.reset();setMessage("Countdown added. ⏳",true);loadEvents()}); loadEvents(); }
+    else if(btn.dataset.tab==="celebrations") $("profileTabContent").innerHTML=renderCelebrations();
+    else $("profileTabContent").innerHTML='<div class="cv-empty-profile"><div>✨</div><h2>'+escapeHtml(title)+'</h2><p>'+escapeHtml(text)+'</p><a href="'+href+'" class="primary-btn">Create Celebration</a></div>';
   });
 });
