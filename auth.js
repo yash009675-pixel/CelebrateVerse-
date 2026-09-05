@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("signupEmail")?.focus();
         return;
       }
-      if (!/^\\S+@\\S+\\.\\S+$/.test(email)) {
+      if (!/^\S+@\S+\.\S+$/.test(email)) {
         showMessage("Please enter a valid email address.");
         document.getElementById("signupEmail")?.focus();
         return;
