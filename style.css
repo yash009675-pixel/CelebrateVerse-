@@ -6222,3 +6222,13 @@ body.light-mode .nav-links a.active {
 .hero-visual .preview-button{display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:inherit;cursor:pointer;transition:transform .2s ease,background .2s ease}
 .hero-visual .preview-button:hover{transform:translateY(-2px);background:rgba(255,255,255,.12)}
 @media(max-width:900px){.hero-container{grid-template-columns:1fr}.hero-visual{min-height:auto;margin-top:30px}.hero-visual .celebration-preview{width:min(390px,92vw)}}
+
+/* ==========================================
+   PHASE 1 - TODAY'S CELEBRATION
+========================================== */
+.cv-today-card{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:22px;padding:26px 30px;border:1px solid rgba(124,58,237,.16);border-radius:24px;background:rgba(255,255,255,.72);box-shadow:0 18px 50px rgba(30,20,60,.08)}
+.cv-today-icon{width:64px;height:64px;flex:0 0 64px;display:grid;place-items:center;border-radius:20px;font-size:30px;background:linear-gradient(135deg,rgba(124,58,237,.12),rgba(236,72,153,.12))}
+.cv-today-card h3{margin:0 0 6px;font-size:22px}.cv-today-card p{margin:0;color:rgba(20,20,35,.65);line-height:1.5}.cv-today-card .primary-btn{margin-left:auto;white-space:nowrap}
+body:not(.light-mode) .cv-today-card{background:rgba(20,18,35,.7);border-color:rgba(255,255,255,.1)}
+body:not(.light-mode) .cv-today-card p{color:rgba(255,255,255,.65)}
+@media(max-width:700px){.cv-today-card{flex-direction:column;text-align:center;padding:24px 20px}.cv-today-card .primary-btn{margin-left:0;width:100%;justify-content:center}.cv-today-icon{width:58px;height:58px;flex-basis:58px}}
