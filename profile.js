@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   $("username").value=profile.username||"";
   $("bio").value=profile.bio||"";
   $("avatarUrl").value=profile.avatar_url||"";
-  $("language").value=profile.language||"en";
+  $("language").value=profile.language||"en"; $("profileVisibility").value=profile.profile_visibility||"public";
   const favs=profile.favorite_occasions||[];
   document.querySelectorAll("#occasionPicks input").forEach(x=>x.checked=favs.includes(x.value));
 
@@ -66,7 +66,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     try{if(navigator.share) await navigator.share({title:"CelebrateVerse Celebration",url});else await navigator.clipboard.writeText(url);setMessage(navigator.share?"":"Celebration link copied. 🔗",true)}catch(err){if(err.name!=="AbortError")setMessage("Could not share this celebration.")}});
   bindCelebrationActions();
 
-  $("editProfileBtn").onclick=()=>{$("profileForm").hidden=false;$("editProfileBtn").hidden=true;$("profileMessage").textContent=""};
+  document.getElementById("sharePublicProfileBtn")?.addEventListener("click",async()=>{if(!profile?.username)return setMessage("Set a username first, then save your profile.");if(profile.profile_visibility!=="public")return setMessage("Set Profile Visibility to Public and save first.");const url=new URL("public-profile.html",window.location.href);url.searchParams.set("username",profile.username);try{if(navigator.share)await navigator.share({title:(profile.full_name||profile.username)+" | CelebrateVerse",url:url.href});else{await navigator.clipboard.writeText(url.href);setMessage("Public profile link copied. 🔗",true)}}catch(e){if(e.name!=="AbortError")setMessage("Could not share profile.")}});
+$("editProfileBtn").onclick=()=>{$("profileForm").hidden=false;$("editProfileBtn").hidden=true;$("profileMessage").textContent=""};
   $("cancelEditBtn").onclick=()=>{$("profileForm").hidden=true;$("editProfileBtn").hidden=false};
 
   const uploadAvatar = async (userId) => {
@@ -91,7 +92,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if(username && !/^[a-z0-9_]{3,30}$/.test(username)) return setMessage("Username must be 3–30 characters using letters, numbers or underscores.");
     const favorite_occasions=[...document.querySelectorAll("#occasionPicks input:checked")].map(x=>x.value);
     let avatar_url; try { avatar_url=await uploadAvatar(user.id); } catch(err) { return setMessage(err.message||"Could not upload profile photo."); }
-    const payload={full_name:$("fullName").value.trim(),username:username||null,bio:$("bio").value.trim(),avatar_url,language:$("language").value,favorite_occasions,updated_at:new Date().toISOString()};
+    const payload={full_name:$("fullName").value.trim(),username:username||null,bio:$("bio").value.trim(),avatar_url,language:$("language").value,profile_visibility:$("profileVisibility").value,favorite_occasions,updated_at:new Date().toISOString()};
     const {data,error}=await supabaseClient.from("profiles").update(payload).eq("id",user.id).select("*").single();
     if(error) return setMessage(error.code==="23505"?"That username is already taken. Choose another one.":"Could not save profile: "+error.message);
     profile=data;
