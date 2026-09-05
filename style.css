@@ -6304,5 +6304,3 @@ body:not(.light-mode) .cv-today-card p{color:rgba(255,255,255,.65)}
 
 .cv-share-btn{margin-top:10px;width:100%;padding:12px 14px;border:1px solid rgba(124,58,237,.2);border-radius:12px;background:transparent;color:inherit;font:inherit;font-weight:600;cursor:pointer}.cv-share-btn:hover{transform:translateY(-1px)}
 
-/* Phase 2 — Language preference */
-.cv-language-switcher{max-width:700px;margin:0 auto;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.cv-lang-btn{padding:11px 18px;border:1px solid rgba(124,58,237,.18);border-radius:999px;background:transparent;color:inherit;font:inherit;font-weight:600;cursor:pointer}.cv-lang-btn.active{background:rgba(124,58,237,.12);border-color:rgba(124,58,237,.35)}.cv-language-section .cv-notify-status{text-align:center;margin-top:14px;opacity:.7}
