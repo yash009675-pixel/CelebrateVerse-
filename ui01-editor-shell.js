@@ -46,7 +46,7 @@
 
     const bottom=document.createElement('div');bottom.className='cv-ui01-bottom';bottom.innerHTML='<span class="cv-ui01-page-label">Pages</span><button type="button" data-ui01bottom="add">＋</button><button type="button" data-ui01bottom="pages">☷ Manage</button><span class="cv-ui01-zoom"><button type="button" data-ui01bottom="minus">−</button><span id="cvUi01Zoom">100%</span><button type="button" data-ui01bottom="plus">＋</button><button type="button" data-ui01bottom="fit">Fit</button></span>';main.appendChild(bottom);
     bottom.querySelector('[data-ui01bottom=minus]').onclick=()=>existingButton('#edZoomOut')?.click();bottom.querySelector('[data-ui01bottom=plus]').onclick=()=>existingButton('#edZoomIn')?.click();bottom.querySelector('[data-ui01bottom=fit]').onclick=()=>existingButton('#edFit')?.click();bottom.querySelector('[data-ui01bottom=add]').onclick=()=>existingButton('#edAddPage')?.click();bottom.querySelector('[data-ui01bottom=pages]').onclick=()=>showPanel('pages');
-    const observer=new MutationObserver(()=>{const z=root.querySelector('#edZoom'),out=root.querySelector('#cvUi01Zoom');if(z&&out)out.textContent=z.textContent});observer.observe(root,{subtree:true,childList:true,characterData:true});
+    const observer=new MutationObserver(()=>{const z=root.querySelector('#edZoom'),out=root.querySelector('#cvUi01Zoom');if(z&&out&&out.textContent!==z.textContent)out.textContent=z.textContent});observer.observe(root,{subtree:true,childList:true,characterData:true});
   }
   wait(()=>{const timer=setInterval(()=>{if(document.getElementById('stableEditor')){clearInterval(timer);mount()}},150);setTimeout(()=>clearInterval(timer),8000)});
 })();
