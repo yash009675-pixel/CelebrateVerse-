@@ -51,20 +51,21 @@
     setupBody.addEventListener('click',e=>{const step=e.target.closest('.progress-step');if(step){e.preventDefault();openSetup(Number(step.dataset.step))}});
     document.addEventListener('cv:open-setup',e=>openSetup(Number(e.detail?.step)||1));
 
-    const oldTabs=left.querySelector('.ed-tabs');const panels=[...left.querySelectorAll('.ed-panel')];const nav=document.createElement('nav');nav.className='cv-ui01-nav';
+    const panels=[...left.querySelectorAll('.ed-panel')];const panelMap=Object.fromEntries(panels.map(p=>[p.dataset.panel,p]));const nav=document.createElement('nav');nav.className='cv-ui01-nav';
     const cats=[['templates','▦','Templates'],['elements','◇','Elements'],['text','T','Text'],['uploads','↑','Uploads'],['audio','♪','Audio'],['ai','✦','AI'],['pages','▤','Pages']];
-    cats.forEach(([key,icon,label],i)=>{const btn=document.createElement('button');btn.type='button';btn.dataset.ui01cat=key;btn.innerHTML='<span>'+icon+'</span>'+label+(key==='ai'||key==='audio'?'<sup class="cv-ui01-pro">PRO</sup>':'');if(i===0)btn.classList.add('active');nav.appendChild(btn)});left.insertBefore(nav,oldTabs||left.firstChild);oldTabs?.remove();
+    cats.forEach(([key,icon,label],i)=>{const btn=document.createElement('button');btn.type='button';btn.dataset.ui01cat=key;btn.innerHTML='<span>'+icon+'</span>'+label+(key==='ai'||key==='audio'?'<sup class="cv-ui01-pro">PRO</sup>':'');if(i===0)btn.classList.add('active');nav.appendChild(btn)});left.insertBefore(nav,left.firstChild);
     const panelTitle=document.createElement('div');panelTitle.className='cv-ui01-panel-title';left.insertBefore(panelTitle,panels[0]||null);
-    const p0=panels[0],p1=panels[1],p2=panels[2];[p0,p1,p2].forEach(p=>{if(p){p.hidden=false;p.style.display='none'}});
     const filterPanel=(panel,predicate)=>{if(!panel)return;[...panel.children].forEach(ch=>{ch.style.display=predicate(ch)?'':'none'})};
-    const showPanel=key=>{nav.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x.dataset.ui01cat===key));[p0,p1,p2].forEach(p=>{if(p)p.style.display='none'});panelTitle.textContent=({templates:'Templates',elements:'Elements & Blocks',text:'Text',uploads:'Uploads & Photos',audio:'Audio',ai:'AI Assistant',pages:'Pages'})[key]||'Design';
-      if(key==='templates'){p0.style.display='block';filterPanel(p0,ch=>ch.matches('[data-template]'))}
-      else if(key==='elements'){p0.style.display='block';filterPanel(p0,ch=>ch.matches('.ed-grid,[data-block]')|| (ch.matches('[data-add]')&&ch.getAttribute('data-add')!=='Your text'))}
-      else if(key==='text'){p0.style.display='block';filterPanel(p0,ch=>ch.matches('[data-add="Your text"]'))}
-      else if(key==='uploads'){p1.style.display='block';filterPanel(p1,ch=>ch.matches('#edPhoto,#edFile,.ed-help'))}
-      else if(key==='audio'){p1.style.display='block';filterPanel(p1,ch=>ch.matches('#edMusicUpload,#edMusicFile,.ed-audio'))}
-      else if(key==='pages'){p2.style.display='block';filterPanel(p2,()=>true)}
-      else if(key==='ai'){right.querySelector('#edAiText')?.scrollIntoView({block:'nearest'})}
+    const showPanel=key=>{nav.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x.dataset.ui01cat===key));panels.forEach(p=>{p.hidden=false;p.style.display='none'});panelTitle.textContent=({templates:'Templates',elements:'Elements & Blocks',text:'Text',uploads:'Uploads & Photos',audio:'Audio',ai:'AI Assistant',pages:'Pages'})[key]||'Design';
+      const p=panelMap[key];if(!p)return;
+      p.style.display='block';filterPanel(p,()=>true);
+      if(key==='templates')filterPanel(p,ch=>ch.matches('[data-template],.ed-panel>b'));
+      else if(key==='elements')filterPanel(p,ch=>ch.matches('.ed-grid,[data-block],.ed-panel>b,.ed-panel hr'));
+      else if(key==='text')filterPanel(p,ch=>ch.matches('[data-add],.ed-help,.ed-panel>b'));
+      else if(key==='uploads')filterPanel(p,ch=>ch.matches('#edPhoto,#edFile,.ed-help,.ed-panel>b'));
+      else if(key==='audio')filterPanel(p,ch=>ch.matches('#edMusicUpload,#edMusicFile,.ed-audio,.ed-panel>b'));
+      else if(key==='ai')filterPanel(p,()=>true);
+      else if(key==='pages')filterPanel(p,()=>true);
     };
     nav.querySelectorAll('button').forEach(x=>x.onclick=()=>showPanel(x.dataset.ui01cat));showPanel('templates');
 
