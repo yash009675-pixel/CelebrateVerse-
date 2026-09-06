@@ -6345,3 +6345,6 @@ body:not(.light-mode) .cv-today-card p{color:rgba(255,255,255,.65)}
 .cv-demo-badge{display:inline-flex;align-items:center;gap:8px;margin-bottom:14px;padding:8px 12px;border:1px solid var(--border);border-radius:999px;font-size:12px;font-weight:700;background:rgba(124,58,237,.08);width:max-content}
 .cv-dashboard-btn{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-weight:700}
 @media(max-width:700px){.cv-demo-badge{font-size:11px}.cv-dashboard-btn{display:none}}
+
+.cv-oauth-divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--text-muted);font-size:11px;font-weight:700}.cv-oauth-divider:before,.cv-oauth-divider:after{content:"";height:1px;flex:1;background:var(--border)}
+.cv-google-btn{width:100%;min-height:48px;border:1px solid var(--border);border-radius:14px;background:var(--card-bg,#fff);color:var(--text,#222);font:600 15px "DM Sans",sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:.2s}.cv-google-btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}.cv-google-btn i{font-size:18px}
