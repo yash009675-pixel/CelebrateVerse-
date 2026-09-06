@@ -1,3 +1,59 @@
+const DEMO_DASHBOARD = new URLSearchParams(location.search).get("demo") === "1";
+
+function renderDemoDashboard() {
+  const $ = id => document.getElementById(id);
+  const escapeHtml = value => String(value ?? "").replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+  if ($("userName")) $("userName").textContent = "Yash";
+  if ($("totalCelebrations")) $("totalCelebrations").textContent = "12";
+  if ($("totalDrafts")) $("totalDrafts").textContent = "4";
+  if ($("totalOrders")) $("totalOrders").textContent = "3";
+
+  document.querySelectorAll(".dashboard-nav-item").forEach(item => item.addEventListener("click", () => {
+    document.querySelectorAll(".dashboard-nav-item").forEach(n => n.classList.remove("active"));
+    document.querySelectorAll(".dashboard-tab").forEach(t => t.classList.remove("active"));
+    item.classList.add("active");
+    document.getElementById(item.dataset.tab)?.classList.add("active");
+  }));
+
+  const demoDrafts = [
+    ["Arpita's Birthday", "Birthday · Purple Romantic"],
+    ["Our Anniversary", "Anniversary · Love Story"],
+    ["Mom's Special Day", "Special Celebration · Memories"],
+    ["Best Friend Surprise", "Surprise · Galaxy Story"]
+  ];
+  const demoOrders = [
+    ["Arpita's Birthday", "Birthday · Premium", "Completed"],
+    ["Our Anniversary", "Anniversary · Ultimate", "In Progress"],
+    ["Special Celebration", "Special Celebration · Basic", "Completed"]
+  ];
+  $("draftList") && ($("draftList").innerHTML = demoDrafts.map(x => '<div class="dashboard-item"><div class="dashboard-item-icon">💌</div><div><h3>'+escapeHtml(x[0])+'</h3><p>'+escapeHtml(x[1])+'</p></div><span class="item-action">Demo</span></div>').join(""));
+  $("orderList") && ($("orderList").innerHTML = demoOrders.map(x => '<div class="dashboard-item"><div class="dashboard-item-icon">🎊</div><div><h3>'+escapeHtml(x[0])+'</h3><p>'+escapeHtml(x[1])+'</p></div><span class="order-status">'+escapeHtml(x[2])+'</span></div>').join(""));
+
+  const overview = $("overview");
+  if (overview) {
+    const title = overview.querySelector(".dashboard-section-title");
+    if (title && !overview.querySelector(".dashboard-upcoming")) {
+      const box = document.createElement("div");
+      box.className = "dashboard-upcoming";
+      box.innerHTML = '<div><strong>⏳ Next Countdown</strong><h3>Arpita\'s Birthday</h3><p>Birthday · Demo celebration</p></div><span class="dashboard-countdown">39d · 04h · 22m</span>';
+      title.insertAdjacentElement("afterend", box);
+    }
+  }
+  document.querySelector(".dashboard-header-actions .secondary-btn")?.setAttribute("href","profile.html?public=1");
+  const logout = $("logoutBtn");
+  if (logout) {
+    logout.innerHTML = '<i class="fa-solid fa-arrow-left"></i> Exit Demo';
+    logout.onclick = () => { location.href = "index.html"; };
+  }
+  const badge = document.createElement("div");
+  badge.className = "cv-demo-badge";
+  badge.innerHTML = '✨ Demo Mode — no email or password required';
+  document.querySelector(".dashboard-header")?.prepend(badge);
+}
+
+if (DEMO_DASHBOARD) {
+  document.addEventListener("DOMContentLoaded", renderDemoDashboard);
+} else {
 document.addEventListener("DOMContentLoaded", async () => {
   if (!supabaseClient) { window.location.href = "login.html"; return; }
   const { data: { user } } = await supabaseClient.auth.getUser();
@@ -40,3 +96,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   $("logoutBtn")?.addEventListener("click", async () => { await supabaseClient.auth.signOut(); window.location.href = "index.html"; });
 });
+}
