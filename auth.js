@@ -41,6 +41,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }, { onConflict: "id" });
   }
 
+  const googleButton = document.getElementById("googleSignIn");
+  if (googleButton && supabaseClient) {
+    googleButton.addEventListener("click", async () => {
+      googleButton.disabled = true;
+      googleButton.innerHTML = '<i class="fa-brands fa-google"></i> Connecting to Google...';
+      const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: CELEBRATEVERSE_BASE_URL + "auth-callback.html" }
+      });
+      if (error) {
+        googleButton.disabled = false;
+        googleButton.innerHTML = '<i class="fa-brands fa-google"></i> Continue with Google';
+        showMessage("Google sign-in failed: " + error.message);
+      }
+    });
+  }
+
   // Always use the production URL for Supabase auth email redirects.
   const loginUrl = CELEBRATEVERSE_BASE_URL + "login.html";
   const resetUrl = CELEBRATEVERSE_BASE_URL + "reset-password.html";
