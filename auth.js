@@ -3,6 +3,10 @@
 // can accidentally generate localhost links when the app is tested locally.
 const CELEBRATEVERSE_BASE_URL = "https://yash009675-pixel.github.io/CelebrateVerse-/";
 
+  // Admin notification is generated server-side by the Supabase Auth trigger.
+  // Do not send the admin email from the browser (that would expose credentials).
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const signupForm = document.getElementById("signupForm");
   const loginForm = document.getElementById("loginForm");
