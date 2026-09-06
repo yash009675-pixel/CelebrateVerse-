@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.querySelector("#profileTabContent").innerHTML='<div class="cv-celebration-grid"><article class="cv-celebration-item"><div class="cv-celebration-icon">🎂</div><div class="cv-celebration-main"><h3>Birthday Celebration</h3><p>Birthday</p><small>Public preview</small></div></article><article class="cv-celebration-item"><div class="cv-celebration-icon">❤️</div><div class="cv-celebration-main"><h3>Anniversary</h3><p>Special Celebration</p><small>Public preview</small></div></article><article class="cv-celebration-item"><div class="cv-celebration-icon">🎉</div><div class="cv-celebration-main"><h3>Special Day</h3><p>Celebration</p><small>Public preview</small></div></article></div>';
     return;
   }
-  if (!window.supabaseClient) { location.href="login.html"; return; }
+  if (typeof supabaseClient === "undefined" || !supabaseClient) { location.href="login.html"; return; }
   const { data:{ user } } = await supabaseClient.auth.getUser();
   if (!user) { location.href="login.html"; return; }
 
