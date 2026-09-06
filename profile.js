@@ -78,8 +78,8 @@ $("editProfileBtn").onclick=()=>{$("profileForm").hidden=false;$("editProfileBtn
     if(!["image/jpeg","image/png","image/webp"].includes(file.type)) throw new Error("Please choose a JPG, PNG or WebP image.");
     status.textContent="Uploading photo…";
     const ext=(file.name.split(".").pop()||"jpg").toLowerCase();
-    const path=userId+"/"+crypto.randomUUID()+"."+ext;
-    const {error:uploadError}=await supabaseClient.storage.from("avatars").upload(path,file,{upsert:false,contentType:file.type});
+    const path=userId+"/profile."+ext;
+    const {error:uploadError}=await supabaseClient.storage.from("avatars").upload(path,file,{upsert:true,contentType:file.type,cacheControl:"3600"});
     if(uploadError) throw uploadError;
     const {data}=supabaseClient.storage.from("avatars").getPublicUrl(path);
     status.textContent="Photo uploaded successfully. ✨";
