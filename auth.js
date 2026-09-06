@@ -42,18 +42,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const googleButton = document.getElementById("googleSignIn");
-  if (googleButton && supabaseClient) {
+  if (googleButton) {
     googleButton.addEventListener("click", async () => {
+      if (!supabaseClient) return showMessage("Authentication service is not available.");
       googleButton.disabled = true;
-      googleButton.innerHTML = '<i class="fa-brands fa-google"></i> Connecting to Google...';
-      const { error } = await supabaseClient.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: CELEBRATEVERSE_BASE_URL + "auth-callback.html" }
-      });
-      if (error) {
+      googleButton.innerHTML = '<i class="fa-brands fa-google"></i><span>Connecting to Google...</span>';
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithOAuth({
+          provider: "google",
+          options: { redirectTo: CELEBRATEVERSE_BASE_URL + "auth-callback.html" }
+        });
+        if (error) throw error;
+        if (data?.url) window.location.assign(data.url);
+      } catch (error) {
+        console.error("CelebrateVerse Google sign-in error:", error);
         googleButton.disabled = false;
-        googleButton.innerHTML = '<i class="fa-brands fa-google"></i> Continue with Google';
-        showMessage("Google sign-in failed: " + error.message);
+        googleButton.innerHTML = '<i class="fa-brands fa-google"></i><span>Continue with Google</span>';
+        showMessage("Google sign-in failed: " + (error.message || "Please try again."));
       }
     });
   }
