@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const { data, error } = await supabaseClient.auth.signInWithOAuth({
           provider: "google",
-          options: { redirectTo: CELEBRATEVERSE_BASE_URL + "auth-callback.html" }
+          options: { redirectTo: CELEBRATEVERSE_BASE_URL + "auth-callback.html", skipBrowserRedirect: false }
         });
         if (error) throw error;
         if (data?.url) window.location.assign(data.url);
