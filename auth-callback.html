@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Signing in… | CelebrateVerse</title><link rel="stylesheet" href="style.css"></head>
+<body><main class="auth-page"><section class="auth-card"><a href="index.html" class="auth-logo">Celebrate<span>Verse</span></a><div class="auth-header"><span class="section-tag">GOOGLE SIGN-IN</span><h1>Welcome to <span>CelebrateVerse.</span></h1><p id="callbackMessage">Completing your Google sign-in…</p></div></section></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase.js"></script>
+<script>
+(async()=>{
+ const msg=document.getElementById("callbackMessage");
+ if(!window.supabaseClient){msg.textContent="Authentication service is unavailable.";return;}
+ const {data,error}=await supabaseClient.auth.getSession();
+ if(error||!data.session?.user){msg.textContent="Google sign-in could not be completed. Please try again.";setTimeout(()=>location.href="login.html",1800);return;}
+ const u=data.session.user;
+ await supabaseClient.from("profiles").upsert({id:u.id,full_name:u.user_metadata?.full_name||u.user_metadata?.name||u.email?.split("@")[0]||"CelebrateVerse User",avatar_url:u.user_metadata?.avatar_url||u.user_metadata?.picture||null,updated_at:new Date().toISOString()},{onConflict:"id"});
+ msg.textContent="Google sign-in successful! Opening your dashboard…";
+ setTimeout(()=>location.href="dashboard.html",500);
+})();
+</script></body></html>
