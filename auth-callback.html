@@ -5,7 +5,7 @@
 <script>
 (async()=>{
  const msg=document.getElementById("callbackMessage");
- if(!window.supabaseClient){msg.textContent="Authentication service is unavailable.";return;}
+ if(typeof supabaseClient === "undefined" || !supabaseClient){msg.textContent="Authentication service is unavailable.";return;}
  try{
    const hash=window.location.hash;
    if(hash.includes("access_token=")){
@@ -36,4 +36,4 @@
    setTimeout(()=>{window.location.href="login.html";},1800);
  }
 })();
-</script>></body></html>
+</script></body></html>
