@@ -86,6 +86,22 @@ $("editProfileBtn").onclick=()=>{$("profileForm").hidden=false;$("editProfileBtn
     return data.publicUrl;
   };
 
+  $("removeAvatarBtn")?.addEventListener("click",async()=>{
+    if(!profile?.avatar_url){ $("avatarUrl").value=""; $("avatarFile").value=""; $("avatarUploadStatus").textContent="No profile photo to remove."; return; }
+    if(!confirm("Remove your profile photo?")) return;
+    const status=$("avatarUploadStatus"); status.textContent="Removing photo…";
+    try{
+      const urls=String(profile.avatar_url).split("/avatars/")[1];
+      if(urls){ await supabaseClient.storage.from("avatars").remove([decodeURIComponent(urls.split("?")[0])]); }
+      const {data,error}=await supabaseClient.from("profiles").update({avatar_url:null,updated_at:new Date().toISOString()}).eq("id",user.id).select("*").single();
+      if(error) throw error;
+      profile=data; $("avatarUrl").value=""; $("avatarFile").value="";
+      const i=(data.full_name||"CV").trim().split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase();
+      $("avatarPreview").innerHTML="<span>"+escapeHtml(i)+"</span>";
+      status.textContent="Profile photo removed. ✨"; setMessage("Profile photo removed successfully.",true);
+    }catch(err){status.textContent="";setMessage("Could not remove profile photo: "+(err.message||"Please try again."));}
+  });
+
   $("profileForm").addEventListener("submit",async e=>{
     e.preventDefault();
     const username=$("username").value.trim().toLowerCase();
