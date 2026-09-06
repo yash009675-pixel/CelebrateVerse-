@@ -6,11 +6,34 @@
 (async()=>{
  const msg=document.getElementById("callbackMessage");
  if(!window.supabaseClient){msg.textContent="Authentication service is unavailable.";return;}
- const {data,error}=await supabaseClient.auth.getSession();
- if(error||!data.session?.user){msg.textContent="Google sign-in could not be completed. Please try again.";setTimeout(()=>location.href="login.html",1800);return;}
- const u=data.session.user;
- await supabaseClient.from("profiles").upsert({id:u.id,full_name:u.user_metadata?.full_name||u.user_metadata?.name||u.email?.split("@")[0]||"CelebrateVerse User",avatar_url:u.user_metadata?.avatar_url||u.user_metadata?.picture||null,updated_at:new Date().toISOString()},{onConflict:"id"});
- msg.textContent="Google sign-in successful! Opening your dashboard…";
- setTimeout(()=>location.href="dashboard.html",500);
+ try{
+   const hash=window.location.hash;
+   if(hash.includes("access_token=")){
+     const p=new URLSearchParams(hash.substring(1));
+     const access_token=p.get("access_token");
+     const refresh_token=p.get("refresh_token");
+     if(access_token && refresh_token){
+       const result=await supabaseClient.auth.setSession({access_token,refresh_token});
+       if(result.error) throw result.error;
+       history.replaceState(null,"",window.location.pathname+window.location.search);
+     }
+   }
+   const result=await supabaseClient.auth.getSession();
+   if(result.error) throw result.error;
+   if(!result.data?.session?.user) throw new Error("No authenticated session returned.");
+   const u=result.data.session.user;
+   await supabaseClient.from("profiles").upsert({
+     id:u.id,
+     full_name:u.user_metadata?.full_name||u.user_metadata?.name||u.email?.split("@")[0]||"CelebrateVerse User",
+     avatar_url:u.user_metadata?.avatar_url||u.user_metadata?.picture||null,
+     updated_at:new Date().toISOString()
+   },{onConflict:"id"});
+   msg.textContent="Google sign-in successful! Opening your dashboard…";
+   setTimeout(()=>{window.location.href="dashboard.html";},500);
+ }catch(error){
+   console.error("CelebrateVerse OAuth callback error:",error);
+   msg.textContent="Google sign-in could not be completed. Please try again.";
+   setTimeout(()=>{window.location.href="login.html";},1800);
+ }
 })();
-</script></body></html>
+</script>></body></html>
