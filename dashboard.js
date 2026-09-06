@@ -63,6 +63,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   const { data: profile } = await supabaseClient.from("profiles").select("full_name,username,avatar_url").eq("id", user.id).maybeSingle();
   const displayName = profile?.full_name || user.user_metadata?.full_name || user.email?.split("@")[0] || "Creator";
   if ($("userName")) $("userName").textContent = displayName;
+  const avatar = $("dashboardAvatar");
+  if (avatar) {
+    const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url || user.user_metadata?.picture || "";
+    const initials = displayName.trim().split(/\s+/).slice(0,2).map(x=>x[0]).join("").toUpperCase() || "CV";
+    avatar.innerHTML = avatarUrl
+      ? '<img src="'+escapeHtml(avatarUrl)+'" alt="Profile photo">'
+      : '<span>'+escapeHtml(initials)+'</span>';
+  }
   document.querySelectorAll(".dashboard-nav-item").forEach(item => item.addEventListener("click", () => {
     const tabName = item.dataset.tab;
     document.querySelectorAll(".dashboard-nav-item").forEach(n => n.classList.remove("active"));
