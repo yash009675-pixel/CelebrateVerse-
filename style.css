@@ -6340,3 +6340,8 @@ body:not(.light-mode) .cv-today-card p{color:rgba(255,255,255,.65)}
 .dashboard-upcoming{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:0 0 28px;padding:20px 22px;border:1px solid var(--border);border-radius:20px;background:rgba(124,58,237,.08);box-shadow:var(--shadow)}
 .dashboard-upcoming strong{font-size:12px;letter-spacing:.04em;text-transform:uppercase;opacity:.7}.dashboard-upcoming h3{margin:6px 0 3px}.dashboard-upcoming p{margin:0;color:var(--text-muted);font-size:13px}.dashboard-countdown{font-weight:800;font-size:20px;white-space:nowrap}.dashboard-item .item-action{font-size:12px;font-weight:700;padding:8px 11px;border:1px solid var(--border);border-radius:10px;color:var(--text)}
 @media(max-width:600px){.dashboard-upcoming{align-items:flex-start;flex-direction:column}.dashboard-countdown{font-size:18px}}
+
+/* No-login dashboard demo */
+.cv-demo-badge{display:inline-flex;align-items:center;gap:8px;margin-bottom:14px;padding:8px 12px;border:1px solid var(--border);border-radius:999px;font-size:12px;font-weight:700;background:rgba(124,58,237,.08);width:max-content}
+.cv-dashboard-btn{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-weight:700}
+@media(max-width:700px){.cv-demo-badge{font-size:11px}.cv-dashboard-btn{display:none}}
