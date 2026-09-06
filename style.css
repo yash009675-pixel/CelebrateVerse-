@@ -6348,3 +6348,9 @@ body:not(.light-mode) .cv-today-card p{color:rgba(255,255,255,.65)}
 
 .cv-oauth-divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--text-muted);font-size:11px;font-weight:700}.cv-oauth-divider:before,.cv-oauth-divider:after{content:"";height:1px;flex:1;background:var(--border)}
 .cv-google-btn{width:100%;min-height:48px;border:1px solid var(--border);border-radius:14px;background:var(--card-bg,#fff);color:var(--text,#222);font:600 15px "DM Sans",sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:.2s}.cv-google-btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}.cv-google-btn i{font-size:18px}
+
+/* Google OAuth button visibility fix */
+.cv-google-btn{box-sizing:border-box!important;min-height:50px!important;visibility:visible!important;opacity:1!important;overflow:visible!important;position:relative!important;z-index:5!important;color:#202124!important;background:#fff!important}
+.cv-google-btn span{display:inline-block!important;visibility:visible!important;opacity:1!important;color:#202124!important;font:600 15px "DM Sans",sans-serif!important}
+.cv-google-btn i{display:inline-block!important;visibility:visible!important;opacity:1!important;color:#4285f4!important}
+.cv-google-btn:disabled{opacity:.75!important;cursor:wait!important}
