@@ -630,8 +630,10 @@ document.addEventListener("DOMContentLoaded", () => {
             progressFill.style.width = `${progress}%`;
         }
 
-        // Phase 1: make the 1–5 progress steps usable navigation.
-        /* ==========================================
+        // End of showStep(). Navigation handlers must be outside this function.
+    }
+
+    /* ==========================================
        NEXT BUTTON
     ========================================== */
 
