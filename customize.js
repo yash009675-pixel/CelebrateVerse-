@@ -960,6 +960,37 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ==========================================
+       AI CREATION CO-PILOT
+    ========================================== */
+    const aiBuildBtn=document.getElementById("cvAiBuildBtn");
+    const aiBuildInput=document.getElementById("cvAiBuildInput");
+    const aiBuildStatus=document.getElementById("cvAiBuildStatus");
+    if(aiBuildBtn){
+      aiBuildBtn.addEventListener("click",async()=>{
+        const request=(aiBuildInput?.value||"").trim();
+        if(!request){ aiBuildStatus.textContent="Tell AI what you want to create first."; aiBuildInput?.focus(); return; }
+        if(!window.cvBuildCelebration){ aiBuildStatus.textContent="AI is loading. Please try again."; return; }
+        aiBuildBtn.disabled=true; aiBuildStatus.textContent="✨ AI is preparing your celebration…";
+        try{
+          const result=await window.cvBuildCelebration(request);
+          const p=result?.plan||{};
+          const set=(el,v)=>{if(el&&v)el.value=v};
+          set(occasionInput,p.occasion);set(relationshipInput,p.relationship);set(themeInput,p.theme);
+          set(personNameInput,p.personName);set(customerNameInput,p.customerName);set(specialDateInput,p.specialDate);
+          set(emailInput,p.email);set(messageInput,p.message);
+          set(document.getElementById("wishTone"),p.wishTone);
+          restoreSelectedCard(".occasion-selection .selection-card",p.occasion);
+          restoreSelectedCard(".relationship-selection .selection-card",p.relationship);
+          restoreSelectedCard(".theme-card",p.theme);
+          saveCustomization();saveExtendedCustomization();updateLivePreview();
+          currentStep=4;localStorage.setItem(CURRENT_STEP_KEY,"4");showStep(4);updateLivePreview();
+          aiBuildStatus.textContent="✅ AI filled your setup. Review it, add photos, then continue to Live Edit Studio.";
+        }catch(e){aiBuildStatus.textContent="AI couldn't build this yet. "+(e.message||"Please try again.");}
+        finally{aiBuildBtn.disabled=false;}
+      });
+    }
+
+    /* ==========================================
        START
     ========================================== */
 
