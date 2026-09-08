@@ -19,19 +19,41 @@
     nodes.forEach(n=>{if(!original.has(n)) original.set(n,n.nodeValue);});
   }
   function apply(lang){
-    const L=dict[lang];
-    if(!L) return;
+    const L=dict[lang]||{};
     walk(document.body);
     restoreOriginal();
     original.forEach((value,node)=>{
-      const key=value.trim();
-      if(!key || node.parentElement?.closest("script,style")) return;
-      if(lang==="en"){node.nodeValue=value;return;}
-      if(L[key]) node.nodeValue=value.replace(key,L[key]); else { const compact=key.replace(/\s+/g," ").trim(); if(L[compact]) node.nodeValue=value.replace(key,L[compact]); }
+      if(!node || !node.parentElement || node.parentElement.closest("script,style")) return;
+      const raw=value;
+      const trimmed=raw.trim();
+      if(!trimmed) return;
+      const compact=trimmed.replace(/\\s+/g," ");
+      const translated=L[trimmed]||L[compact];
+      if(translated) node.nodeValue=raw.replace(trimmed,translated);
     });
-    original.forEach((value,node)=>current.set(node,node.nodeValue));
+
+    // Translate form placeholders/titles too (the old text-node-only engine missed these).
+    document.querySelectorAll("[placeholder]").forEach(el=>{
+      const raw=el.getAttribute("placeholder"); const translated=L[raw]||L[raw.trim()];
+      if(translated) el.setAttribute("placeholder",translated);
+    });
+    document.querySelectorAll("[title]").forEach(el=>{
+      const raw=el.getAttribute("title"); const translated=L[raw]||L[raw.trim()];
+      if(translated) el.setAttribute("title",translated);
+    });
+    document.querySelectorAll("input,textarea,select").forEach(el=>{
+      if(el.dataset.cvI18nOriginalLabel) return;
+      const label=el.closest(".input-group,.form-group,.cv-input-group")?.querySelector("label");
+      if(label) {
+        el.dataset.cvI18nOriginalLabel=label.textContent;
+      }
+    });
+
     document.documentElement.lang=lang==="hi"?"hi":lang==="gu"?"gu":"en";
-    document.querySelectorAll(".cv-language-card, .cv-lang-btn").forEach(b=>b.classList.toggle("active",(b.dataset.lang||b.dataset.cvLang)===lang));
+    document.querySelectorAll(".cv-language-card, .cv-lang-btn, #language option").forEach(b=>{
+      const bLang=b.dataset.lang||b.dataset.cvLang||b.value;
+      b.classList.toggle("active",bLang===lang);
+    });
     localStorage.setItem("cv-language",lang);
   }
   window.CelebrateVerseI18n={apply};
