@@ -564,6 +564,20 @@ document.addEventListener("DOMContentLoaded", () => {
     bindCardSelection(".theme-card", themeInput);
     bindCardSelection(".package-option", packageInput);
 
+    // Keep all required wizard fields in the same draft, including Step 4 tone/photos.
+    function saveExtendedCustomization() {
+        try {
+            const existing = JSON.parse(localStorage.getItem(AUTO_SAVE_KEY) || "{}");
+            existing.wishTone = document.getElementById("wishTone")?.value || "";
+            localStorage.setItem(AUTO_SAVE_KEY, JSON.stringify(existing));
+        } catch (e) {}
+    }
+    ["wishTone","personName","customerName","specialDate","email","message"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("input", () => { saveCustomization(); saveExtendedCustomization(); updateLivePreview(); });
+        if (el) el.addEventListener("change", () => { saveCustomization(); saveExtendedCustomization(); updateLivePreview(); });
+    });
+
     /* ==========================================
        SHOW CURRENT STEP
     ========================================== */
