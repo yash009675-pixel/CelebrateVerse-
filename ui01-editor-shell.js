@@ -104,7 +104,21 @@ const setupBody=setupBackdrop.querySelector('.cv-setup-body');const progressWrap
 
     // Phase 1 wizard-first flow: never drop a new user straight into the editor.
     // Open the existing 1–5 setup automatically; the user can close it to enter Studio.
-    setTimeout(()=>openSetup(1),180);
+    // Wizard-first: hide Studio until the 5-step setup is explicitly closed.
+    root.style.setProperty('display','none','important');
+    setupBackdrop.hidden=false;
+    window.cvGoToStep?.(1);
+    requestAnimationFrame(()=>{
+      setupBackdrop.hidden=false;
+      setupBackdrop.style.setProperty('display','block','important');
+      const nav=setupBackdrop.querySelector('.form-navigation');
+      if(nav) nav.style.setProperty('display','flex','important');
+    });
+    setupBackdrop.querySelector('.cv-ui01-setup-close').onclick=()=>{
+      setupBackdrop.hidden=true;
+      setupBackdrop.style.removeProperty('display');
+      root.style.removeProperty('display');
+    };
   }
   wait(()=>{const timer=setInterval(()=>{if(document.getElementById('stableEditor')){clearInterval(timer);mount()}},150);setTimeout(()=>clearInterval(timer),8000)});
 })();
