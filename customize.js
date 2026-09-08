@@ -504,8 +504,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* ==========================================
+       STEP VALIDATION
+    ========================================== */
+    function validateStep() {
+        if (currentStep === 1 && !occasionInput?.value) {
+            alert("Please select an occasion to continue.");
+            return false;
+        }
+        if (currentStep === 2 && !relationshipInput?.value) {
+            alert("Please select who this celebration is for.");
+            return false;
+        }
+        if (currentStep === 3 && !themeInput?.value) {
+            alert("Please choose a website style.");
+            return false;
+        }
+        if (currentStep === 4) {
+            if (!personNameInput?.value?.trim() || !customerNameInput?.value?.trim() ||
+                !specialDateInput?.value || !emailInput?.value?.trim()) {
+                alert("Please complete all required details before continuing.");
+                return false;
+            }
+            if (emailInput && !emailInput.checkValidity()) {
+                alert("Please enter a valid email address.");
+                emailInput.focus();
+                return false;
+            }
+        }
+        if (currentStep === 5 && !packageInput?.value) {
+            alert("Please select a package to continue.");
+            return false;
+        }
+        return true;
+    }
+
+    /* ==========================================
        SHOW CURRENT STEP
     ========================================== */
+
+    document.querySelectorAll(".progress-step").forEach(item => {
+        item.addEventListener("click", () => {
+            const target = Number(item.dataset.step);
+            if (!target || target === currentStep) return;
+            if (target > currentStep && !validateStep()) return;
+            currentStep = target;
+            showStep(currentStep);
+            updateLivePreview();
+        });
+    });
 
     function showStep(step) {
 
