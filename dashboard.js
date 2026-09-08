@@ -41,11 +41,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     }).join("") : "<div class=\"empty-state\"><div class=\"empty-icon\">✨</div><h3>No celebrations yet</h3><p>Create your first celebration and it will appear here.</p><a href=\"customize.html\" class=\"primary-btn\">Create Celebration</a></div>";
   }
 
-  $("totalDrafts") && ($("totalDrafts").textContent = cards.length);
+  $("totalDrafts") && ($("totalDrafts").textContent = celebrations.filter(x => String(x.status || "draft").toLowerCase() === "draft").length + cards.length);
   $("totalOrders") && ($("totalOrders").textContent = orders.length);
-  $("totalCelebrations") && ($("totalCelebrations").textContent = orders.length + events.length);
+  $("totalCelebrations") && ($("totalCelebrations").textContent = celebrations.length);
   const draftList = $("draftList");
-  if (draftList) draftList.innerHTML = cards.length ? cards.map(c => "<div class=\"dashboard-item\"><div class=\"dashboard-item-icon\">💌</div><div><h3>"+escapeHtml(c.title || "Untitled Card")+"</h3><p>"+escapeHtml(c.occasion || c.recipient_name || "Celebration Card")+"</p></div><span class=\"item-action\">Saved</span></div>").join("") : "<div class=\"empty-state\"><div class=\"empty-icon\">✨</div><h3>No saved cards yet</h3><p>Create a card from your celebration tools.</p><a href=\"customize.html\" class=\"primary-btn\">Create Celebration</a></div>";
+  if (draftList) {
+    const celebrationDrafts = celebrations.filter(x => String(x.status || "draft").toLowerCase() === "draft");
+    const celebrationHtml = celebrationDrafts.map(x => {
+      const title = x.person_name ? x.person_name + "'s " + (x.occasion || "Celebration") : (x.occasion || "Untitled Celebration");
+      const meta = [x.theme, x.package ? x.package.toUpperCase() : "DRAFT"].filter(Boolean).join(" · ");
+      return '<div class="dashboard-item"><div class="dashboard-item-icon">🎨</div><div><h3>'+escapeHtml(title)+'</h3><p>'+escapeHtml(meta)+'</p></div><a class="primary-btn" href="edit-studio.html?celebration='+encodeURIComponent(x.id)+'">Continue Editing</a></div>';
+    }).join("");
+    const cardHtml = cards.map(x => '<div class="dashboard-item"><div class="dashboard-item-icon">💌</div><div><h3>'+escapeHtml(x.title || "Untitled Card")+'</h3><p>'+escapeHtml(x.occasion || x.recipient_name || "Celebration Card")+'</p></div><span class="item-action">Saved</span></div>').join("");
+    draftList.innerHTML = (celebrationHtml + cardHtml) || '<div class="empty-state"><div class="empty-icon">✨</div><h3>No drafts yet</h3><p>Create your first celebration and continue editing it anytime.</p><a href="customize.html" class="primary-btn">Create Celebration</a></div>';
+  }
+
   const orderList = $("orderList");
   if (orderList) orderList.innerHTML = orders.length ? orders.map(o => "<div class=\"dashboard-item\"><div class=\"dashboard-item-icon\">🎊</div><div><h3>"+escapeHtml(o.person_name || o.customer_name || o.occasion || "CelebrateVerse Order")+"</h3><p>"+escapeHtml(o.occasion || "Celebration")+" · "+escapeHtml(o.package || "Package")+"</p></div><span class=\"order-status\">"+escapeHtml(o.order_status || o.payment_status || "New")+"</span></div>").join("") : "<div class=\"empty-state\"><div class=\"empty-icon\">📦</div><h3>No orders yet</h3><p>Your CelebrateVerse orders will appear here.</p></div>";
   const upcoming = events.filter(e => new Date(e.event_date).getTime() >= Date.now());
