@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const totalSteps = 5;
     const PACKAGE_PRICES = { free: 0, basic: 199, premium: 399, ultimate: 699 };
+    // Single canonical package price source for Customize, checkout and dashboard.
+    window.CELEBRATEVERSE_PACKAGE_PRICES = Object.freeze({...PACKAGE_PRICES});
 
 
     /* ==========================================
