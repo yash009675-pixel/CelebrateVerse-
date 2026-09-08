@@ -6356,3 +6356,27 @@ body:not(.light-mode) .cv-today-card p{color:rgba(255,255,255,.65)}
 .cv-google-btn:disabled{opacity:.75!important;cursor:wait!important}
 
 .dashboard-user-avatar-wrap{display:flex;align-items:center}.dashboard-user-avatar{width:48px;height:48px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff;font-weight:700;border:2px solid rgba(255,255,255,.7);box-shadow:0 4px 14px rgba(0,0,0,.12)}.dashboard-user-avatar img{width:100%;height:100%;object-fit:cover;display:block}.dashboard-user-avatar span{font-size:15px}.dashboard-header{display:flex;align-items:center;gap:18px}.dashboard-header>div:nth-child(2){flex:1}.dashboard-header-actions{display:flex;gap:10px;flex-wrap:wrap}@media(max-width:640px){.dashboard-user-avatar{width:42px;height:42px}.dashboard-header{gap:12px}.dashboard-header-actions .secondary-btn{display:none}}
+
+
+/* CelebrateVerse contrast + calendar polish */
+.cv-profile-top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cv-profile-logout{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 16px;border:1px solid rgba(236,72,153,.35);border-radius:999px;background:rgba(236,72,153,.08);color:var(--text);font:600 14px "DM Sans",sans-serif;cursor:pointer}
+.cv-profile-logout:hover{transform:translateY(-1px);background:rgba(236,72,153,.14)}
+.cv-calendar-box,.cv-calendar-box h3,.cv-calendar-box button,.cv-calendar-week,.cv-calendar-details{color:var(--text)!important}
+.cv-calendar-box{background:linear-gradient(145deg,rgba(124,58,237,.16),rgba(236,72,153,.10))!important;border-color:rgba(167,139,250,.28)!important;box-shadow:0 20px 55px rgba(0,0,0,.18)!important}
+.cv-calendar-head button{background:rgba(255,255,255,.07)!important;border-color:rgba(167,139,250,.3)!important}
+.cv-cal-day{background:rgba(255,255,255,.045)!important;color:var(--text)!important;border-color:rgba(167,139,250,.2)!important}
+.cv-cal-day:hover:not(:disabled){background:rgba(124,58,237,.18)!important;border-color:rgba(236,72,153,.4)!important}
+.cv-cal-day.today{outline:2px solid #a78bfa!important;background:rgba(124,58,237,.18)!important}
+.cv-cal-day.has-event{font-weight:800}
+.cv-calendar-details{background:rgba(124,58,237,.14)!important;border:1px solid rgba(167,139,250,.18)}
+.cv-language-switcher{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:0 auto 12px}
+.cv-lang-btn{min-width:120px;padding:12px 18px;border:1px solid rgba(124,58,237,.22);border-radius:999px;background:rgba(255,255,255,.72);color:var(--text);font:600 14px "DM Sans",sans-serif;cursor:pointer;transition:.2s}
+.cv-lang-btn:hover{transform:translateY(-2px)}
+.cv-lang-btn.active{background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff;border-color:transparent;box-shadow:0 10px 28px rgba(124,58,237,.22)}
+body:not(.light-mode) .cv-lang-btn{background:rgba(20,18,35,.72);border-color:rgba(255,255,255,.14);color:#fff}
+body:not(.light-mode) .cv-lang-btn.active{color:#fff}
+/* Light surfaces always use readable text */
+.cv-calendar-box,.cv-explore-card,.cv-occasion-group,.cv-language-card,.cv-countdown-box,.cv-gift-result,.cv-reminder-box,.cv-card-builder,.cv-memory-box{color:var(--text)}
+.cv-calendar-box input,.cv-calendar-box select,.cv-calendar-box textarea,.cv-language-section button{color:var(--text)}
+@media(max-width:600px){.cv-profile-top-actions{width:100%;justify-content:space-between}.cv-profile-logout{min-height:40px}.cv-lang-btn{flex:1;min-width:0}.cv-cal-day{min-height:52px}}
