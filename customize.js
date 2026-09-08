@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
        CELEBRATEVERSE CUSTOMIZER SYSTEM
     ========================================== */
 
-    let currentStep = 1;
+    let currentStep = Math.min(5, Math.max(1, Number(localStorage.getItem("celebrateVerseCurrentStep") || 1)));
 
     const totalSteps = 5;
     const PACKAGE_PRICES = { free: 0, basic: 199, premium: 399, ultimate: 699 };
@@ -150,6 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ========================================== */
 
     const AUTO_SAVE_KEY = "celebrateVerseCustomization";
+    const CURRENT_STEP_KEY = "celebrateVerseCurrentStep";
     /* Phase 1: normalize homepage query params into the wizard on first load. */
     function applyUrlPresets() {
         const params = new URLSearchParams(window.location.search);
@@ -573,6 +574,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!target || target === currentStep) return;
             if (target > currentStep && !validateStep()) return;
             currentStep = target;
+            localStorage.setItem(CURRENT_STEP_KEY, String(currentStep));
             showStep(currentStep);
             updateLivePreview();
         });
@@ -580,6 +582,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function showStep(step) {
 
+        currentStep = Math.min(5, Math.max(1, Number(step) || 1));
+        localStorage.setItem(CURRENT_STEP_KEY, String(currentStep));
         document.querySelectorAll(".form-step").forEach(item => {
             const isActive = Number(item.dataset.step) === Number(step);
             item.classList.toggle("active", isActive);
@@ -671,6 +675,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 currentStep++;
+                localStorage.setItem(CURRENT_STEP_KEY, String(currentStep));
 
                 showStep(
                     currentStep
@@ -708,6 +713,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 currentStep--;
+                localStorage.setItem(CURRENT_STEP_KEY, String(currentStep));
 
                 showStep(
                     currentStep
@@ -962,6 +968,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (currentStep < totalSteps) {
                 if (!validateStep()) return;
                 currentStep += 1;
+                localStorage.setItem(CURRENT_STEP_KEY, String(currentStep));
                 showStep(currentStep);
                 updateLivePreview();
                 return;
@@ -978,6 +985,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
             currentStep -= 1;
+            localStorage.setItem(CURRENT_STEP_KEY, String(currentStep));
             showStep(currentStep);
             updateLivePreview();
         });
