@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!user) { location.href="login.html"; return; }
 
   const $ = id => document.getElementById(id);
+  document.getElementById("profileLogoutBtn")?.addEventListener("click", async () => { await supabaseClient.auth.signOut(); location.href="index.html"; });
   const escapeHtml = v => String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
   const setMessage = (m, ok=false) => { $("profileMessage").textContent=m; $("profileMessage").className="cv-profile-message "+(ok?"success":"error"); };
 
