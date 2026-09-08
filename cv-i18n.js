@@ -27,16 +27,16 @@
       const key=value.trim();
       if(!key || node.parentElement?.closest("script,style")) return;
       if(lang==="en"){node.nodeValue=value;return;}
-      if(L[key]) node.nodeValue=value.replace(key,L[key]);
+      if(L[key]) node.nodeValue=value.replace(key,L[key]); else { const compact=key.replace(/\s+/g," ").trim(); if(L[compact]) node.nodeValue=value.replace(key,L[compact]); }
     });
     original.forEach((value,node)=>current.set(node,node.nodeValue));
     document.documentElement.lang=lang==="hi"?"hi":lang==="gu"?"gu":"en";
-    document.querySelectorAll(".cv-language-card").forEach(b=>b.classList.toggle("active",b.dataset.lang===lang));
+    document.querySelectorAll(".cv-language-card, .cv-lang-btn").forEach(b=>b.classList.toggle("active",(b.dataset.lang||b.dataset.cvLang)===lang));
     localStorage.setItem("cv-language",lang);
   }
   window.CelebrateVerseI18n={apply};
   document.addEventListener("DOMContentLoaded",()=>{
-    document.querySelectorAll(".cv-language-card").forEach(b=>b.addEventListener("click",()=>apply(b.dataset.lang)));
+    document.querySelectorAll(".cv-language-card, .cv-lang-btn").forEach(b=>b.addEventListener("click",()=>apply(b.dataset.lang||b.dataset.cvLang)));
     apply(localStorage.getItem("cv-language")||"en");
   });
 })();
