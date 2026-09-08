@@ -55,7 +55,7 @@
         </button>
 
 
-        <button
+        <button class="dashboard-nav-item" data-tab="celebrations"><i class="fa-solid fa-heart"></i> My Celebrations</button><button
           class="dashboard-nav-item"
           data-tab="drafts">
 
@@ -289,6 +289,11 @@
 
 
 
+<section class="dashboard-tab" id="celebrations">
+<div class="dashboard-section-title"><div><h2>My Celebrations</h2><p>Your created celebrations and their Edit Studio.</p></div><a href="customize.html" class="primary-btn"><i class="fa-solid fa-plus"></i> Create New</a></div>
+<div id="celebrationList" class="dashboard-list"></div>
+</section>
+
       <!-- DRAFTS -->
 
       <section
@@ -456,7 +461,7 @@
 <script src="supabase.js"></script>
 <script src="auth.js"></script>
 
-  <script src="dashboard.js"></script>
+  <script src="dashboard.js?v=2"></script>
 
 <script src="cv-i18n.js?v=3"></script></body>
 
