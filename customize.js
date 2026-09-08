@@ -1025,7 +1025,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const isFirst = currentStep <= 1;
             const isLast = currentStep >= totalSteps;
             prevControl.textContent = isFirst ? "Back to Home" : "Back";
-            nextControl.textContent = isLast ? "Continue to Payment" : "Continue";
+            nextControl.textContent = isLast ? "✨ Open Live Edit Studio" : "Continue";
             nextControl.disabled = false;
             prevControl.disabled = false;
         };
