@@ -10,7 +10,23 @@
 <link rel="stylesheet" href="phase13-video-animation.css?v=1">
 <link rel="stylesheet" href="phase23-collaboration.css?v=23">
 <style>
-body{background:#090b11}.studio-page{min-height:100vh;padding:14px}.cv-live-preview-section{display:block!important;margin:0!important}.cv-live-preview{display:none!important}#stableEditor{display:block!important}
+body{background:radial-gradient(circle at 50% 0%,#191329 0,#090b11 42%,#06070c 100%);color:#f8fafc}
+.studio-page{min-height:100vh;padding:16px 12px 60px;box-sizing:border-box}
+.cv-live-preview-section{display:block!important;margin:0!important;padding:0!important}
+.cv-live-preview{display:block!important;visibility:visible!important;opacity:1!important}
+#celebrationLivePreview{display:block!important;min-height:0!important}
+#stableEditor{display:block!important;margin:0!important}
+#stableEditor .ed-head{box-shadow:0 18px 55px rgba(0,0,0,.28)}
+#stableEditor .ed{box-shadow:0 24px 80px rgba(0,0,0,.35)}
+#stableEditor #edCanvasWrap{background:linear-gradient(145deg,#080910,#11101b);padding:28px;min-height:620px}
+#stableEditor #edCanvas{background:linear-gradient(145deg,#161323,#090b14);border:1px solid rgba(255,255,255,.12);border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.42);overflow:hidden}
+#stableEditor #edCanvas:before{content:"LIVE PREVIEW";position:absolute;right:16px;top:14px;z-index:30;padding:6px 10px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(10,10,18,.65);backdrop-filter:blur(10px);font:700 9px/1 system-ui,sans-serif;letter-spacing:.12em;color:#c4b5fd}
+@media(max-width:600px){
+ .studio-page{padding:8px 6px 45px}
+ #stableEditor #edCanvasWrap{padding:12px;min-height:560px}
+ #stableEditor #edCanvas{min-height:540px;border-radius:18px}
+ #stableEditor .ed-head{border-radius:14px}
+}
 </style>
 </head>
 <body>
@@ -20,7 +36,7 @@ body{background:#090b11}.studio-page{min-height:100vh;padding:14px}.cv-live-prev
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js?v=18"></script>
 <script src="main.js?v=18"></script>
-<script src="stable-editor.js?v=22"></script>
+<script src="stable-editor.js?v=23"></script>
 <script src="ui01-editor-shell.js?v=4"></script>
 <script src="ui02-templates-elements.js?v=1"></script>
 <script src="ui03-text-photo.js?v=1"></script>
