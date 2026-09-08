@@ -579,9 +579,9 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".progress-step").forEach(item => {
             const stepNumber = Number(item.dataset.step);
             item.setAttribute("role", "button");
-            item.setAttribute("tabindex", stepNumber <= step ? "0" : "-1");
+            item.setAttribute("tabindex", "0");
             item.setAttribute("aria-current", stepNumber === step ? "step" : "false");
-            item.classList.toggle("clickable", stepNumber <= step);
+            item.classList.add("clickable");
         });
 
 
@@ -1190,15 +1190,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.querySelectorAll(".progress-step").forEach(item => {
         const go = () => {
-            const step = Number(item.dataset.step);
-            // Users can return to completed/current steps, but cannot skip ahead.
-            if (step <= currentStep) window.cvGoToStep(step);
+            const target = Number(item.dataset.step);
+            if (!target || target === currentStep) return;
+
+            // Allow direct step navigation, but validate each step being skipped.
+            if (target > currentStep) {
+                for (let s = currentStep; s < target; s++) {
+                    if (!validateStep()) return;
+                    currentStep = s + 1;
+                }
+            } else {
+                currentStep = target;
+            }
+            showStep(currentStep);
+            updateLivePreview();
+            saveCustomization();
         };
         item.addEventListener("click", go);
         item.addEventListener("keydown", e => {
-            if ((e.key === "Enter" || e.key === " ") && Number(item.dataset.step) <= currentStep) {
-                e.preventDefault(); go();
-            }
+            if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); }
         });
     });
 
