@@ -24,6 +24,45 @@ root.innerHTML=`<div class="ed-head"><div><span class="ed-kicker">CELEBRATEVERSE
 <main class="ed-main"><div class="edbar"><button type="button" id="edUndo">↶</button><button type="button" id="edRedo">↷</button><span class="ed-sep"></span><button type="button" id="edCopy">Copy</button><button type="button" id="edPaste">Paste</button><button type="button" id="edDuplicate">Duplicate</button><button type="button" id="edDelete">Delete</button><span class="ed-sep"></span><button type="button" id="edDesk">Desktop</button><button type="button" id="edMob">Mobile</button><button type="button" id="edZoomOut">−</button><span id="edZoom">100%</span><button type="button" id="edZoomIn">＋</button><button type="button" id="edFit">Fit</button></div><div class="ed-align"><button type="button" data-align="left">←</button><button type="button" data-align="center">↔</button><button type="button" data-align="right">→</button><button type="button" data-align="top">↑</button><button type="button" data-align="bottom">↓</button><button type="button" id="edForward">Bring Forward</button><button type="button" id="edBackward">Send Back</button></div><div id="edCanvasWrap"><div id="edCanvas"></div></div><div class="ed-bottom-flow"><span>Canvas / Design</span><i>→</i><span>Preview</span><i>→</i><span>Save</span><i>→</i><span>Share</span><i>→</i><span>Publish</span></div></main>
 <aside class="ed-right"><b>PROPERTIES</b><p id="edEmpty">Select an element.</p><div id="edProps" hidden><label>Text<input id="edText"></label><div class="ed-two"><label>Size<input id="edSize" type="range" min="8" max="160"></label><output id="edSizeOut">32</output></div><label>Font<select id="edFont"><option>DM Sans</option><option>Playfair Display</option><option>Georgia</option><option>Arial</option></select></label><div class="ed-two"><label>Color<input id="edColor" type="color"></label><label>Opacity<input id="edOpacity" type="range" min="0" max="1" step="0.05"></label></div><label>Letter spacing<input id="edSpacing" type="range" min="-5" max="20" step="0.5"></label><label>Rotation<input id="edRotation" type="range" min="-180" max="180"></label><label>Animation<select id="edAnim"><option value="">None</option><option value="float">Float</option><option value="pulse">Pulse</option><option value="bounce">Bounce</option></select></label><div class="ed-checks"><label><input id="edVisible" type="checkbox" checked> Visible</label><label><input id="edRounded" type="checkbox"> Rounded</label><label><input id="edCircle" type="checkbox"> Circle</label><label><input id="edFrame" type="checkbox"> Soft Frame</label><label><input id="edShadow" type="checkbox"> Shadow</label></div><div class="ed-two"><button type="button" id="edLock">🔒 Lock</button><button type="button" id="edHide">Hide</button></div></div></aside></div>`;
 section.parentNode.insertBefore(root,section);const canvas=root.querySelector('#edCanvas');
+
+// Load the authenticated celebration selected from Dashboard/Customize.
+// This is intentionally read before starter content is finalized.
+const celebrationId = new URLSearchParams(location.search).get('celebration');
+let cloudCelebration = null;
+async function loadCelebrationFromCloud() {
+  if (!celebrationId || typeof supabaseClient === 'undefined' || !supabaseClient) return;
+  try {
+    const {data:{user}} = await supabaseClient.auth.getUser();
+    if (!user) return;
+    const {data,error} = await supabaseClient.from('celebrations')
+      .select('*').eq('id', celebrationId).eq('user_id', user.id).maybeSingle();
+    if (error || !data) return;
+    cloudCelebration = data;
+    const draft = {
+      occasion:data.occasion || 'Celebration',
+      personName:data.person_name || 'Someone Special',
+      relationship:data.relationship || '',
+      theme:data.theme || '',
+      message:data.message || ''
+    };
+    try { localStorage.setItem('celebrateVerseCustomization', JSON.stringify(draft)); } catch(_) {}
+    // Replace generic starter copy with the user's actual celebration details.
+    const title = preview?.querySelector('[data-text="Made Just For You"]');
+    const sub = preview?.querySelector('.editem:nth-of-type(2)');
+    if (title) { title.dataset.text = 'Made Just For You'; title.textContent = data.person_name ? 'Made Just For You, '+data.person_name : 'Made Just For You'; }
+    if (sub) { sub.dataset.text = (data.person_name || 'Someone Special')+' • '+(data.occasion || 'Celebration'); sub.textContent = sub.dataset.text; }
+    if (data.message) {
+      const msg = document.createElement('div'); msg.className='editem'; msg.dataset.text=data.message;
+      msg.style.cssText='left:12%;top:54%;width:76%;text-align:center;font-size:16px;line-height:1.6;color:rgba(255,255,255,.88)';
+      msg.textContent=data.message; preview.append(msg); bind(msg);
+    }
+    if (data.theme && templates[data.theme]) {
+      const [bg,accent]=templates[data.theme]; preview.style.background=bg; root.style.setProperty('--ed-accent',accent);
+    }
+    layers();
+  } catch(e) { console.warn('Celebration load failed',e); }
+}
+
 /* Premium live preview: the design being edited must always be visible. */
 const livePreview=root.querySelector('#celebrationLivePreview');
 if(livePreview){
@@ -63,6 +102,7 @@ function ensureStarterPreview(){
   preview.style.background='radial-gradient(circle at 50% 18%,rgba(168,85,247,.22),transparent 34%),linear-gradient(145deg,#171323,#090b14 65%,#1b1027)';
 }
 ensureStarterPreview();
+loadCelebrationFromCloud();
 
 canvas.append(section);
 const $=id=>root.querySelector('#'+id), state={selected:null,history:[],future:[],clipboard:null,zoom:1,pages:[null],page:0,restoring:false,showcase:false};let transformTimer;
