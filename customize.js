@@ -580,34 +580,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function showStep(step) {
 
-        document
-            .querySelectorAll(
-                ".form-step"
-            )
-            .forEach(item => {
+        document.querySelectorAll(".form-step").forEach(item => {
+            const isActive = Number(item.dataset.step) === Number(step);
+            item.classList.toggle("active", isActive);
+            // Explicit visibility prevents legacy CSS from keeping a hidden/blank step on screen.
+            item.style.display = isActive ? "block" : "none";
+            item.style.visibility = isActive ? "visible" : "hidden";
+            item.style.opacity = isActive ? "1" : "0";
+            item.style.pointerEvents = isActive ? "auto" : "none";
+        });
 
-                item.classList.remove(
-                    "active"
-                );
-
-            });
-
-
-        const activeStep =
-            document.querySelector(
-
-                `.form-step[data-step="${step}"]`
-
-            );
-
-
-        if (activeStep) {
-
-            activeStep.classList.add(
-                "active"
-            );
-
-        }
+        const activeStep = document.querySelector(`.form-step[data-step="${step}"]`);
+        if (activeStep) activeStep.scrollIntoView({behavior:"smooth", block:"start"});
 
 
         document
