@@ -24,6 +24,45 @@ root.innerHTML=`<div class="ed-head"><div><span class="ed-kicker">CELEBRATEVERSE
 <main class="ed-main"><div class="edbar"><button type="button" id="edUndo">↶</button><button type="button" id="edRedo">↷</button><span class="ed-sep"></span><button type="button" id="edCopy">Copy</button><button type="button" id="edPaste">Paste</button><button type="button" id="edDuplicate">Duplicate</button><button type="button" id="edDelete">Delete</button><span class="ed-sep"></span><button type="button" id="edDesk">Desktop</button><button type="button" id="edMob">Mobile</button><button type="button" id="edZoomOut">−</button><span id="edZoom">100%</span><button type="button" id="edZoomIn">＋</button><button type="button" id="edFit">Fit</button></div><div class="ed-align"><button type="button" data-align="left">←</button><button type="button" data-align="center">↔</button><button type="button" data-align="right">→</button><button type="button" data-align="top">↑</button><button type="button" data-align="bottom">↓</button><button type="button" id="edForward">Bring Forward</button><button type="button" id="edBackward">Send Back</button></div><div id="edCanvasWrap"><div id="edCanvas"></div></div><div class="ed-bottom-flow"><span>Canvas / Design</span><i>→</i><span>Preview</span><i>→</i><span>Save</span><i>→</i><span>Share</span><i>→</i><span>Publish</span></div></main>
 <aside class="ed-right"><b>PROPERTIES</b><p id="edEmpty">Select an element.</p><div id="edProps" hidden><label>Text<input id="edText"></label><div class="ed-two"><label>Size<input id="edSize" type="range" min="8" max="160"></label><output id="edSizeOut">32</output></div><label>Font<select id="edFont"><option>DM Sans</option><option>Playfair Display</option><option>Georgia</option><option>Arial</option></select></label><div class="ed-two"><label>Color<input id="edColor" type="color"></label><label>Opacity<input id="edOpacity" type="range" min="0" max="1" step="0.05"></label></div><label>Letter spacing<input id="edSpacing" type="range" min="-5" max="20" step="0.5"></label><label>Rotation<input id="edRotation" type="range" min="-180" max="180"></label><label>Animation<select id="edAnim"><option value="">None</option><option value="float">Float</option><option value="pulse">Pulse</option><option value="bounce">Bounce</option></select></label><div class="ed-checks"><label><input id="edVisible" type="checkbox" checked> Visible</label><label><input id="edRounded" type="checkbox"> Rounded</label><label><input id="edCircle" type="checkbox"> Circle</label><label><input id="edFrame" type="checkbox"> Soft Frame</label><label><input id="edShadow" type="checkbox"> Shadow</label></div><div class="ed-two"><button type="button" id="edLock">🔒 Lock</button><button type="button" id="edHide">Hide</button></div></div></aside></div>`;
 section.parentNode.insertBefore(root,section);const canvas=root.querySelector('#edCanvas');
+/* Premium live preview: the design being edited must always be visible. */
+const livePreview=root.querySelector('#celebrationLivePreview');
+if(livePreview){
+  livePreview.style.setProperty('display','block','important');
+  livePreview.style.setProperty('visibility','visible','important');
+  livePreview.style.setProperty('opacity','1','important');
+}
+if(preview){
+  preview.style.display='block';
+  preview.style.visibility='visible';
+  preview.style.minHeight='540px';
+  preview.style.position='relative';
+  preview.style.overflow='hidden';
+  preview.style.borderRadius='18px';
+}
+function ensureStarterPreview(){
+  if(!preview || preview.querySelector('.editem')) return;
+  const data=(()=>{try{return JSON.parse(localStorage.getItem('celebrateVerseCustomization')||'{}')}catch(_){return {}}})();
+  const occasion=data.occasion||'Celebration';
+  const person=data.personName||data.person_name||'Someone Special';
+  const title=document.createElement('div');
+  title.className='editem';
+  title.dataset.text='Made Just For You';
+  title.style.cssText='left:10%;top:28%;width:80%;text-align:center;font-family:"Playfair Display",Georgia,serif;font-size:44px;font-weight:800;color:#fff;text-shadow:0 8px 28px rgba(0,0,0,.35)';
+  title.textContent='Made Just For You';
+  const sub=document.createElement('div');
+  sub.className='editem';
+  sub.dataset.text=person+' • '+occasion;
+  sub.style.cssText='left:12%;top:43%;width:76%;text-align:center;font-size:18px;color:rgba(255,255,255,.82)';
+  sub.textContent=person+' • '+occasion;
+  const badge=document.createElement('div');
+  badge.className='editem';
+  badge.dataset.text='♥';
+  badge.style.cssText='left:calc(50% - 42px);top:10%;width:84px;height:84px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:48px;background:linear-gradient(135deg,rgba(236,72,153,.38),rgba(139,92,246,.42));box-shadow:0 18px 45px rgba(139,92,246,.25)';
+  badge.textContent='♥';
+  [title,sub,badge].forEach(el=>{preview.append(el);bind(el)});
+  preview.style.background='radial-gradient(circle at 50% 18%,rgba(168,85,247,.22),transparent 34%),linear-gradient(145deg,#171323,#090b14 65%,#1b1027)';
+}
+ensureStarterPreview();
 
 canvas.append(section);
 const $=id=>root.querySelector('#'+id), state={selected:null,history:[],future:[],clipboard:null,zoom:1,pages:[null],page:0,restoring:false,showcase:false};let transformTimer;
