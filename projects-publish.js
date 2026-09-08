@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const KEY='celebrateVerseProjects';
   const IDKEY='celebrateVerseActiveProject';
   const VERSION=18;
-  let id=localStorage.getItem(IDKEY) || `cv-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+  const celebrationParam=new URLSearchParams(location.search).get('celebration');
+  let id=celebrationParam || localStorage.getItem(IDKEY) || `cv-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
   localStorage.setItem(IDKEY,id);
 
   const read=()=>{try{const x=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(x)?x:[]}catch{return[]}};
