@@ -3,7 +3,7 @@ function boot(){
 if(window.__cvAIReady)return;
 window.__cvAIReady=true;
 const style=document.createElement("style");style.textContent=`
-#cvAI{position:fixed !important;right:18px !important;bottom:calc(18px + env(safe-area-inset-bottom)) !important;z-index:2147483647 !important;font-family:DM Sans,system-ui,sans-serif}
+#cvAI{position:fixed !important;right:18px !important;bottom:18px !important;z-index:2147483647 !important}
 #cvAI .cv-ai-fab{display:flex;align-items:center;justify-content:center;appearance:none;-webkit-appearance:none;width:58px;height:58px;border:0;border-radius:50%;cursor:pointer;color:#fff;font-size:25px;background:linear-gradient(135deg,#7c3aed,#ec4899);box-shadow:0 12px 35px rgba(124,58,237,.45)}
 #cvAI .cv-ai-panel{position:absolute;right:0;bottom:70px;width:min(360px,calc(100vw - 28px));height:min(520px,70vh);display:none;flex-direction:column;overflow:hidden;border:1px solid rgba(255,255,255,.14);border-radius:22px;background:rgba(13,14,25,.97);backdrop-filter:blur(18px);box-shadow:0 25px 80px rgba(0,0,0,.5);color:#f8fafc}
 #cvAI.open .cv-ai-panel{display:flex}
