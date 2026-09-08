@@ -58,7 +58,13 @@
   }
   window.CelebrateVerseI18n={apply};
   document.addEventListener("DOMContentLoaded",()=>{
-    document.querySelectorAll(".cv-language-card, .cv-lang-btn").forEach(b=>b.addEventListener("click",()=>apply(b.dataset.lang||b.dataset.cvLang)));
+    const setLanguage=(lang)=>apply(lang||"en");
+    document.querySelectorAll(".cv-language-card, .cv-lang-btn").forEach(b=>b.addEventListener("click",()=>setLanguage(b.dataset.lang||b.dataset.cvLang)));
+    document.querySelectorAll("select#language, select[name='language'], [data-language-select]").forEach(s=>{
+      s.addEventListener("change",()=>setLanguage(s.value));
+    });
     apply(localStorage.getItem("cv-language")||"en");
   });
+  // Auth and other dynamic UI can appear after the first translation pass.
+  window.addEventListener("cv:auth-ui-ready",()=>apply(localStorage.getItem("cv-language")||"en"));
 })();
