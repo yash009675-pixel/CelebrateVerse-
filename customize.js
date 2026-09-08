@@ -815,9 +815,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }));
                 localStorage.removeItem(AUTO_SAVE_KEY);
                 if (selectedPackage === "free") {
-                    const setup = document.querySelector(".cv-ui01-setup-backdrop");
-                    if (setup) setup.hidden = true;
-                    window.dispatchEvent(new CustomEvent("cv:free-selected"));
+                    window.location.href = "edit-studio.html?celebration=" + encodeURIComponent(celebration.id);
                     return;
                 }
                 window.location.href = "payment.html?package=" + encodeURIComponent(celebration.package) + "&celebration=" + encodeURIComponent(celebration.id);
