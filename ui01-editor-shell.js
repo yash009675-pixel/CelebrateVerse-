@@ -107,13 +107,18 @@ const setupBody=setupBackdrop.querySelector('.cv-setup-body');const progressWrap
     // Wizard-first: hide Studio until the 5-step setup is explicitly closed.
     root.style.setProperty('display','none','important');
     setupBackdrop.hidden=false;
-    window.cvGoToStep?.(1);
-    requestAnimationFrame(()=>{
-      setupBackdrop.hidden=false;
-      setupBackdrop.style.setProperty('display','block','important');
-      const nav=setupBackdrop.querySelector('.form-navigation');
-      if(nav) nav.style.setProperty('display','flex','important');
+    setupBackdrop.style.setProperty('display','block','important');
+    setupBackdrop.setAttribute('aria-modal','true');
+    setupBackdrop.setAttribute('role','dialog');
+    // Do not depend on customize.js timing; activate the first panel directly.
+    const firstStep=setupBackdrop.querySelector('.form-step[data-step="1"]');
+    setupBackdrop.querySelectorAll('.form-step').forEach(p=>p.classList.toggle('active',p===firstStep));
+    setupBackdrop.querySelectorAll('.progress-step').forEach(s=>{
+      s.classList.toggle('active',s.dataset.step==='1');
+      s.setAttribute('tabindex','0');
     });
+    const nav=setupBackdrop.querySelector('.form-navigation');
+    if(nav) nav.style.setProperty('display','flex','important');
     setupBackdrop.querySelector('.cv-ui01-setup-close').onclick=()=>{
       setupBackdrop.hidden=true;
       setupBackdrop.style.removeProperty('display');
