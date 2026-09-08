@@ -1,4 +1,4 @@
-const CACHE_NAME="celebrateverse-v40";
+const CACHE_NAME="celebrateverse-v41";
 const APP_SHELL=[
   "./","./index.html","./login.html","./signup.html","./dashboard.html","./profile.html","./account.html","./customize.html","./celebration.html","./payment.html","./success.html","./offline.html",
   "./style.css","./mobile-fix.css","./canva-editor.css","./stable-editor.css",
