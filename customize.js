@@ -150,6 +150,20 @@ document.addEventListener("DOMContentLoaded", () => {
     ========================================== */
 
     const AUTO_SAVE_KEY = "celebrateVerseCustomization";
+    /* Phase 1: normalize homepage query params into the wizard on first load. */
+    function applyUrlPresets() {
+        const params = new URLSearchParams(window.location.search);
+        const occasion = params.get("occasion");
+        const pkg = params.get("package");
+        if (occasion && occasionInput && document.querySelector(`.occasion-selection .selection-card[data-value="${CSS.escape(occasion)}"]`)) {
+            occasionInput.value = occasion;
+        }
+        if (pkg && packageInput && document.querySelector(`.package-option[data-value="${CSS.escape(pkg)}"]`)) {
+            packageInput.value = pkg;
+        }
+        if (occasion) restoreSelectedCard(".occasion-selection .selection-card", occasion);
+        if (pkg) restoreSelectedCard(".package-option", pkg);
+    }
     const MAX_PHOTOS = 10;
     const MAX_FILE_SIZE = 5 * 1024 * 1024;
     let currentDraftId = new URLSearchParams(window.location.search).get("draft");
@@ -1473,6 +1487,8 @@ document.addEventListener("DOMContentLoaded", () => {
     ========================================== */
 
     restoreCustomization();
+    applyUrlPresets();
+    updateLivePreview();
     loadCloudDraft();
 
     showStep(
