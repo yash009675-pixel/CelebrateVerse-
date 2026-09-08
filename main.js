@@ -6,7 +6,31 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.se
    CLEAN WEB APP / PWA VERSION
 ========================================== */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    /* PHASE 1: keep homepage navigation aligned with the real authenticated state. */
+    try {
+        const client = window.supabaseClient;
+        if (client?.auth) {
+            const { data: { session } } = await client.auth.getSession();
+            const desktop = document.querySelector(".cv-auth-actions");
+            const mobile = document.querySelector("#mobileMenu");
+            if (session?.user) {
+                if (desktop) desktop.innerHTML = '<a href="dashboard.html" class="cv-login-btn">Dashboard</a><a href="profile.html" class="cv-signup-btn">Profile</a>';
+                if (mobile) {
+                    const links = [...mobile.querySelectorAll("a")];
+                    links.filter(a => /login|create account|add account/i.test(a.textContent)).forEach(a => a.remove());
+                    if (!mobile.querySelector('a[href="dashboard.html"]')) {
+                        const dash = document.createElement("a"); dash.href="dashboard.html"; dash.innerHTML='<i class="fa-solid fa-grid-2"></i> Dashboard'; mobile.appendChild(dash);
+                    }
+                    if (!mobile.querySelector('a[href="profile.html"]')) {
+                        const prof = document.createElement("a"); prof.href="profile.html"; prof.innerHTML='<i class="fa-solid fa-user"></i> Profile'; mobile.appendChild(prof);
+                    }
+                }
+            }
+        }
+    } catch (e) { console.warn("Phase 1 auth navigation:", e); }
+
+
 
     /* ==========================================
        MOBILE MENU
