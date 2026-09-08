@@ -529,22 +529,35 @@ document.addEventListener("DOMContentLoaded", () => {
     /* ==========================================
        STEP VALIDATION
     ========================================== */
-    function validateStep() {
-        if (currentStep === 1 && !occasionInput?.value) {
+    function getVisibleStep() {
+        const active = document.querySelector(".form-step.active");
+        return active ? Number(active.dataset.step) : currentStep;
+    }
+
+    function validateStep(step = getVisibleStep()) {
+        step = Number(step) || 1;
+
+        if (step === 1 && !occasionInput?.value) {
             alert("Please select an occasion to continue.");
             return false;
         }
-        if (currentStep === 2 && !relationshipInput?.value) {
+        if (step === 2 && !relationshipInput?.value) {
             alert("Please select who this celebration is for.");
             return false;
         }
-        if (currentStep === 3 && !themeInput?.value) {
+        if (step === 3 && !themeInput?.value) {
             alert("Please choose a website style.");
             return false;
         }
-        if (currentStep === 4) {
-            if (!personNameInput?.value?.trim() || !customerNameInput?.value?.trim() ||
-                !specialDateInput?.value || !emailInput?.value?.trim()) {
+        if (step === 4) {
+            const missing = [
+                !personNameInput?.value?.trim(),
+                !customerNameInput?.value?.trim(),
+                !specialDateInput?.value,
+                !emailInput?.value?.trim()
+            ].some(Boolean);
+
+            if (missing) {
                 alert("Please complete all required details before continuing.");
                 return false;
             }
@@ -554,7 +567,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return false;
             }
         }
-        if (currentStep === 5 && !packageInput?.value) {
+        if (step === 5 && !packageInput?.value) {
             alert("Please select a package to continue.");
             return false;
         }
@@ -588,7 +601,7 @@ document.addEventListener("DOMContentLoaded", () => {
         item.addEventListener("click", () => {
             const target = Number(item.dataset.step);
             if (!target || target === currentStep) return;
-            if (target > currentStep && !validateStep()) return;
+            if (target > currentStep && !validateStep(currentStep)) return;
             currentStep = target;
             localStorage.setItem(CURRENT_STEP_KEY, String(currentStep));
             showStep(currentStep);
@@ -823,7 +836,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (form) {
         form.addEventListener("submit", async event => {
             event.preventDefault();
-            if (!validateStep()) return;
+            if (!validateStep(currentStep)) return;
 
             const button = submitBtn || form.querySelector('button[type="submit"]');
             const original = button?.innerHTML;
@@ -982,7 +995,7 @@ document.addEventListener("DOMContentLoaded", () => {
             event.preventDefault();
 
             if (currentStep < totalSteps) {
-                if (!validateStep()) return;
+                if (!validateStep(currentStep)) return;
                 currentStep += 1;
                 localStorage.setItem(CURRENT_STEP_KEY, String(currentStep));
                 showStep(currentStep);
@@ -990,7 +1003,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            if (!validateStep()) return;
+            if (!validateStep(currentStep)) return;
             if (submitBtn) submitBtn.click();
         });
 
