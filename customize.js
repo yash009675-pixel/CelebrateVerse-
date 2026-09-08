@@ -951,6 +951,67 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateLivePreview();
 
+    /* ==========================================
+       FINAL WIZARD CONTROLLER
+       Rebind the visible controls once so old
+       duplicated handlers cannot block navigation.
+    ========================================== */
+    (() => {
+        const next = document.getElementById("nextBtn");
+        const prev = document.getElementById("prevBtn");
+        if (!next || !prev) return;
+
+        const cleanButton = (button) => {
+            const clone = button.cloneNode(true);
+            button.replaceWith(clone);
+            return clone;
+        };
+
+        const nextControl = cleanButton(next);
+        const prevControl = cleanButton(prev);
+
+        nextControl.addEventListener("click", async (event) => {
+            event.preventDefault();
+
+            if (currentStep < totalSteps) {
+                if (!validateStep()) return;
+                currentStep += 1;
+                showStep(currentStep);
+                updateLivePreview();
+                return;
+            }
+
+            if (!validateStep()) return;
+            if (submitBtn) submitBtn.click();
+        });
+
+        prevControl.addEventListener("click", (event) => {
+            event.preventDefault();
+            if (currentStep <= 1) {
+                window.location.href = "index.html";
+                return;
+            }
+            currentStep -= 1;
+            showStep(currentStep);
+            updateLivePreview();
+        });
+
+        const refreshNavigation = () => {
+            const isFirst = currentStep <= 1;
+            const isLast = currentStep >= totalSteps;
+            prevControl.textContent = isFirst ? "Back to Home" : "Back";
+            nextControl.textContent = isLast ? "Continue to Payment" : "Continue";
+            nextControl.disabled = false;
+            prevControl.disabled = false;
+        };
+
+        const originalShowStep = showStep;
+        // Keep navigation labels synchronized whenever the step changes.
+        const observer = new MutationObserver(refreshNavigation);
+        observer.observe(document.querySelector("form") || document.body, {subtree:true, childList:true, attributes:true, attributeFilter:["class"]});
+        refreshNavigation();
+    })();
+
 });
 
 /* Phase 2 — local personalized wish generator (no external AI API) */
