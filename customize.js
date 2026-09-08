@@ -504,6 +504,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* ==========================================
+       CARD SELECTION
+    ========================================== */
+    function bindCardSelection(selector, input) {
+        document.querySelectorAll(selector).forEach(card => {
+            card.addEventListener("click", () => {
+                document.querySelectorAll(selector).forEach(x => x.classList.remove("selected"));
+                card.classList.add("selected");
+                if (input) input.value = card.dataset.value || "";
+                saveCustomization();
+                updateLivePreview();
+            });
+            card.setAttribute("role","button");
+            card.setAttribute("tabindex","0");
+            card.addEventListener("keydown", e => {
+                if (e.key === "Enter" || e.key === " ") { e.preventDefault(); card.click(); }
+            });
+        });
+    }
+
+    /* ==========================================
        STEP VALIDATION
     ========================================== */
     function validateStep() {
@@ -537,6 +557,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         return true;
     }
+
+    bindCardSelection(".occasion-selection .selection-card", occasionInput);
+    bindCardSelection(".relationship-selection .selection-card", relationshipInput);
+    bindCardSelection(".theme-card", themeInput);
+    bindCardSelection(".package-option", packageInput);
 
     /* ==========================================
        SHOW CURRENT STEP
