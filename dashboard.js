@@ -56,7 +56,8 @@ if (DEMO_DASHBOARD) {
 } else {
 document.addEventListener("DOMContentLoaded", async () => {
   if (!supabaseClient) { window.location.href = "login.html"; return; }
-  const { data: { user } } = await supabaseClient.auth.getUser();
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  const user = session?.user;
   if (!user) { window.location.href = "login.html"; return; }
   const $ = id => document.getElementById(id);
   const escapeHtml = value => String(value ?? "").replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
