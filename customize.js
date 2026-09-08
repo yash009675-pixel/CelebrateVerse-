@@ -571,21 +571,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         if (progressFill) {
-
-            const progress =
-
-                (
-                    (step - 1) /
-                    (totalSteps - 1)
-                )
-
-                * 100;
-
-
-            progressFill.style.width =
-                `${progress}%`;
-
+            const progress = ((step - 1) / (totalSteps - 1)) * 100;
+            progressFill.style.width = `${progress}%`;
         }
+
+        // Phase 1: make the 1–5 progress steps usable navigation.
+        document.querySelectorAll(".progress-step").forEach(item => {
+            const stepNumber = Number(item.dataset.step);
+            item.setAttribute("role", "button");
+            item.setAttribute("tabindex", stepNumber <= step ? "0" : "-1");
+            item.setAttribute("aria-current", stepNumber === step ? "step" : "false");
+            item.classList.toggle("clickable", stepNumber <= step);
+        });
 
 
         if (prevBtn) {
@@ -1189,6 +1186,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.addEventListener("cv:go-to-step", event => {
         window.cvGoToStep(event.detail?.step);
+    });
+
+    document.querySelectorAll(".progress-step").forEach(item => {
+        const go = () => {
+            const step = Number(item.dataset.step);
+            // Users can return to completed/current steps, but cannot skip ahead.
+            if (step <= currentStep) window.cvGoToStep(step);
+        };
+        item.addEventListener("click", go);
+        item.addEventListener("keydown", e => {
+            if ((e.key === "Enter" || e.key === " ") && Number(item.dataset.step) <= currentStep) {
+                e.preventDefault(); go();
+            }
+        });
     });
 
     /* ==========================================
