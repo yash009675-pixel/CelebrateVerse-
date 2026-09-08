@@ -19,7 +19,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
   if (typeof supabaseClient === "undefined" || !supabaseClient) { location.href="login.html"; return; }
-  const { data:{ user } } = await supabaseClient.auth.getUser();
+  const { data:{ session } } = await supabaseClient.auth.getSession();
+  const user = session?.user;
   if (!user) { location.href="login.html"; return; }
 
   const $ = id => document.getElementById(id);
