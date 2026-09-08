@@ -46,17 +46,56 @@ async function loadCelebrationFromCloud() {
       message:data.message || ''
     };
     try { localStorage.setItem('celebrateVerseCustomization', JSON.stringify(draft)); } catch(_) {}
-    // Replace generic starter copy with the user's actual celebration details.
-    const title = preview?.querySelector('[data-text="Made Just For You"]');
-    const sub = preview?.querySelector('.editem:nth-of-type(2)');
-    if (title) { title.dataset.text = 'Made Just For You'; title.textContent = data.person_name ? 'Made Just For You, '+data.person_name : 'Made Just For You'; }
-    if (sub) { sub.dataset.text = (data.person_name || 'Someone Special')+' • '+(data.occasion || 'Celebration'); sub.textContent = sub.dataset.text; }
-    if (data.message) {
-      const msg = document.createElement('div'); msg.className='editem'; msg.dataset.text=data.message;
-      msg.style.cssText='left:12%;top:54%;width:76%;text-align:center;font-size:16px;line-height:1.6;color:rgba(255,255,255,.88)';
-      msg.textContent=data.message; preview.append(msg); bind(msg);
-    }
-    if (data.theme && templates[data.theme]) {
+    // Build a real first-look celebration from the 1–5 wizard.
+    // The user sees the result immediately, then can edit every element.
+    const oldItems = [...preview.querySelectorAll('.editem')];
+    oldItems.forEach(el => el.remove());
+
+    const occasionLabel = (data.occasion || 'Celebration').replace(/[-_]/g,' ').replace(/\b\w/g,m=>m.toUpperCase());
+    const person = data.person_name || 'Someone Special';
+    const relationship = data.relationship ? data.relationship.replace(/[-_]/g,' ') : '';
+    const message = data.message || 'Your beautiful message will appear here.';
+    const dateText = data.special_date ? new Date(data.special_date+'T00:00:00').toLocaleDateString(undefined,{day:'numeric',month:'long',year:'numeric'}) : '';
+
+    const hero = document.createElement('div');
+    hero.className='editem';
+    hero.dataset.text=occasionLabel;
+    hero.style.cssText='left:8%;top:7%;width:84%;text-align:center;font-size:15px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--ed-accent,#f9a8d4)';
+    hero.textContent=occasionLabel;
+
+    const heart = document.createElement('div');
+    heart.className='editem';
+    heart.dataset.text='♥';
+    heart.style.cssText='left:calc(50% - 48px);top:15%;width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:52px;background:linear-gradient(135deg,rgba(236,72,153,.34),rgba(139,92,246,.38));box-shadow:0 20px 55px rgba(139,92,246,.28)';
+    heart.textContent='♥';
+
+    const title = document.createElement('div');
+    title.className='editem';
+    title.dataset.text=person;
+    title.style.cssText='left:7%;top:39%;width:86%;text-align:center;font-family:"Playfair Display",Georgia,serif;font-size:46px;font-weight:800;color:#fff;text-shadow:0 10px 35px rgba(0,0,0,.38)';
+    title.textContent=person;
+
+    const sub = document.createElement('div');
+    sub.className='editem';
+    sub.dataset.text=relationship ? 'For my '+relationship : 'A celebration made especially for you';
+    sub.style.cssText='left:10%;top:51%;width:80%;text-align:center;font-size:18px;color:rgba(255,255,255,.82)';
+    sub.textContent=relationship ? 'For my '+relationship : 'A celebration made especially for you';
+
+    const msg = document.createElement('div');
+    msg.className='editem';
+    msg.dataset.text=message;
+    msg.style.cssText='left:11%;top:61%;width:78%;text-align:center;font-size:16px;line-height:1.65;color:rgba(255,255,255,.9)';
+    msg.textContent=message;
+
+    const date = document.createElement('div');
+    date.className='editem';
+    date.dataset.text=dateText || 'Every Date Can Be a Celebration';
+    date.style.cssText='left:12%;top:84%;width:76%;text-align:center;font-size:13px;letter-spacing:.5px;color:rgba(255,255,255,.62)';
+    date.textContent=dateText || 'Every Date Can Be a Celebration';
+
+    [hero,heart,title,sub,msg,date].forEach(el=>{preview.append(el);bind(el)});
+
+        if (data.theme && templates[data.theme]) {
       const [bg,accent]=templates[data.theme]; preview.style.background=bg; root.style.setProperty('--ed-accent',accent);
     }
     layers();
