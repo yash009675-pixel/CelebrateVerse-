@@ -26,4 +26,6 @@ const context=()=>{const data=(()=>{try{return JSON.parse(localStorage.getItem("
 async function ask(q){q=String(q||"").trim();if(!q)return;add("user",q);input.value="";add("bot","Thinking…");const pending=msgs.lastElementChild;try{if(!window.supabase||!supabaseClient)throw Error("AI connection is unavailable on this page.");const {data,error}=await supabaseClient.functions.invoke("celebrate-ai",{body:{message:q,context:context()}});pending.remove();if(error||data?.error)throw Error(data?.error||error?.message||"AI request failed.");add("bot",data.text||"I couldn't generate a response.");}catch(e){pending.textContent="I couldn't connect to AI right now. Please try again in a moment.";pending.title=e.message||""}}
 root.querySelector(".cv-ai-form").onsubmit=e=>{e.preventDefault();ask(input.value)};
 root.querySelectorAll(".cv-ai-quick button").forEach(b=>b.onclick=()=>ask(b.dataset.q));
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true}); else boot();
 })();
