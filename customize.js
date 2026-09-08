@@ -1182,11 +1182,44 @@ document.addEventListener("DOMContentLoaded", () => {
         currentStep = target;
         showStep(currentStep);
         updateLivePreview();
+        document.querySelector(".cv-ui01-setup-backdrop")?.removeAttribute("hidden");
     };
+
+    // Keep navigation inside the 5-step setup. This is intentionally independent
+    // from the Studio editor so a new user can always understand what to do next.
+    function setupWizardNavigation() {
+        if (!nextBtn) return;
+        nextBtn.addEventListener("click", event => {
+            event.preventDefault();
+            if (currentStep < totalSteps) {
+                if (validateStep()) {
+                    currentStep += 1;
+                    showStep(currentStep);
+                    updateLivePreview();
+                    saveCustomization();
+                }
+            } else if (submitBtn) {
+                submitBtn.click();
+            }
+        });
+        if (prevBtn) {
+            prevBtn.addEventListener("click", event => {
+                event.preventDefault();
+                if (currentStep > 1) {
+                    currentStep -= 1;
+                    showStep(currentStep);
+                } else {
+                    window.location.href = "index.html";
+                }
+            });
+        }
+    }
 
     document.addEventListener("cv:go-to-step", event => {
         window.cvGoToStep(event.detail?.step);
     });
+
+    setupWizardNavigation();
 
     document.querySelectorAll(".progress-step").forEach(item => {
         const go = () => {
