@@ -859,12 +859,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     package: celebration.package,
                     price: selectedPrice
                 }));
+                // Payment is intentionally deferred. Every completed 1–5 wizard
+                // flow goes straight to the live Edit Studio so the user can see,
+                // enjoy, and freely customize the result before deciding to buy.
                 localStorage.removeItem(AUTO_SAVE_KEY);
-                if (selectedPackage === "free") {
-                    window.location.href = "edit-studio.html?celebration=" + encodeURIComponent(celebration.id);
-                    return;
-                }
-                window.location.href = "payment.html?package=" + encodeURIComponent(celebration.package) + "&celebration=" + encodeURIComponent(celebration.id);
+                localStorage.setItem("celebrateVerseLastCelebrationId", celebration.id);
+                window.location.href = "edit-studio.html?celebration=" + encodeURIComponent(celebration.id) + "&from=wizard";
             } catch (error) {
                 console.error(error);
                 alert(error.message || "Unable to save your celebration. Please try again.");
