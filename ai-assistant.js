@@ -1,5 +1,4 @@
 (function(){
-if(window.__cvAIReady)return;
 function boot(){
 if(window.__cvAIReady)return;
 window.__cvAIReady=true;
