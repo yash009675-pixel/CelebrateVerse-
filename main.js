@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const desktop = document.querySelector(".cv-auth-actions");
             const mobile = document.querySelector("#mobileMenu");
             if (session?.user) {
-                if (desktop) desktop.innerHTML = '<a href="dashboard.html" class="cv-login-btn">Dashboard</a><a href="profile.html" class="cv-signup-btn">Profile</a>';
+                if (desktop) desktop.innerHTML = '<a href="dashboard.html" class="cv-login-btn">Dashboard</a><a href="profile.html" class="cv-signup-btn">Profile</a><a href="javascript:void(0)" id="cvLogoutBtn" class="cv-login-btn">Logout</a>';
                 if (mobile) {
                     const links = [...mobile.querySelectorAll("a")];
                     links.filter(a => /login|create account|add account/i.test(a.textContent)).forEach(a => a.remove());
@@ -27,6 +27,15 @@ document.addEventListener("DOMContentLoaded", async () => {
                     }
                 }
             }
+        }
+        const logoutBtn = document.getElementById("cvLogoutBtn");
+        if (logoutBtn && client?.auth) {
+            logoutBtn.addEventListener("click", async (event) => {
+                event.preventDefault();
+                const { error } = await client.auth.signOut();
+                if (error) { alert(error.message || "Unable to logout."); return; }
+                window.location.href = "index.html";
+            });
         }
     } catch (e) { console.warn("Phase 1 auth navigation:", e); }
 
