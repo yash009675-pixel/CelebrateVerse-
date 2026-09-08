@@ -567,9 +567,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 return false;
             }
         }
+        // Package selection is optional at the guided-preview stage.
+        // Users must be able to finish the 1–5 creation flow and see their
+        // live celebration in Edit Studio before making any purchase decision.
         if (step === 5 && !packageInput?.value) {
-            alert("Please select a package to continue.");
-            return false;
+            return true;
         }
         return true;
     }
