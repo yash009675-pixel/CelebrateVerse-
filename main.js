@@ -26,7 +26,15 @@ document.addEventListener("DOMContentLoaded", async () => {
                         const prof = document.createElement("a"); prof.href="profile.html"; prof.innerHTML='<i class="fa-solid fa-user"></i> Profile'; mobile.appendChild(prof);
                     }
                 }
+            } else {
+                if (desktop) desktop.innerHTML = '<a href="login.html" class="cv-login-btn">Login</a><a href="signup.html" class="cv-signup-btn">Create Account</a>';
+                if (mobile) {
+                    mobile.querySelector(".cv-auth-mobile-actions")?.replaceChildren();
+                    const holder = mobile.querySelector(".cv-auth-mobile-actions");
+                    if (holder) holder.innerHTML = '<a href="login.html">Login</a><a href="signup.html">Create Account</a>';
+                }
             }
+            window.dispatchEvent(new CustomEvent("cv:auth-ui-ready"));
         }
         const logoutBtn = document.getElementById("cvLogoutBtn");
         if (logoutBtn && client?.auth) {
