@@ -22,15 +22,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.querySelectorAll(".dashboard-tab").forEach(t => t.classList.remove("active"));
     item.classList.add("active"); $(tabName)?.classList.add("active");
   }));
-  const [ordersResult, cardsResult, eventsResult] = await Promise.all([
+  const [ordersResult, cardsResult, eventsResult, celebrationsResult] = await Promise.all([
     supabaseClient.from("orders").select("id,occasion,person_name,customer_name,special_date,package,amount,payment_status,order_status,created_at").eq("email", user.email).order("created_at", { ascending: false }),
     supabaseClient.from("profile_cards").select("id,title,recipient_name,occasion,message,created_at").eq("user_id", user.id).order("created_at", { ascending: false }),
-    supabaseClient.from("celebration_events").select("id,title,occasion,person_name,event_date,created_at").eq("user_id", user.id).order("event_date", { ascending: true })
+    supabaseClient.from("celebration_events").select("id,title,occasion,person_name,event_date,created_at").eq("user_id", user.id).order("event_date", { ascending: true }),
+    supabaseClient.from("celebrations").select("id,occasion,relationship,theme,person_name,customer_name,special_date,package,status,created_at").eq("user_id", user.id).order("created_at", { ascending: false })
   ]);
-  const orders = ordersResult.data || [], cards = cardsResult.data || [], events = eventsResult.data || [];
+  const orders = ordersResult.data || [], cards = cardsResult.data || [], events = eventsResult.data || [], celebrations = celebrationsResult.data || [];
   if (ordersResult.error) console.error("Orders:", ordersResult.error);
   if (cardsResult.error) console.error("Cards:", cardsResult.error);
   if (eventsResult.error) console.error("Events:", eventsResult.error);
+  const celebrationList = $("celebrationList");
+  if (celebrationList) {
+    celebrationList.innerHTML = celebrations.length ? celebrations.map(c => {
+      const title = c.person_name ? c.person_name + "'s " + (c.occasion || "Celebration") : (c.occasion || "Untitled Celebration");
+      const meta = [c.theme, c.package ? c.package.toUpperCase() : ""].filter(Boolean).join(" · ");
+      return "<div class=\"dashboard-item cv-celebration-item\"><div class=\"dashboard-item-icon\">🎉</div><div><h3>"+escapeHtml(title)+"</h3><p>"+escapeHtml(meta || "Celebration")+" · "+escapeHtml(c.status || "Draft")+"</p></div><a class=\"primary-btn\" href=\"edit-studio.html?celebration="+encodeURIComponent(c.id)+"\">🎨 Edit Studio</a></div>";
+    }).join("") : "<div class=\"empty-state\"><div class=\"empty-icon\">✨</div><h3>No celebrations yet</h3><p>Create your first celebration and it will appear here.</p><a href=\"customize.html\" class=\"primary-btn\">Create Celebration</a></div>";
+  }
+
   $("totalDrafts") && ($("totalDrafts").textContent = cards.length);
   $("totalOrders") && ($("totalOrders").textContent = orders.length);
   $("totalCelebrations") && ($("totalCelebrations").textContent = orders.length + events.length);
