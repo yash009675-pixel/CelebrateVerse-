@@ -47,7 +47,17 @@ const setupBody=setupBackdrop.querySelector('.cv-setup-body');const progressWrap
     const editorRoot=document.getElementById('stableEditor');const editorHost=document.querySelector('.customizer-container');
     if(editorRoot&&celebrationForm&&editorRoot.parentElement===celebrationForm&&editorHost){editorHost.insertBefore(editorRoot,celebrationForm);}
     if(progressWrapper)setupBody.appendChild(progressWrapper);if(celebrationForm)setupBody.appendChild(celebrationForm);
-    const openSetup=step=>{setupBackdrop.hidden=false;window.cvGoToStep?.(step||1);requestAnimationFrame(()=>setupBackdrop.querySelector('.form-step.active')?.scrollIntoView({block:'start'}))};
+    const openSetup=step=>{
+      setupBackdrop.hidden=false;
+      window.cvGoToStep?.(step||1);
+      requestAnimationFrame(()=>{
+        const active=setupBackdrop.querySelector('.form-step.active');
+        if(active) active.scrollIntoView({block:'start'});
+        // Ensure navigation is visible even if another editor layer has altered it.
+        const nav=setupBackdrop.querySelector('.form-navigation');
+        if(nav) nav.style.setProperty('display','flex','important');
+      });
+    };
     actions.querySelector('[data-ui01=setup]').onclick=()=>openSetup(1);
     setupBackdrop.querySelector('.cv-ui01-setup-close').onclick=()=>setupBackdrop.hidden=true;setupBackdrop.addEventListener('click',e=>{if(e.target===setupBackdrop)setupBackdrop.hidden=true});
     setupBody.addEventListener('click',e=>{const step=e.target.closest('.progress-step');if(step){e.preventDefault();openSetup(Number(step.dataset.step))}});
