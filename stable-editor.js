@@ -60,6 +60,9 @@ async function loadCelebrationFromCloud() {
       const [bg,accent]=templates[data.theme]; preview.style.background=bg; root.style.setProperty('--ed-accent',accent);
     }
     layers();
+    // Let the project persistence layer capture the hydrated cloud design.
+    document.dispatchEvent(new CustomEvent('cv:projectLoaded', {detail: data}));
+    document.dispatchEvent(new CustomEvent('cv:changed'));
   } catch(e) { console.warn('Celebration load failed',e); }
 }
 
