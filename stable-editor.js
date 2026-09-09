@@ -94,6 +94,27 @@ async function loadCelebrationFromCloud() {
     date.textContent=dateText || 'Every Date Can Be a Celebration';
 
     [hero,heart,title,sub,msg,date].forEach(el=>{preview.append(el);bind(el)});
+    // Phase 1: bring uploaded wizard photos into the first live Edit Studio view.
+    try {
+      const {data: photos} = await supabaseClient.from('celebration_photos')
+        .select('storage_path').eq('celebration_id', data.id).eq('user_id', user.id);
+      if (Array.isArray(photos) && photos.length) {
+        const urls = await Promise.all(photos.slice(0,10).map(async row => {
+          const {data: signed} = await supabaseClient.storage.from('celebration-photos')
+            .createSignedUrl(row.storage_path, 3600);
+          return signed?.signedUrl || null;
+        }));
+        urls.filter(Boolean).forEach((url,index) => {
+          const photo = document.createElement('img');
+          photo.className='editem';
+          photo.dataset.text='Photo '+(index+1);
+          photo.alt='Celebration photo '+(index+1);
+          photo.src=url;
+          photo.style.cssText='left:'+(8+(index%2)*44)+'%;top:'+(68+Math.floor(index/2)*13)+'%;width:38%;height:11%;object-fit:cover;border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,.28);';
+          preview.append(photo); bind(photo);
+        });
+      }
+    } catch (photoError) { console.warn('Celebration photos could not be loaded', photoError); }
 
         if (data.theme && templates[data.theme]) {
       const [bg,accent]=templates[data.theme]; preview.style.background=bg; root.style.setProperty('--ed-accent',accent);
