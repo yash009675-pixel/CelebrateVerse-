@@ -9,7 +9,7 @@
 
     let step=1, total=5;
     const $=id=>document.getElementById(id);
-    const occasion=$("occasion"), relationship=$("relationship"), theme=$("theme"), pkg=$("package");
+    const occasion=$("occasion"), relationship=$("relationship"), theme=$("theme");
     const person=$("personName"), customer=$("customerName"), date=$("specialDate"), email=$("email");
 
     const oldNext=$("nextBtn"), oldPrev=$("prevBtn");
@@ -37,7 +37,6 @@
     cards(".occasion-selection .selection-card",occasion);
     cards(".relationship-selection .selection-card",relationship);
     cards(".theme-card",theme);
-    cards(".package-option",pkg);
 
     function valid(){
       if(step===1 && !occasion?.value){alert("Please select an occasion.");return false;}
@@ -49,7 +48,6 @@
         }
         if(!email.checkValidity()){alert("Please enter a valid email address.");email.focus();return false;}
       }
-      if(step===5 && !pkg?.value){alert("Please select a package.");return false;}
       return true;
     }
 
@@ -70,7 +68,7 @@
       const fill=$("progressFill");
       if(fill) fill.style.width=(((step-1)/(total-1))*100)+"%";
       prev.textContent=step===1?"Back to Home":"Back";
-      next.textContent=step===total?"Continue to Payment":"Continue";
+      next.textContent=step===total?"✨ Open Live Edit Studio":"Continue";
       next.disabled=false; prev.disabled=false;
       window.scrollTo({top:0,behavior:"smooth"});
     }
@@ -104,7 +102,7 @@
       const saved=JSON.parse(localStorage.getItem("celebrateVerseCustomization")||"{}");
       [[occasion,saved.occasion,".occasion-selection .selection-card"],
        [relationship,saved.relationship,".relationship-selection .selection-card"],
-       [theme,saved.theme,".theme-card"],[pkg,saved.package,".package-option"]].forEach(([input,val,sel])=>{
+       [theme,saved.theme,".theme-card"]].forEach(([input,val,sel])=>{
         if(input&&val){input.value=val; const c=form.querySelector(sel+'[data-value="'+CSS.escape(val)+'"]'); if(c)c.classList.add("selected");}
       });
     }catch(_){}
