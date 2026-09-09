@@ -144,6 +144,15 @@ if(preview){
 function ensureStarterPreview(){
   if(!preview || preview.querySelector('.editem')) return;
   const data=(()=>{try{return JSON.parse(localStorage.getItem('celebrateVerseCustomization')||'{}')}catch(_){return {}}})();
+  // Phase 1: keep the live studio preview synchronized with the guided setup.
+  // The setup stores both snake_case (database) and camelCase (legacy UI) keys.
+  const setupData={...data};
+  const setupOccasion=setupData.occasion||'Celebration';
+  const setupPerson=setupData.personName||setupData.person_name||'Someone Special';
+  const setupMessage=setupData.message||'';
+  const setupTheme=setupData.theme||'';
+  const setupDate=setupData.specialDate||setupData.special_date||'';
+  window.CelebrateVersePhase1={setupData,setupOccasion,setupPerson,setupMessage,setupTheme,setupDate};
   const occasion=data.occasion||'Celebration';
   const person=data.personName||data.person_name||'Someone Special';
   const title=document.createElement('div');
