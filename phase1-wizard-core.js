@@ -28,8 +28,7 @@
             ...(JSON.parse(localStorage.getItem("celebrateVerseCustomization")||"{}")),
             ...(input===occasion?{occasion:input.value}:{}),
             ...(input===relationship?{relationship:input.value}:{}),
-            ...(input===theme?{theme:input.value}:{}),
-            ...(input===pkg?{package:input.value}:{})
+            ...(input===theme?{theme:input.value}:{})
           }));
         });
       });
@@ -76,7 +75,7 @@
     next.addEventListener("click",e=>{
       e.preventDefault(); e.stopImmediatePropagation();
       if(step<total){ if(valid()){step++;render();} }
-      else if(valid()){ const submit=$("submitBtn"); if(submit) submit.click(); }
+      else if(valid()){ form.dispatchEvent(new CustomEvent("celebrateverse:open-edit-studio",{bubbles:true,detail:{source:"phase1",step:5}})); }
     });
     prev.addEventListener("click",e=>{
       e.preventDefault(); e.stopImmediatePropagation();
