@@ -236,6 +236,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* ==========================================
+       LIVE PREVIEW UPDATE
+    ========================================== */
+    function updateLivePreview() {
+        const occasion = occasionInput?.value || "";
+        const relationship = relationshipInput?.value || "";
+        const personName = personNameInput?.value?.trim() || "Your special person";
+        const message = messageInput?.value?.trim() || "A beautiful celebration made just for you.";
+        const pkg = packageInput?.value || "";
+
+        if (previewOccasion) previewOccasion.textContent = formatText(occasion) || "Your Celebration";
+        if (previewEmoji) previewEmoji.textContent = getOccasionEmoji(occasion);
+        if (previewPersonName) previewPersonName.textContent = personName;
+        if (previewRelationship) previewRelationship.textContent = relationship ? formatText(relationship) : "";
+        if (previewMessage) previewMessage.textContent = message;
+        if (previewPackage) previewPackage.textContent = pkg ? formatText(pkg) : "";
+
+        if (livePreview) {
+            livePreview.classList.toggle("has-content", Boolean(occasion || personNameInput?.value || messageInput?.value));
+        }
+
+        if (previewPhotos && photoInput) {
+            previewPhotos.innerHTML = "";
+            const files = Array.from(photoInput.files || []).slice(0, MAX_PHOTOS);
+            if (!files.length) {
+                previewPhotos.innerHTML = '<div class="preview-photo-placeholder"><i class="fa-solid fa-images"></i></div>';
+            } else {
+                files.forEach(file => {
+                    if (!file.type.startsWith("image/")) return;
+                    const img = document.createElement("img");
+                    img.alt = "Uploaded celebration photo";
+                    img.loading = "lazy";
+                    img.src = URL.createObjectURL(file);
+                    img.onload = () => URL.revokeObjectURL(img.src);
+                    previewPhotos.appendChild(img);
+                });
+            }
+        }
+    }
+
+    if (photoInput) {
+        photoInput.addEventListener("change", () => {
+            saveCustomization();
+            updateLivePreview();
+        });
+    }
+
+    /* ==========================================
        SAVE CUSTOMIZATION
     ========================================== */
 
