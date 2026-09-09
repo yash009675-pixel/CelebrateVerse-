@@ -690,18 +690,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 if (currentStep === totalSteps) {
-
-                    // Step 5 uses the same visible Continue button,
-                    // then submits the existing payment/free-flow handler.
-
-                    if (submitBtn) {
-
-                        submitBtn.click();
-
-                    }
-
+                    // Phase 1: finish setup and open the real Edit Studio.
+                    // Saving is handled by the existing submit handler; prevent
+                    // the legacy payment/free-flow action from running here.
+                    form?.dispatchEvent(new Event("submit", {bubbles:true, cancelable:true}));
                     return;
-
                 }
 
 
